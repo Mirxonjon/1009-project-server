@@ -27,11 +27,13 @@ export class EntertainmentsEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
+    nullable: true
   })
   mention: string;
 
   @Column({
     type: 'character varying',
+    nullable: true
   })
   warning: string;
 
