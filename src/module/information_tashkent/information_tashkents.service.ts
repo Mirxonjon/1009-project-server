@@ -34,6 +34,8 @@ export class InformationTashkentServise {
       .values({
         text: body.text,
         table_arr: body.table_arr,
+        mention : body.mention,
+        warning: body.warning,
       })
       .execute()
       .catch((e) => {
@@ -52,6 +54,8 @@ export class InformationTashkentServise {
     const updatedVideo = await InformationTashkentEntity.update(id, {
       text: body.text || findInformationTashkent.text,
       table_arr: body.table_arr || findInformationTashkent.table_arr,
+      mention : body.mention || findInformationTashkent.mention,
+      warning: body.warning || findInformationTashkent.warning,
     });
 
     return updatedVideo;

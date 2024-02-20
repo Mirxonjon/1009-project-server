@@ -21,6 +21,16 @@ export class NumbersCodesEntity extends BaseEntity {
   })
   table_arr: any;
 
+  @Column({
+    type: 'character varying',
+  })
+  mention: string;
+
+  @Column({
+    type: 'character varying',
+  })
+  warning: string;
+
   @CreateDateColumn()
   data_sequence: Date;
 

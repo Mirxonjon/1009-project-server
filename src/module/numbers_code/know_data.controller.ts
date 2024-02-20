@@ -58,6 +58,14 @@ export class NumbersCodesController {
           type: 'string',
           default: '<html> salom</html>',
         },
+        mention: {
+          type: 'string',
+          default: 'Mention text goes here',
+        },
+        warning: {
+          type: 'string',
+          default: 'Warning text goes here',
+        },
         table_arr: {
           type: 'object',
           default: {
@@ -87,6 +95,14 @@ export class NumbersCodesController {
         category_id: {
           type: 'string',
           default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+        },
+        mention: {
+          type: 'string',
+          default: 'Mention text goes here',
+        },
+        warning: {
+          type: 'string',
+          default: 'Warning text goes here',
         },
         text: {
           type: 'string',

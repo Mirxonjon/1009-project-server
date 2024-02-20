@@ -7,4 +7,8 @@ export class CreateKnowDataDto {
 
   // @IsObject()
   table_arr: object;
+  
+  mention:string;
+  
+  warning: string;
 }

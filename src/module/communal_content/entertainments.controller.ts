@@ -78,6 +78,14 @@ export class EntertainmentsController {
           type: 'string',
           default: '<html> salom</html>',
         },
+        mention: {
+          type: 'string',
+          default: 'Mention text goes here',
+        },
+        warning: {
+          type: 'string',
+          default: 'Warning text goes here',
+        },
         table_arr: {
           type: 'object',
           default: {
@@ -111,6 +119,14 @@ export class EntertainmentsController {
         text: {
           type: 'string',
           default: '<html> salom</html>',
+        },
+        mention: {
+          type: 'string',
+          default: 'Mention text goes here',
+        },
+        warning: {
+          type: 'string',
+          default: 'Warning text goes here',
         },
         table_arr: {
           type: 'object',

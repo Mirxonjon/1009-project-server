@@ -17,6 +17,16 @@ export class CommunalEntity extends BaseEntity {
   text: string;
 
   @Column({
+    type: 'character varying',
+  })
+  mention: string;
+
+  @Column({
+    type: 'character varying',
+  })
+  warning: string;
+
+  @Column({
     type: 'jsonb',
   })
   table_arr: any;

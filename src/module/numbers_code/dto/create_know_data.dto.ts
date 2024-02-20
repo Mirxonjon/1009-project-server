@@ -7,4 +7,8 @@ export class CreateNumbersCodesDto {
 
   // @IsObject()
   table_arr: object;
+
+  mention:string;
+  
+  warning: string;
 }

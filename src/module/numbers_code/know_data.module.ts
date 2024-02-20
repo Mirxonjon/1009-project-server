@@ -6,4 +6,4 @@ import { NumbersCodesServise } from './know_data.service';
   controllers: [NumbersCodesController],
   providers: [NumbersCodesServise],
 })
-export class KnowDataModule {}
+export class NumbersCodesModule {}

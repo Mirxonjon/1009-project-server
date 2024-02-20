@@ -10,4 +10,8 @@ export class CreateEntertainmentsDto {
 
   // @IsObject()
   table_arr: object;
+
+  mention:string;
+  
+  warning: string;
 }

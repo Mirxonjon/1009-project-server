@@ -6,4 +6,7 @@ export class UpdateEntertainmentsDto {
   text: string;
 
   table_arr: Object;
+  mention:string;
+  
+  warning: string;
 }

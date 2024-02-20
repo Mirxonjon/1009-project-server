@@ -7,4 +7,7 @@ export class CreateInformationTashkentDto {
 
   // @IsObject()
   table_arr: object;
+  mention:string;
+  
+  warning: string;
 }

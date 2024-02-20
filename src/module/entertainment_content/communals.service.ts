@@ -33,6 +33,8 @@ export class CommunalServise {
       .values({
         text: body.text,
         table_arr: body.table_arr,
+        mention : body.mention,
+        warning: body.warning,
       })
       .execute()
       .catch((e) => {
@@ -51,6 +53,8 @@ export class CommunalServise {
     const updatedVideo = await CommunalEntity.update(id, {
       text: body.text || findCommunal.text,
       table_arr: body.table_arr || findCommunal.table_arr,
+      mention : body.mention || findCommunal.mention,
+      warning: body.warning || findCommunal.warning,
     });
 
     return updatedVideo;
