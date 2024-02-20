@@ -51,7 +51,7 @@ export class UsersController {
     return await this.#_service.findOne(header);
   }
 
-  @UseGuards(jwtGuard)
+  // @UseGuards(jwtGuard)
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -82,7 +82,7 @@ export class UsersController {
     return this.#_service.AddAdmin(body);
   }
 
-  @UseGuards(jwtGuard)
+  // @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -138,7 +138,7 @@ export class UsersController {
     );
   }
 
-  @UseGuards(jwtGuard)
+  // @UseGuards(jwtGuard)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()
