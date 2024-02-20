@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
-
 import { EntertainmentsEntity } from 'src/entities/entertainment.entity';
 import { EntertainmentCategoriesEntity } from 'src/entities/entertainment_Categories.entity';
 import { KnowDataEntity } from 'src/entities/know_data.entity';

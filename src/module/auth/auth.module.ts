@@ -1,4 +1,4 @@
-import { Storage } from '@google-cloud/storage';
+import * as dotenv from 'dotenv';
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
@@ -6,7 +6,7 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { jwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthServise } from './auth.service';
-console.log(process.env.SECRET_KEY ,'aaaa');
+dotenv.config();
 
 
 @Module({
