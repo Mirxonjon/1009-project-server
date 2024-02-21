@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { NumbersCodesController } from './know_data.controller';
-import { NumbersCodesServise } from './know_data.service';
+import { NumbersCodesController } from './numbers_codes.controller';
+import { NumbersCodesServise } from './numbers_codes.service';
 
 @Module({
   controllers: [NumbersCodesController],

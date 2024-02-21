@@ -10,7 +10,7 @@ import { AuthModule } from './module/auth/auth.module';
 import { EntertainmentsModule } from './module/communal_content/entertainments.module';
 import { InformationTashkentModule } from './module/information_tashkent/information_tashkents.module';
 import { KnowDataModule } from './module/know_data/know_data.module';
-import { NumbersCodesModule } from './module/numbers_code/know_data.module';
+import { NumbersCodesModule } from './module/numbers_code/numbers_codes.module';
 
 @Module({
   imports: [

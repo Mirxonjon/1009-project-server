@@ -2,6 +2,10 @@ import { IsString, IsNotEmpty, MaxLength, IsObject } from 'class-validator';
 
 export class CreateInformationTashkentDto {
 
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
   // @IsString()
   text: string;
 

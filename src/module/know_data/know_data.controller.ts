@@ -53,6 +53,11 @@ export class KnowDataController {
     schema: {
       type: 'object',
       properties: {
+
+        title : {
+          type: 'string',
+          default: 'title'
+        },
   
         text: {
           type: 'string',
@@ -92,9 +97,9 @@ export class KnowDataController {
     schema: {
       type: 'object',
       properties: {
-        category_id: {
+        title : {
           type: 'string',
-          default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+          default: 'title'
         },
         mention: {
           type: 'string',

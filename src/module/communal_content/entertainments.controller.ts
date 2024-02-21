@@ -74,6 +74,10 @@ export class EntertainmentsController {
           type: 'string',
           default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
         },
+        title : {
+          type: 'string',
+          default: 'title'
+        },
         text: {
           type: 'string',
           default: '<html> salom</html>',
@@ -115,6 +119,10 @@ export class EntertainmentsController {
         category_id: {
           type: 'string',
           default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+        },
+        title : {
+          type: 'string',
+          default: 'title'
         },
         text: {
           type: 'string',

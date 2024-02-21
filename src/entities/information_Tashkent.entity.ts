@@ -13,6 +13,12 @@ export class InformationTashkentEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
+    nullable: false,
+  })
+  title: string;
+
+  @Column({
+    type: 'character varying',
   })
   text: string;
 

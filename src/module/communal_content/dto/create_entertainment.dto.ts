@@ -5,6 +5,10 @@ export class CreateEntertainmentsDto {
   @IsNotEmpty()
   category_id: string;
 
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
   // @IsString()
   text: string;
 

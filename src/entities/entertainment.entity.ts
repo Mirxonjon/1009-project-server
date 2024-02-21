@@ -21,6 +21,12 @@ export class EntertainmentsEntity extends BaseEntity {
   text: string;
 
   @Column({
+    type: 'character varying',
+    nullable: false,
+  })
+  title: string;
+
+  @Column({
     type: 'jsonb',
   })
   table_arr: any;

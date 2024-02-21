@@ -32,6 +32,7 @@ export class InformationTashkentServise {
       .insert()
       .into(InformationTashkentEntity)
       .values({
+        title : body.title ,
         text: body.text,
         table_arr: body.table_arr,
         mention : body.mention,
@@ -52,6 +53,7 @@ export class InformationTashkentServise {
     }
 
     const updatedVideo = await InformationTashkentEntity.update(id, {
+      title : body.title || findInformationTashkent.title,
       text: body.text || findInformationTashkent.text,
       table_arr: body.table_arr || findInformationTashkent.table_arr,
       mention : body.mention || findInformationTashkent.mention,

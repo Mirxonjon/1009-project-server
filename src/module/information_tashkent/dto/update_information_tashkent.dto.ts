@@ -2,6 +2,9 @@ import { IsEmpty, IsObject, IsString, MaxLength } from 'class-validator';
 
 export class UpdateInformationTashkentDto {
 
+  @IsString()
+  title: string;
+
   text: string;
 
   table_arr: Object;

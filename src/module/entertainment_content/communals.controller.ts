@@ -56,6 +56,10 @@ export class CommunalController {
     schema: {
       type: 'object',
       properties: {
+        title : {
+          type: 'string',
+          default: 'title'
+        },
         text: {
           type: 'string',
           default: '<html> salom</html>',
@@ -95,6 +99,10 @@ export class CommunalController {
       type: 'object',
       properties: {
 
+        title : {
+          type: 'string',
+          default: 'title'
+        },
         text: {
           type: 'string',
           default: '<html> salom</html>',

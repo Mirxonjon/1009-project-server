@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateNumbersCodesDto } from './dto/create_know_data.dto';
-import { UpdateNumbersCodesDto } from './dto/update_know_data.dto';
+import { CreateNumbersCodesDto } from './dto/create_numbers_codes.dto';
+import { UpdateNumbersCodesDto } from './dto/update_numbers_codes.dto';
 import { NumbersCodesEntity } from 'src/entities/Numbers_codes.entity';
 
 @Injectable()
@@ -29,6 +29,7 @@ export class NumbersCodesServise {
       .insert()
       .into(NumbersCodesEntity)
       .values({
+        title : body.title,
         text: body.text,
         table_arr: body.table_arr,
       })
@@ -47,6 +48,7 @@ export class NumbersCodesServise {
     }
 
     const updatedVideo = await NumbersCodesEntity.update(id, {
+      title : body.title || findNumbersCodes.title,
       text: body.text || findNumbersCodes.text,
       table_arr: body.table_arr || findNumbersCodes.table_arr,
       mention : body.mention || findNumbersCodes.mention,

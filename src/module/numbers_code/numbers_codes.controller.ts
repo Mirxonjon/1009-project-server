@@ -24,10 +24,10 @@ import {
 
   ApiTags,
 } from '@nestjs/swagger';
-import { NumbersCodesServise } from './know_data.service';
+import { NumbersCodesServise } from './numbers_codes.service';
 
-import { CreateNumbersCodesDto } from './dto/create_know_data.dto';
-import { UpdateNumbersCodesDto } from './dto/update_know_data.dto';
+import { CreateNumbersCodesDto } from './dto/create_numbers_codes.dto';
+import { UpdateNumbersCodesDto } from './dto/update_numbers_codes.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 @Controller('NumbersCodes')
 @ApiTags('Numbers Codes')
@@ -53,7 +53,10 @@ export class NumbersCodesController {
     schema: {
       type: 'object',
       properties: {
-  
+        title : {
+          type: 'string',
+          default: 'title'
+        },
         text: {
           type: 'string',
           default: '<html> salom</html>',
@@ -92,9 +95,9 @@ export class NumbersCodesController {
     schema: {
       type: 'object',
       properties: {
-        category_id: {
+        title : {
           type: 'string',
-          default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+          default: 'title'
         },
         mention: {
           type: 'string',
@@ -106,7 +109,7 @@ export class NumbersCodesController {
         },
         text: {
           type: 'string',
-          default: '<html> salom</html>',
+          default: '<html>salom</html>',
         },
         table_arr: {
           type: 'object',
