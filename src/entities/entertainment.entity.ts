@@ -23,7 +23,7 @@ export class EntertainmentsEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-    nullable: false,
+    nullable: true,
   })
   type: string;
 
