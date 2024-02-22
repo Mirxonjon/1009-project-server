@@ -52,10 +52,15 @@ export class NumbersCodesController {
   @ApiBody({
     schema: {
       type: 'object',
+      required :['title', 'type'],
       properties: {
         title : {
           type: 'string',
           default: 'title'
+        },
+        type : {
+          type: 'string',
+          default: 'text'
         },
         text: {
           type: 'string',
@@ -99,6 +104,10 @@ export class NumbersCodesController {
           type: 'string',
           default: 'title'
         },
+        type : {
+          type: 'string',
+          default: 'text'
+        },
         mention: {
           type: 'string',
           default: 'Mention text goes here',
@@ -121,7 +130,6 @@ export class NumbersCodesController {
       },
     },
   })
-  // @ApiOperation({ summary: 'Attendance Punch In' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async update(

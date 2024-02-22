@@ -19,6 +19,13 @@ export class CommunalEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
+    nullable: false,
+  })
+  type: string;
+
+  @Column({
+    type: 'character varying',
+    nullable:true
   })
   text: string;
 
@@ -34,6 +41,7 @@ export class CommunalEntity extends BaseEntity {
 
   @Column({
     type: 'jsonb',
+    nullable:true
   })
   table_arr: any;
 

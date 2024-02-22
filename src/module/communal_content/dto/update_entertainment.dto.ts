@@ -6,7 +6,10 @@ export class UpdateEntertainmentsDto {
   @IsString()
   title: string;
 
-  
+  @IsString()
+  type: string;
+
+
   text: string;
 
   table_arr: Object;

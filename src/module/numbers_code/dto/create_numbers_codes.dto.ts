@@ -6,6 +6,10 @@ export class CreateNumbersCodesDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
   // @IsString()
   text: string;
 

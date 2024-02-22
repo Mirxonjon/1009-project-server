@@ -68,7 +68,7 @@ export class EntertainmentsController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['category_id'],
+      required: ['category_id' ,'title' , 'type'],
       properties: {
         category_id: {
           type: 'string',
@@ -77,6 +77,10 @@ export class EntertainmentsController {
         title : {
           type: 'string',
           default: 'title'
+        },
+        type : {
+          type: 'string',
+          default: 'text'
         },
         text: {
           type: 'string',
@@ -123,6 +127,10 @@ export class EntertainmentsController {
         title : {
           type: 'string',
           default: 'title'
+        },
+        type : {
+          type: 'string',
+          default: 'text'
         },
         text: {
           type: 'string',

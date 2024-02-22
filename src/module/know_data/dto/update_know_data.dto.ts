@@ -5,6 +5,9 @@ export class UpdateKnowDataDto {
   @IsString()
   title: string;
 
+  @IsString()
+  type: string;
+
   text: string;
 
   table_arr: Object;

@@ -34,6 +34,7 @@ export class KnowDataServise {
       .into(KnowDataEntity)
       .values({
         title : body.title,
+        type : body.type,
         text: body.text,
         table_arr: body.table_arr,
         mention : body.mention,
@@ -55,6 +56,7 @@ export class KnowDataServise {
 
     const updatedVideo = await KnowDataEntity.update(id, {
       title : body.title || findKnowData.title,
+      type : body.type || findKnowData.title,
       text: body.text || findKnowData.text,
       table_arr: body.table_arr || findKnowData.table_arr,
       mention : body.mention || findKnowData.mention,

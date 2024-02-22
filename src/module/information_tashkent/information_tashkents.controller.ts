@@ -52,11 +52,16 @@ export class InformationTashkentController {
   @ApiBody({
     schema: {
       type: 'object',
+      required :['title' , 'type'],
       properties: {
 
         title : {
           type: 'string',
           default: 'title'
+        },
+        type : {
+          type: 'string',
+          default: 'text'
         },
   
         text: {
@@ -101,6 +106,10 @@ export class InformationTashkentController {
         title : {
           type: 'string',
           default: 'title'
+        },
+        type : {
+          type: 'string',
+          default: 'text'
         },
         text: {
           type: 'string',

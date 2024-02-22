@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Body } from '@nestjs/common';
 import { CreateEntertainmentsDto } from './dto/create_entertainment.dto';
 
 import { UpdateEntertainmentsDto } from './dto/update_entertainment.dto';
@@ -69,6 +69,7 @@ export class EntertainmentServise {
       .values({
         text: body.text,
         title : body.title,
+        type : body.type,
         mention : body.mention,
         warning: body.warning,
         table_arr: body.table_arr,
@@ -94,6 +95,7 @@ export class EntertainmentServise {
     const updatedVideo = await EntertainmentsEntity.update(id, {
       text: body.text || findEntertainment.text,
       title : body.title || findEntertainment.title,
+      type : body.type || findEntertainment.type,
       table_arr: body.table_arr || findEntertainment.table_arr,
       mention : body.mention || findEntertainment.mention, 
       warning: body.warning || findEntertainment.warning,

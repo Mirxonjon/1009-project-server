@@ -6,6 +6,10 @@ export class CreateCommunalDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
   // @IsString()
   text: string;
 

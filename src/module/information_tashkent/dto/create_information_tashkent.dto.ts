@@ -6,6 +6,10 @@ export class CreateInformationTashkentDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
   // @IsString()
   text: string;
 

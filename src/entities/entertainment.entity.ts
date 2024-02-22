@@ -17,14 +17,23 @@ export class EntertainmentsEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-  })
-  text: string;
-
-  @Column({
-    type: 'character varying',
     nullable: true,
   })
   title: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: false,
+  })
+  type: string;
+
+  @Column({
+    type: 'character varying',
+    nullable:true
+  })
+  text: string;
+
+
 
   @Column({
     type: 'jsonb',

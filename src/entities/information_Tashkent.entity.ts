@@ -19,11 +19,19 @@ export class InformationTashkentEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
+    nullable: false,
+  })
+  type: string;
+
+  @Column({
+    type: 'character varying',
+    nullable:true
   })
   text: string;
 
   @Column({
     type: 'jsonb',
+    nullable:true
   })
   table_arr: any;
 

@@ -49,6 +49,7 @@ export class NumbersCodesServise {
 
     const updatedVideo = await NumbersCodesEntity.update(id, {
       title : body.title || findNumbersCodes.title,
+      type : body.type ||  findNumbersCodes.type,
       text: body.text || findNumbersCodes.text,
       table_arr: body.table_arr || findNumbersCodes.table_arr,
       mention : body.mention || findNumbersCodes.mention,

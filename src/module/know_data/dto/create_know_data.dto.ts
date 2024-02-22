@@ -6,6 +6,10 @@ export class CreateKnowDataDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
   // @IsString()
   text: string;
 

@@ -52,13 +52,16 @@ export class KnowDataController {
   @ApiBody({
     schema: {
       type: 'object',
+      required : ['title' , 'type'],
       properties: {
-
         title : {
           type: 'string',
           default: 'title'
         },
-  
+        type : {
+          type: 'string',
+          default: 'text'
+        },
         text: {
           type: 'string',
           default: '<html> salom</html>',
@@ -100,6 +103,10 @@ export class KnowDataController {
         title : {
           type: 'string',
           default: 'title'
+        },
+        type : {
+          type: 'string',
+          default: 'text'
         },
         mention: {
           type: 'string',

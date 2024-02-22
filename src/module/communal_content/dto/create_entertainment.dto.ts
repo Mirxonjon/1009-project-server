@@ -9,6 +9,10 @@ export class CreateEntertainmentsDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
   // @IsString()
   text: string;
 
