@@ -4,8 +4,8 @@ import { Controller } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
-import { CreateControlUserDto } from './dto/create-ControlUser.dto';
 import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
+import { CreateControlUserDto } from './dto/create-ControlUser.dto';
 
 @Controller('Auth')
 @ApiTags('Auth')
@@ -98,8 +98,8 @@ export class AuthController {
       },
     },
   })
-  createControlUser(@Body() body: CreateControlUserDto) {
-    return this.service.createControlUser(body);
+  createControlUser(@Body() createControlUserDto: CreateControlUserDto) {
+    return this.service.createControlUser(createControlUserDto);
   }
 
   @Patch('/addControlUser/:id')
