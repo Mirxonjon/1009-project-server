@@ -29,33 +29,36 @@ export class NumbersCodesServise {
       .insert()
       .into(NumbersCodesEntity)
       .values({
-        title : body.title,
+        title: body.title,
         text: body.text,
         table_arr: body.table_arr,
-        mention : body.mention,
-        type : body.type,
-        warning : body.warning
+        mention: body.mention,
+        type: body.type,
+        warning: body.warning,
       })
       .execute()
       .catch((e) => {
         throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
       });
   }
-  async update(id: string, body: UpdateNumbersCodesDto ) {
+  async update(id: string, body: UpdateNumbersCodesDto) {
     const findNumbersCodes = await NumbersCodesEntity.findOne({
       where: { id },
     });
 
     if (!findNumbersCodes) {
-      throw new HttpException('Information Tashkent data not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Information Tashkent data not found',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const updatedVideo = await NumbersCodesEntity.update(id, {
-      title : body.title || findNumbersCodes.title,
-      type : body.type ||  findNumbersCodes.type,
+      title: body.title || findNumbersCodes.title,
+      type: body.type || findNumbersCodes.type,
       text: body.text || findNumbersCodes.text,
       table_arr: body.table_arr || findNumbersCodes.table_arr,
-      mention : body.mention || findNumbersCodes.mention,
+      mention: body.mention || findNumbersCodes.mention,
       warning: body.warning || findNumbersCodes.warning,
     });
 
@@ -63,9 +66,11 @@ export class NumbersCodesServise {
   }
 
   async remove(id: string) {
-    const findNumbersCodes = await NumbersCodesEntity.findOneBy({ id }).catch(() => {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
+    const findNumbersCodes = await NumbersCodesEntity.findOneBy({ id }).catch(
+      () => {
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      },
+    );
 
     if (!findNumbersCodes) {
       throw new HttpException('Number codes  not found', HttpStatus.NOT_FOUND);

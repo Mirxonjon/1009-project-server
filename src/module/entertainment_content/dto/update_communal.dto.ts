@@ -1,7 +1,6 @@
 import { IsEmpty, IsObject, IsString, MaxLength } from 'class-validator';
 
 export class UpdateCommunalDto {
-
   @IsString()
   title: string;
 
@@ -12,7 +11,7 @@ export class UpdateCommunalDto {
 
   table_arr: Object;
 
-  mention:string;
-  
+  mention: string;
+
   warning: string;
 }

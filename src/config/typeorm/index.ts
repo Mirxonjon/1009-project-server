@@ -26,7 +26,7 @@ export const connectDb: TypeOrmModuleOptions = {
     CommunalEntity,
     InformationTashkentEntity,
     KnowDataEntity,
-    NumbersCodesEntity 
+    NumbersCodesEntity,
   ],
   autoLoadEntities: true,
   synchronize: true,

@@ -32,10 +32,10 @@ export class CommunalServise {
       .into(CommunalEntity)
       .values({
         text: body.text,
-        title : body.title,
-        type : body.type,
+        title: body.title,
+        type: body.type,
         table_arr: body.table_arr,
-        mention : body.mention,
+        mention: body.mention,
         warning: body.warning,
       })
       .execute()
@@ -53,11 +53,11 @@ export class CommunalServise {
     }
 
     const updatedVideo = await CommunalEntity.update(id, {
-      title : body.title || findCommunal.title,
-      type : body.type || findCommunal.type,
+      title: body.title || findCommunal.title,
+      type: body.type || findCommunal.type,
       text: body.text || findCommunal.text,
       table_arr: body.table_arr || findCommunal.table_arr,
-      mention : body.mention || findCommunal.mention,
+      mention: body.mention || findCommunal.mention,
       warning: body.warning || findCommunal.warning,
     });
 

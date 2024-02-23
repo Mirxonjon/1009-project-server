@@ -29,25 +29,25 @@ export class EntertainmentsEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-    nullable:true
+    nullable: true,
   })
   text: string;
 
   @Column({
     type: 'jsonb',
-    nullable:true
+    nullable: true,
   })
   table_arr: any;
 
   @Column({
     type: 'character varying',
-    nullable: true
+    nullable: true,
   })
   mention: string;
 
   @Column({
     type: 'character varying',
-    nullable: true
+    nullable: true,
   })
   warning: string;
 

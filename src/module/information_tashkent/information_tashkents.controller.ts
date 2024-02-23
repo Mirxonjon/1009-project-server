@@ -15,13 +15,11 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
-
   ApiCreatedResponse,
   ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-
   ApiTags,
 } from '@nestjs/swagger';
 import { InformationTashkentServise } from './information_tashkents.service';
@@ -52,18 +50,17 @@ export class InformationTashkentController {
   @ApiBody({
     schema: {
       type: 'object',
-      required :['title' , 'type'],
+      required: ['title', 'type'],
       properties: {
+        title: {
+          type: 'string',
+          default: 'title',
+        },
+        type: {
+          type: 'string',
+          default: 'text',
+        },
 
-        title : {
-          type: 'string',
-          default: 'title'
-        },
-        type : {
-          type: 'string',
-          default: 'text'
-        },
-  
         text: {
           type: 'string',
           default: '<html> salom</html>',
@@ -91,7 +88,9 @@ export class InformationTashkentController {
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  async create(@Body() createInformationTashkentDto: CreateInformationTashkentDto) {
+  async create(
+    @Body() createInformationTashkentDto: CreateInformationTashkentDto,
+  ) {
     return await this.#_service.create(createInformationTashkentDto);
   }
 
@@ -102,14 +101,13 @@ export class InformationTashkentController {
     schema: {
       type: 'object',
       properties: {
-
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         text: {
           type: 'string',

@@ -32,11 +32,11 @@ export class InformationTashkentServise {
       .insert()
       .into(InformationTashkentEntity)
       .values({
-        title : body.title ,
+        title: body.title,
         text: body.text,
-        type : body.type,
+        type: body.type,
         table_arr: body.table_arr,
-        mention : body.mention,
+        mention: body.mention,
         warning: body.warning,
       })
       .execute()
@@ -50,15 +50,18 @@ export class InformationTashkentServise {
     });
 
     if (!findInformationTashkent) {
-      throw new HttpException('Information Tashkent data not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Information Tashkent data not found',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const updatedVideo = await InformationTashkentEntity.update(id, {
-      title : body.title || findInformationTashkent.title,
-      type : body.type || findInformationTashkent.type,
+      title: body.title || findInformationTashkent.title,
+      type: body.type || findInformationTashkent.type,
       text: body.text || findInformationTashkent.text,
       table_arr: body.table_arr || findInformationTashkent.table_arr,
-      mention : body.mention || findInformationTashkent.mention,
+      mention: body.mention || findInformationTashkent.mention,
       warning: body.warning || findInformationTashkent.warning,
     });
 
@@ -66,7 +69,9 @@ export class InformationTashkentServise {
   }
 
   async remove(id: string) {
-    const findInformationTashkent = await InformationTashkentEntity.findOneBy({ id }).catch(() => {
+    const findInformationTashkent = await InformationTashkentEntity.findOneBy({
+      id,
+    }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 

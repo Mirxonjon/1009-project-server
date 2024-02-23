@@ -1,11 +1,29 @@
-import { Post, Body, HttpCode, HttpStatus, Patch, Param, Get, Query, Delete } from '@nestjs/common';
+import {
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Param,
+  Get,
+  Query,
+  Delete,
+} from '@nestjs/common';
 import { AuthServise } from './auth.service';
 import { Controller } from '@nestjs/common';
 import { CreateUserDto } from './dto/create_user.dto';
-import { ApiBadRequestResponse, ApiBody, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
 import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
-import { CreateControlUserDto } from './dto/create_controlUser.dto';
+import { ControlUserDto, CreateControlUserDto } from './dto/create_controlUser.dto';
 
 @Controller('Auth')
 @ApiTags('Auth')
@@ -43,9 +61,9 @@ export class AuthController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['numebr', 'password'],
+      required: ['number', 'password'],
       properties: {
-        gmail: {
+        number: {
           type: 'string',
           default: '+998933843484',
         },
@@ -65,13 +83,32 @@ export class AuthController {
   @ApiNotFoundResponse()
   @ApiOkResponse()
   @ApiOperation({ summary: 'write role or null' })
-  async findall(
-    @Query('role') role: string,
-  ) {
+  async findall(@Query('role') role: string) {
     return await this.service.getAllControlUsers(role);
   }
 
-
+  @Post('ControlUser/signIn')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['username', 'password'],
+      properties: {
+        username: {
+          type: 'string',
+          default: 'Moderator',
+        },
+        password: {
+          type: 'string',
+          default: '123',
+        },
+      },
+    },
+  })
+  @ApiOperation({ summary: 'login for admin , moderator , operator'})
+  signInControlUser(@Body() body: ControlUserDto) {
+    return this.service.signInControlUser(body);
+  }
 
   @Post('/addControlUser')
   @HttpCode(HttpStatus.CREATED)
@@ -146,5 +183,4 @@ export class AuthController {
   async deleteControlUser(@Param('id') id: string): Promise<void> {
     await this.service.deleteControlUser(id);
   }
-
 }

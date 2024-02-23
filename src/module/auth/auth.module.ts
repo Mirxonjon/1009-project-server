@@ -8,7 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthServise } from './auth.service';
 dotenv.config();
 
-
 @Module({
   imports: [
     PassportModule,

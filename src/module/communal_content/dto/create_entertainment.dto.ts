@@ -19,7 +19,7 @@ export class CreateEntertainmentsDto {
   // @IsObject()
   table_arr: object;
 
-  mention:string;
-  
+  mention: string;
+
   warning: string;
 }

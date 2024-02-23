@@ -28,7 +28,7 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
     });
 
     if (!findAdmin) {
-      throw new HttpException('You  are not admin', HttpStatus.NOT_FOUND);
+      throw new HttpException('You are not admin', HttpStatus.NOT_FOUND);
     }
 
     return '1';

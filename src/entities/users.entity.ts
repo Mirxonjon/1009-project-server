@@ -31,13 +31,11 @@ export class UsersEntity extends BaseEntity {
   })
   phone: string;
 
-
-
   @Column({
     type: 'character varying',
     length: 100,
     nullable: false,
-    // transformer: 
+    // transformer:
   })
   password: string;
 

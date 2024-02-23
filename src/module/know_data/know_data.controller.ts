@@ -15,13 +15,11 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
-
   ApiCreatedResponse,
   ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-
   ApiTags,
 } from '@nestjs/swagger';
 import { KnowDataServise } from './know_data.service';
@@ -52,15 +50,15 @@ export class KnowDataController {
   @ApiBody({
     schema: {
       type: 'object',
-      required : ['title' , 'type'],
+      required: ['title', 'type'],
       properties: {
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         text: {
           type: 'string',
@@ -100,13 +98,13 @@ export class KnowDataController {
     schema: {
       type: 'object',
       properties: {
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         mention: {
           type: 'string',

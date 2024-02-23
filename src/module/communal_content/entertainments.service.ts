@@ -57,10 +57,7 @@ export class EntertainmentServise {
     });
 
     if (!findCategory) {
-      throw new HttpException(
-        ' Category not found',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(' Category not found', HttpStatus.NOT_FOUND);
     }
 
     await EntertainmentsEntity.createQueryBuilder()
@@ -68,13 +65,12 @@ export class EntertainmentServise {
       .into(EntertainmentsEntity)
       .values({
         text: body.text,
-        title : body.title,
-        type : body.type,
-        mention : body.mention,
+        title: body.title,
+        type: body.type,
+        mention: body.mention,
         warning: body.warning,
         table_arr: body.table_arr,
         category_id: findCategory,
-
       })
       .execute()
       .catch((e) => {
@@ -94,10 +90,10 @@ export class EntertainmentServise {
 
     const updatedVideo = await EntertainmentsEntity.update(id, {
       text: body.text || findEntertainment.text,
-      title : body.title || findEntertainment.title,
-      type : body.type || findEntertainment.type,
+      title: body.title || findEntertainment.title,
+      type: body.type || findEntertainment.type,
       table_arr: body.table_arr || findEntertainment.table_arr,
-      mention : body.mention || findEntertainment.mention, 
+      mention: body.mention || findEntertainment.mention,
       warning: body.warning || findEntertainment.warning,
       category_id:
         body.category_id == 'null'

@@ -1,7 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength, IsObject } from 'class-validator';
 
 export class CreateNumbersCodesDto {
-
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -16,7 +15,7 @@ export class CreateNumbersCodesDto {
   // @IsObject()
   table_arr: object;
 
-  mention:string;
-  
+  mention: string;
+
   warning: string;
 }

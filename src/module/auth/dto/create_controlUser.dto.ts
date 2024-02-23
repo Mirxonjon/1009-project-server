@@ -19,3 +19,14 @@ export class CreateControlUserDto {
   @IsNotEmpty()
   role: string;
 }
+
+export class ControlUserDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

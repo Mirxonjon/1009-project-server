@@ -1,7 +1,6 @@
 import { IsEmpty, IsObject, IsString, MaxLength } from 'class-validator';
 
 export class UpdateKnowDataDto {
-
   @IsString()
   title: string;
 
@@ -11,8 +10,8 @@ export class UpdateKnowDataDto {
   text: string;
 
   table_arr: Object;
-  
-  mention:string;
-  
+
+  mention: string;
+
   warning: string;
 }

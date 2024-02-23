@@ -55,15 +55,15 @@ export class CommunalController {
   @ApiBody({
     schema: {
       type: 'object',
-      required : ['title' , 'type'],
+      required: ['title', 'type'],
       properties: {
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         text: {
           type: 'string',
@@ -103,14 +103,13 @@ export class CommunalController {
     schema: {
       type: 'object',
       properties: {
-
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         text: {
           type: 'string',

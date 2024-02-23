@@ -1,7 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength, IsObject } from 'class-validator';
 
 export class CreateInformationTashkentDto {
-
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -15,7 +14,7 @@ export class CreateInformationTashkentDto {
 
   // @IsObject()
   table_arr: object;
-  mention:string;
-  
+  mention: string;
+
   warning: string;
 }

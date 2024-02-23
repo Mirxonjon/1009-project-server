@@ -9,11 +9,10 @@ export class UpdateEntertainmentsDto {
   @IsString()
   type: string;
 
-
   text: string;
 
   table_arr: Object;
-  mention:string;
-  
+  mention: string;
+
   warning: string;
 }

@@ -28,7 +28,7 @@ import { NumbersCodesModule } from './module/numbers_code/numbers_codes.module';
     CommunalModule,
     InformationTashkentModule,
     KnowDataModule,
-    NumbersCodesModule
+    NumbersCodesModule,
   ],
   controllers: [],
   providers: [],

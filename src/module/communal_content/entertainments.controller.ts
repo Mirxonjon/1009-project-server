@@ -68,19 +68,19 @@ export class EntertainmentsController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['category_id' ,'title' , 'type'],
+      required: ['category_id', 'title', 'type'],
       properties: {
         category_id: {
           type: 'string',
           default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
         },
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         text: {
           type: 'string',
@@ -124,13 +124,13 @@ export class EntertainmentsController {
           type: 'string',
           default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
         },
-        title : {
+        title: {
           type: 'string',
-          default: 'title'
+          default: 'title',
         },
-        type : {
+        type: {
           type: 'string',
-          default: 'text'
+          default: 'text',
         },
         text: {
           type: 'string',

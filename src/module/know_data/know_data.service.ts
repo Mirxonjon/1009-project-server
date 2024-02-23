@@ -33,11 +33,11 @@ export class KnowDataServise {
       .insert()
       .into(KnowDataEntity)
       .values({
-        title : body.title,
-        type : body.type,
+        title: body.title,
+        type: body.type,
         text: body.text,
         table_arr: body.table_arr,
-        mention : body.mention,
+        mention: body.mention,
         warning: body.warning,
       })
       .execute()
@@ -51,15 +51,18 @@ export class KnowDataServise {
     });
 
     if (!findKnowData) {
-      throw new HttpException('Information Tashkent data not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Information Tashkent data not found',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const updatedVideo = await KnowDataEntity.update(id, {
-      title : body.title || findKnowData.title,
-      type : body.type || findKnowData.title,
+      title: body.title || findKnowData.title,
+      type: body.type || findKnowData.title,
       text: body.text || findKnowData.text,
       table_arr: body.table_arr || findKnowData.table_arr,
-      mention : body.mention || findKnowData.mention,
+      mention: body.mention || findKnowData.mention,
       warning: body.warning || findKnowData.warning,
     });
 

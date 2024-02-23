@@ -25,15 +25,13 @@ export class KnowDataEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-    nullable:true
+    nullable: true,
   })
   text: string;
 
-
-
   @Column({
     type: 'jsonb',
-    nullable:true
+    nullable: true,
   })
   table_arr: any;
 
