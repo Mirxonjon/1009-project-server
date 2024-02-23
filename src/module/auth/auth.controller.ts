@@ -1,11 +1,11 @@
 import { Post, Body, HttpCode, HttpStatus, Patch, Param, Get, Query } from '@nestjs/common';
 import { AuthServise } from './auth.service';
 import { Controller } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create_user.dto';
 import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
 import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
-import { CreateControlUserDto } from './dto/create-ControlUser.dto';
+import { CreateControlUserDto } from './dto/create_controlUser.dto';
 
 @Controller('Auth')
 @ApiTags('Auth')
