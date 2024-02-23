@@ -7,6 +7,7 @@ import { KnowDataEntity } from 'src/entities/know_data.entity';
 import { CommunalEntity } from 'src/entities/communal.entity';
 import { InformationTashkentEntity } from 'src/entities/information_Tashkent.entity';
 import { NumbersCodesEntity } from 'src/entities/Numbers_codes.entity';
+import { ControlUsersEntity } from 'src/entities/control_users.entity';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ export const connectDb: TypeOrmModuleOptions = {
   database: process.env.DATABASE,
   entities: [
     UsersEntity,
+    ControlUsersEntity,
     EntertainmentCategoriesEntity,
     EntertainmentsEntity,
     CommunalEntity,

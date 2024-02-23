@@ -8,6 +8,9 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { SingInUserDto } from './dto/sign_in-user.dto';
+import { CreateControlUserDto } from './dto/Create-ControlUser.dto';
+import { ControlUsersEntity } from 'src/entities/control_users.entity';
+import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
 
 @Injectable()
 export class AuthServise {
@@ -83,4 +86,70 @@ export class AuthServise {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async getAllControlUsers(role :string) {
+    const findControlUser = await ControlUsersEntity.findOne({
+     where : {
+      role:role == 'operator' || role == 'moderator' ? role : null 
+     }
+    }).catch((e) => {
+      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+    });
+    return findControlUser
+  }
+
+  async createControlUser(body : CreateControlUserDto) {
+    const findControlUser = await ControlUsersEntity.findOne({
+      where :{
+        username: body.username
+      }
+    }).catch((e) => {
+      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+    });
+//     console.log(body); 
+// console.log(findControlUser);
+
+    if(findControlUser) {
+      throw new HttpException('username alredy exist', HttpStatus.FOUND);
+    }
+    
+     await ControlUsersEntity.createQueryBuilder()
+    .insert()
+    .into(ControlUsersEntity)
+    .values({
+   full_name : body.full_name,
+   username: body.username,
+   password : body.password,
+   role: body.role
+    })
+    .execute()
+    .catch((e) => {
+      console.log(e);
+      
+      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+    });
+
+  }
+
+  async updateControlUser(id :string ,body: UpdateControlUserDto) {
+
+    const findControlUser = await ControlUsersEntity.findOne({
+      where: { id },
+    });
+
+    if (!findControlUser) {
+      throw new HttpException('Control not found', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedVideo = await ControlUsersEntity.update(id, {
+     full_name :body.full_name || findControlUser.full_name,
+     username: body.username || findControlUser.username,
+     password: body.password || findControlUser.password,
+     role: body.role || findControlUser.role 
+    });
+
+    return updatedVideo;
+  }
+
+
 }

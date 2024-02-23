@@ -33,10 +33,9 @@ export class EntertainmentsEntity extends BaseEntity {
   })
   text: string;
 
-
-
   @Column({
     type: 'jsonb',
+    nullable:true
   })
   table_arr: any;
 

@@ -32,6 +32,9 @@ export class NumbersCodesServise {
         title : body.title,
         text: body.text,
         table_arr: body.table_arr,
+        mention : body.mention,
+        type : body.type,
+        warning : body.warning
       })
       .execute()
       .catch((e) => {
