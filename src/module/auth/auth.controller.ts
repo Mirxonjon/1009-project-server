@@ -1,8 +1,8 @@
-import { Post, Body, HttpCode, HttpStatus, Patch, Param, Get, Query } from '@nestjs/common';
+import { Post, Body, HttpCode, HttpStatus, Patch, Param, Get, Query, Delete } from '@nestjs/common';
 import { AuthServise } from './auth.service';
 import { Controller } from '@nestjs/common';
 import { CreateUserDto } from './dto/create_user.dto';
-import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
 import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
 import { CreateControlUserDto } from './dto/create_controlUser.dto';
@@ -12,7 +12,7 @@ import { CreateControlUserDto } from './dto/create_controlUser.dto';
 export class AuthController {
   constructor(private readonly service: AuthServise) {}
 
-  @Post('/register')
+  @Post('/user/register')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
     schema: {
@@ -38,7 +38,7 @@ export class AuthController {
     return this.service.createUser(body);
   }
 
-  @Post('/signIn')
+  @Post('user/signIn')
   @HttpCode(HttpStatus.OK)
   @ApiBody({
     schema: {
@@ -60,10 +60,11 @@ export class AuthController {
     return this.service.signIn(body);
   }
 
-  @Get('/all')
+  @Get('addControlUser/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
+  @ApiOperation({ summary: 'write role or null' })
   async findall(
     @Query('role') role: string,
   ) {
@@ -102,7 +103,7 @@ export class AuthController {
     return this.service.createControlUser(createControlUserDto);
   }
 
-  @Patch('/addControlUser/:id')
+  @Patch('/updateControlUser/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
     schema: {
@@ -135,6 +136,15 @@ export class AuthController {
     @Body() updateControlUserDto: UpdateControlUserDto,
   ) {
     await this.service.updateControlUser(id, updateControlUserDto);
+  }
+
+  @Delete('/deleteControlUser/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiNoContentResponse()
+  async deleteControlUser(@Param('id') id: string): Promise<void> {
+    await this.service.deleteControlUser(id);
   }
 
 }

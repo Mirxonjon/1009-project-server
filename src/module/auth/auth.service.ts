@@ -26,7 +26,7 @@ export class AuthServise {
 
     if (findUser) {
       throw new HttpException(
-        'Gmail or Number already registered',
+        'Number already registered',
         HttpStatus.FOUND,
       );
     }
@@ -53,7 +53,7 @@ export class AuthServise {
   async signIn(signInDto: SingInUserDto) {
     const finduser = await UsersEntity.findOne({
       where: {
-        // email: signInDto.gmail,
+        number: signInDto.number,
         password: signInDto.password,
       },
     }).catch((e) => {
@@ -88,20 +88,24 @@ export class AuthServise {
   }
 
   async getAllControlUsers(role :string) {
-    const findControlUser = await ControlUsersEntity.findOne({
+    const findControlUser = await ControlUsersEntity.find({
      where : {
-      role:role == 'operator' || role == 'moderator' ? role : null 
+      role: role == 'null' ?  null : role 
+     },
+     order :{
+      create_data :'asc'
      }
     }).catch((e) => {
       throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
     });
+
     return findControlUser
   }
 
   async createControlUser(body : CreateControlUserDto) {
     const findControlUser = await ControlUsersEntity.findOne({
       where :{
-        username: body.username
+        username: body.username.toLowerCase()
       }
     }).catch((e) => {
       throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
@@ -118,9 +122,9 @@ export class AuthServise {
     .into(ControlUsersEntity)
     .values({
    full_name : body.full_name,
-   username: body.username,
+   username: body.username.toLowerCase,
    password : body.password,
-   role: body.role
+   role: body.role.toLowerCase()
     })
     .execute()
     .catch((e) => {
@@ -149,6 +153,21 @@ export class AuthServise {
     });
 
     return updatedVideo;
+  }
+
+  async deleteControlUser (id : string) {
+
+    const findControlUser = await ControlUsersEntity.findOne({
+      where: { id },
+    }).catch(() => {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    });
+
+    if (!findControlUser) {
+      throw new HttpException('Control user not found', HttpStatus.NOT_FOUND);
+    }
+
+    await ControlUsersEntity.delete({ id });
   }
 
 
