@@ -122,7 +122,7 @@ export class AuthServise {
     .into(ControlUsersEntity)
     .values({
    full_name : body.full_name,
-   username: body.username.toLowerCase,
+   username: body.username.toLowerCase(),
    password : body.password,
    role: body.role.toLowerCase()
     })
