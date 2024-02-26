@@ -25,7 +25,7 @@ export class UsersServise {
       }
       return findUser;
     } else {
-      return undefined;
+      throw new HttpException('token not found', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -58,68 +58,68 @@ export class UsersServise {
     return updated;
   }
 
-  async update(id: string, body: UpdateUserDto, image: Express.Multer.File) {
-    const findUser = await UsersEntity.findOne({
-      where: { id },
-    });
+  // async update(id: string, body: UpdateUserDto, image: Express.Multer.File) {
+  //   const findUser = await UsersEntity.findOne({
+  //     where: { id },
+  //   });
 
-    if (!findUser) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+  //   if (!findUser) {
+  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  //   }
 
-    let formatImage: string = 'Not image';
+  //   let formatImage: string = 'Not image';
 
-    if (image) {
-      formatImage = extname(image.originalname).toLowerCase();
-    }
+  //   if (image) {
+  //     formatImage = extname(image.originalname).toLowerCase();
+  //   }
 
-    if (
-      allowedImageFormats.includes(formatImage) ||
-      formatImage === 'Not image'
-    ) {
-      let image_link: string = findUser.image;
+  //   if (
+  //     allowedImageFormats.includes(formatImage) ||
+  //     formatImage === 'Not image'
+  //   ) {
+  //     let image_link: string = findUser.image;
 
-      if (formatImage !== 'Not image') {
-        if (image_link) {
-          await deleteFileCloud(image_link);
-        }
-        image_link = googleCloud(image);
-      }
+  //     if (formatImage !== 'Not image') {
+  //       if (image_link) {
+  //         await deleteFileCloud(image_link);
+  //       }
+  //       image_link = googleCloud(image);
+  //     }
 
-      const updatedUser = await UsersEntity.update(id, {
-        name: body.name || findUser.name,
-        surname: body.surname || findUser.surname,
-        phone: body.phone || findUser.phone,
-        email: body.email || findUser.email,
-        password: body.password || findUser.password,
-        image: image_link,
-      });
+  //     const updatedUser = await UsersEntity.update(id, {
+  //       name: body.name || findUser.name,
+  //       surname: body.surname || findUser.surname,
+  //       phone: body.phone || findUser.phone,
+  //       email: body.email || findUser.email,
+  //       password: body.password || findUser.password,
+  //       image: image_link,
+  //     });
 
-      return updatedUser;
-    } else {
-      throw new HttpException(
-        'Image should be in the format jpg, png, jpeg, pnmj, svg',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
+  //     return updatedUser;
+  //   } else {
+  //     throw new HttpException(
+  //       'Image should be in the format jpg, png, jpeg, pnmj, svg',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  // }
 
-  async remove(id: string) {
-    const findUser = await UsersEntity.findOneBy({ id }).catch(() => {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
+  // async remove(id: string) {
+  //   const findUser = await UsersEntity.findOneBy({ id }).catch(() => {
+  //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+  //   });
 
-    if (!findUser) {
-      throw new HttpException('Video not found', HttpStatus.NOT_FOUND);
-    }
-    if (findUser.image) {
-      const imageLink = await deleteFileCloud(findUser?.image);
+  //   if (!findUser) {
+  //     throw new HttpException('Video not found', HttpStatus.NOT_FOUND);
+  //   }
+  //   if (findUser.image) {
+  //     const imageLink = await deleteFileCloud(findUser?.image);
 
-      if (!imageLink) {
-        throw new HttpException('User was not deleted', HttpStatus.NOT_FOUND);
-      }
-    }
+  //     if (!imageLink) {
+  //       throw new HttpException('User was not deleted', HttpStatus.NOT_FOUND);
+  //     }
+  //   }
 
-    await UsersEntity.delete({ id });
-  }
+  //   await UsersEntity.delete({ id });
+  // }
 }

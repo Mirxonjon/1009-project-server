@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ControlUsersEntity } from 'src/entities/control_users.entity';
 import { UsersEntity } from 'src/entities/users.entity';
 import { CustomRequest } from 'src/types';
 
@@ -20,7 +21,7 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: CustomRequest, payload: any) {
-    const findAdmin = await UsersEntity.findOne({
+    const findAdmin = await ControlUsersEntity.findOne({
       where: {
         id: payload.id,
         role: 'admin',

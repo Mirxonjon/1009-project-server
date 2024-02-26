@@ -60,91 +60,91 @@ export class UsersController {
     return await this.#_service.findAll();
   }
 
-  @Patch('/UpdateAdmin')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['id'],
-      properties: {
-        id: {
-          type: 'string',
-          default: 'fsdgewfghwergkreomgbpregbmpmf',
-        },
-        role: {
-          type: 'string',
-          default: 'admin',
-        },
-      },
-    },
-  })
-  addAdmin(@Body() body: AddAdminDto) {
-    return this.#_service.AddAdmin(body);
-  }
+  // @Patch('/UpdateAdmin')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     required: ['id'],
+  //     properties: {
+  //       id: {
+  //         type: 'string',
+  //         default: 'fsdgewfghwergkreomgbpregbmpmf',
+  //       },
+  //       role: {
+  //         type: 'string',
+  //         default: 'admin',
+  //       },
+  //     },
+  //   },
+  // })
+  // addAdmin(@Body() body: AddAdminDto) {
+  //   return this.#_service.AddAdmin(body);
+  // }
 
-  // @UseGuards(jwtGuard)
-  @Patch('/update/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        surname: {
-          type: 'string',
-          default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
-        },
-        name: {
-          type: 'string',
-          default: '1 chi dars',
-        },
-        phone: {
-          type: 'string',
-          default: '1 chi darsru',
-        },
-        email: {
-          type: 'string',
-          default: 'ru',
-        },
-        password: {
-          type: 'string',
-          default: 'uuid23422',
-        },
-        was_born_date: {
-          type: 'string',
-          default: 'Хорошее обучение',
-        },
-        image: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Attendance Punch In' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
-  async update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @UploadedFiles()
-    file: { image?: Express.Multer.File },
-  ) {
-    await this.#_service.update(
-      id,
-      updateUserDto,
-      file?.image ? file?.image[0] : null,
-    );
-  }
+  // // @UseGuards(jwtGuard)
+  // @Patch('/update/:id')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       surname: {
+  //         type: 'string',
+  //         default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+  //       },
+  //       name: {
+  //         type: 'string',
+  //         default: '1 chi dars',
+  //       },
+  //       phone: {
+  //         type: 'string',
+  //         default: '1 chi darsru',
+  //       },
+  //       email: {
+  //         type: 'string',
+  //         default: 'ru',
+  //       },
+  //       password: {
+  //         type: 'string',
+  //         default: 'uuid23422',
+  //       },
+  //       was_born_date: {
+  //         type: 'string',
+  //         default: 'Хорошее обучение',
+  //       },
+  //       image: {
+  //         type: 'string',
+  //         format: 'binary',
+  //       },
+  //     },
+  //   },
+  // })
+  // @ApiConsumes('multipart/form-data')
+  // @ApiOperation({ summary: 'Attendance Punch In' })
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateUserDto: UpdateUserDto,
+  //   @UploadedFiles()
+  //   file: { image?: Express.Multer.File },
+  // ) {
+  //   await this.#_service.update(
+  //     id,
+  //     updateUserDto,
+  //     file?.image ? file?.image[0] : null,
+  //   );
+  // }
 
-  // @UseGuards(jwtGuard)
-  @Delete('/delete/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiNoContentResponse()
-  async remove(@Param('id') id: string): Promise<void> {
-    await this.#_service.remove(id);
-  }
+  // // @UseGuards(jwtGuard)
+  // @Delete('/delete/:id')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiNoContentResponse()
+  // async remove(@Param('id') id: string): Promise<void> {
+  //   await this.#_service.remove(id);
+  // }
 }
