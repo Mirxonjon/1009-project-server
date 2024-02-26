@@ -44,7 +44,7 @@ export class InformationTashkentController {
     return await this.#_service.findAll();
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -94,7 +94,7 @@ export class InformationTashkentController {
     return await this.#_service.create(createInformationTashkentDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -141,7 +141,7 @@ export class InformationTashkentController {
     await this.#_service.update(id, updateInformationTashkentDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()

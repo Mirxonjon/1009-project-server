@@ -21,15 +21,15 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: CustomRequest, payload: any) {
-    const findAdmin = await ControlUsersEntity.findOne({
+    const findUser = await ControlUsersEntity.findOne({
       where: {
         id: payload.id,
-        role: 'admin',
+        role: payload.role,
       },
     });
 
-    if (!findAdmin) {
-      throw new HttpException('You are not admin', HttpStatus.NOT_FOUND);
+    if (findUser.role == 'operator'  ) {
+      throw new HttpException('You are not moderator', HttpStatus.NOT_FOUND);
     }
 
     return '1';

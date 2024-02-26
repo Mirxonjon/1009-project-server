@@ -62,7 +62,7 @@ export class EntertainmentsController {
   // }
 
   //
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -113,7 +113,7 @@ export class EntertainmentsController {
     return await this.#_service.create(createEntertainmentsDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -164,7 +164,7 @@ export class EntertainmentsController {
     await this.#_service.update(id, updateEntertainmentsDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()

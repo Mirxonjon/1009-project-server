@@ -44,7 +44,7 @@ export class KnowDataController {
     return await this.#_service.findAll();
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -91,7 +91,7 @@ export class KnowDataController {
     return await this.#_service.create(createKnowDataDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -138,7 +138,7 @@ export class KnowDataController {
     await this.#_service.update(id, updateKnowDataDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()

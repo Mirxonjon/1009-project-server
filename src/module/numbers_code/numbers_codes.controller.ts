@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -44,7 +43,7 @@ export class NumbersCodesController {
     return await this.#_service.findAll();
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -91,7 +90,7 @@ export class NumbersCodesController {
     return await this.#_service.create(createNumbersCodesDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -137,7 +136,7 @@ export class NumbersCodesController {
     await this.#_service.update(id, updateNumbersCodesDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()

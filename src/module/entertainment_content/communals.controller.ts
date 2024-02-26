@@ -49,7 +49,7 @@ export class CommunalController {
     return await this.#_service.findAll();
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -96,7 +96,7 @@ export class CommunalController {
     return await this.#_service.create(createCommunalDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -143,7 +143,7 @@ export class CommunalController {
     await this.#_service.update(id, updateCommunalDto);
   }
 
-  // @UseGuards(jwtGuard)
+  @UseGuards(jwtGuard)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()
