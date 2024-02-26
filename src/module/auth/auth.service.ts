@@ -26,13 +26,15 @@ export class AuthServise {
     if (findUser) {
       throw new HttpException('Number already registered', HttpStatus.FOUND);
     }
+    console.log(createUser);
+    
 
     const addedUser = await UsersEntity.createQueryBuilder()
       .insert()
       .into(UsersEntity)
       .values({
         full_name: createUser.full_name,
-        number: createUser.number,
+        phone: createUser.number,
         password: createUser.password,
       })
       .returning(['id', 'role'])
@@ -51,7 +53,7 @@ export class AuthServise {
   async signIn(signInDto: SingInUserDto) {
     const finduser = await UsersEntity.findOne({
       where: {
-        number: signInDto.number,
+        phone: signInDto.number,
         password: signInDto.password,
       },
     }).catch((e) => {

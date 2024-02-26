@@ -19,11 +19,12 @@ export class UsersEntity extends BaseEntity {
     nullable: false,
   })
   full_name: string;
-  @Column({
-    type: 'character varying',
-    nullable: false,
-  })
-  number: string;
+
+  // @Column({
+  //   type: 'character varying',
+  //   nullable: false,
+  // })
+  // number: string;
 
   @Column({
     type: 'character varying',
