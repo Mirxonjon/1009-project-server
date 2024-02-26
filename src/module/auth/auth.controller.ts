@@ -87,6 +87,15 @@ export class AuthController {
     return await this.service.getAllControlUsers(role);
   }
 
+  @Get('addControlUser/search')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  @ApiOperation({ summary: 'api for search username' })
+  async findusername(@Query('username') username: string) {
+    return await this.service.getSearchControlUsername(username);
+  }
+
   @Post('ControlUser/signIn')
   @HttpCode(HttpStatus.OK)
   @ApiBody({

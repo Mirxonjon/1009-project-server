@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create_user.dto';
@@ -70,8 +69,8 @@ export class AuthServise {
   async signInControlUser(body: ControlUserDto) {
     const finduser = await ControlUsersEntity.findOne({
       where: {
-        username : body.username.toLowerCase(),
-        password: body.password,
+        username : body.username.trim().toLowerCase(),
+        password: body.password.trim(),
       },
     }).catch((e) => {
       throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
@@ -84,6 +83,22 @@ export class AuthServise {
       message: 'successfully sing In',
       token: this.sign(finduser.id, finduser.role),
     };
+  }
+
+  async getSearchControlUsername (username : string) {
+    const finduser = await ControlUsersEntity.findOne({
+      where: {
+        username : username.trim().toLowerCase()
+      },
+    }).catch(() => {
+      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+    });
+
+    if(finduser) {
+      return true
+    }else {
+      return false
+    }
   }
 
   async getAllControlUsers(role: string) {
@@ -119,8 +134,8 @@ export class AuthServise {
       .into(ControlUsersEntity)
       .values({
         full_name: body.full_name,
-        username: body.username.toLowerCase(),
-        password: body.password,
+        username: body.username.trim().toLowerCase(),
+        password: body.password.trim(),
         role: body.role.toLowerCase(),
       })
       .execute()
