@@ -64,12 +64,17 @@ export class EntertainmentServise {
       .insert()
       .into(EntertainmentsEntity)
       .values({
-        text: body.text,
         title: body.title,
+        title_ru : body.title_ru,
+        text: body.text,
+        text_ru : body.text_ru,
         type: body.type,
         mention: body.mention,
+        mention_ru :body.mention_ru,
         warning: body.warning,
+        warning_ru: body.warning_ru,
         table_arr: body.table_arr,
+        table_arr_ru: body.table_arr_ru,
         category_id: findCategory,
       })
       .execute()
@@ -89,12 +94,17 @@ export class EntertainmentServise {
     }
 
     const updatedVideo = await EntertainmentsEntity.update(id, {
-      text: body.text || findEntertainment.text,
       title: body.title || findEntertainment.title,
+      title_ru : body.title_ru || findEntertainment.title_ru,
+      text: body.text || findEntertainment.text,
+      text_ru : body.text_ru || findEntertainment.text_ru,
       type: body.type || findEntertainment.type,
-      table_arr: body.table_arr || findEntertainment.table_arr,
       mention: body.mention || findEntertainment.mention,
+      mention_ru :body.mention_ru || findEntertainment.mention_ru,
       warning: body.warning || findEntertainment.warning,
+      warning_ru: body.warning_ru || findEntertainment.warning_ru,
+      table_arr: body.table_arr || findEntertainment.table_arr,
+      table_arr_ru: body.table_arr_ru || findEntertainment.table_arr_ru ,
       category_id:
         body.category_id == 'null'
           ? (findEntertainment.category_id.id as any)

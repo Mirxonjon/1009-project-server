@@ -5,6 +5,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { EntertainmentsEntity } from './entertainment.entity';
 
@@ -19,11 +20,14 @@ export class EntertainmentCategoriesEntity extends BaseEntity {
   })
   title: string;
 
-  // @Column({
-  //   type: 'character varying',
-  //   nullable: false,
-  // })
-  // title_ru: string;
+  @Column({
+    type: 'character varying',
+    nullable: false,
+  })
+  title_ru: string;
+  
+  @UpdateDateColumn({ name: 'updated_at' })
+  update_date: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;

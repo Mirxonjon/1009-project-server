@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateEntertainmentCategoryDto } from './dto/create-book_category.dto';
-import { UpdateEntertainmentCategory } from './dto/update-book_category.dto';
+import { CreateEntertainmentCategoryDto } from './dto/create_entertainment_categories.dto';
+import { UpdateEntertainmentCategory } from './dto/update_entertainment_categories.dto';
 import { Like } from 'typeorm';
 import { EntertainmentCategoriesEntity } from 'src/entities/entertainment_Categories.entity';
 @Injectable()
@@ -45,8 +45,8 @@ export class EntertainmentCategoriesService {
       .insert()
       .into(EntertainmentCategoriesEntity)
       .values({
-        title: body.title,
-        // title_ru: body.title_ru.toLowerCase(),
+        title: body.title.toLowerCase(),
+        title_ru: body.title_ru.toLowerCase(),
       })
       .execute()
       .catch(() => {
@@ -68,7 +68,9 @@ export class EntertainmentCategoriesService {
     await EntertainmentCategoriesEntity.createQueryBuilder()
       .update(EntertainmentCategoriesEntity)
       .set({
-        title: body.title || findCategory.title,
+        title: body.title.toLowerCase() || findCategory.title,
+        title_ru: body.title_ru.toLowerCase() || findCategory.title_ru,
+
       })
       .where({ id })
       .execute()

@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { EntertainmentCategoriesEntity } from './entertainment_Categories.entity';
 
@@ -33,11 +34,12 @@ export class EntertainmentsEntity extends BaseEntity {
   })
   text: string;
 
+
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  table_arr: any;
+  table_arr: JSON;
 
   @Column({
     type: 'character varying',
@@ -50,6 +52,38 @@ export class EntertainmentsEntity extends BaseEntity {
     nullable: true,
   })
   warning: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: false,
+  })
+  title_ru: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  text_ru: string;
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  table_arr_ru: JSON;
+
+  @Column({
+    type: 'character varying',
+  })
+  mention_ru: string;
+  
+  @Column({
+    type: 'character varying',
+  })
+  warning_ru: string;
+
+  
+  @UpdateDateColumn({ name: 'updated_at' })
+  update_date: Date;
 
   @CreateDateColumn()
   data_sequence: Date;

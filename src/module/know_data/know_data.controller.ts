@@ -56,6 +56,10 @@ export class KnowDataController {
           type: 'string',
           default: 'title',
         },
+        title_ru: {
+          type: 'string',
+          default: 'title ru',
+        },
         type: {
           type: 'string',
           default: 'text',
@@ -64,19 +68,38 @@ export class KnowDataController {
           type: 'string',
           default: '<html> salom</html>',
         },
+        text_ru: {
+          type: 'string',
+          default: '<html> salom</html>',
+        },
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
+        mention_ru: {
+          type: 'string',
+          default: 'Mention text goes here ru',
+        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
+        },
+        warning_ru: {
+          type: 'string',
+          default: 'Warning text goes here ru',
         },
         table_arr: {
           type: 'object',
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
+          },
+        },
+        table_arr_ru: {
+          type: 'object',
+          default: {
+            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
+            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },
@@ -102,6 +125,10 @@ export class KnowDataController {
           type: 'string',
           default: 'title',
         },
+        title_ru: {
+          type: 'string',
+          default: 'title ru',
+        },
         type: {
           type: 'string',
           default: 'text',
@@ -110,11 +137,23 @@ export class KnowDataController {
           type: 'string',
           default: 'Mention text goes here',
         },
+        mention_ru: {
+          type: 'string',
+          default: 'Mention text goes here ru',
+        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
         },
+        warning_ru: {
+          type: 'string',
+          default: 'Warning text goes here ru',
+        },
         text: {
+          type: 'string',
+          default: '<html> salom</html>',
+        },
+        text_ru: {
           type: 'string',
           default: '<html> salom</html>',
         },
@@ -123,6 +162,13 @@ export class KnowDataController {
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
+          },
+        },
+        table_arr_ru: {
+          type: 'object',
+          default: {
+            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
+            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },

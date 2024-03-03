@@ -6,6 +6,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -38,6 +39,10 @@ export class ControlUsersEntity extends BaseEntity {
     default: 'user',
   })
   role: string;
+
+  
+  @UpdateDateColumn({ name: 'updated_at' })
+  update_date: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;

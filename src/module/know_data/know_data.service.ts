@@ -34,11 +34,16 @@ export class KnowDataServise {
       .into(KnowDataEntity)
       .values({
         title: body.title,
+        title_ru : body.title_ru,
         type: body.type,
         text: body.text,
-        table_arr: body.table_arr,
+        text_ru: body.text_ru,
         mention: body.mention,
+        mention_ru :body.mention_ru,
         warning: body.warning,
+        warning_ru: body.warning_ru,
+        table_arr: body.table_arr,
+        table_arr_ru: body.table_arr_ru
       })
       .execute()
       .catch((e) => {
@@ -61,9 +66,14 @@ export class KnowDataServise {
       title: body.title || findKnowData.title,
       type: body.type || findKnowData.title,
       text: body.text || findKnowData.text,
-      table_arr: body.table_arr || findKnowData.table_arr,
+      text_ru: body.text_ru || findKnowData.text_ru ,
       mention: body.mention || findKnowData.mention,
+      mention_ru :body.mention_ru || findKnowData.mention_ru,
       warning: body.warning || findKnowData.warning,
+      warning_ru: body.warning_ru || findKnowData.warning_ru,
+      title_ru : body.title_ru || findKnowData.title_ru,
+      table_arr: body.table_arr || findKnowData.table_arr,
+      table_arr_ru: body.table_arr_ru || findKnowData.table_arr_ru,
     });
 
     return updatedVideo;

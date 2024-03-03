@@ -9,10 +9,24 @@ export class UpdateEntertainmentsDto {
   @IsString()
   type: string;
 
-  text: string;
+  @IsString()
+  title_ru: string;
 
-  table_arr: Object;
+  text: string;
+  
+  text_ru: string;
+
+  table_arr: object;
+
+  table_arr_ru: object;
+
   mention: string;
 
+  mention_ru : string
+
   warning: string;
+  warning_ru: string;
+
+
+
 }

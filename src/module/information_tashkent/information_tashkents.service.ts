@@ -33,11 +33,16 @@ export class InformationTashkentServise {
       .into(InformationTashkentEntity)
       .values({
         title: body.title,
+        title_ru : body.title_ru,
         text: body.text,
+        text_ru :body.text_ru,
         type: body.type,
-        table_arr: body.table_arr,
         mention: body.mention,
+        mention_ru :body.mention_ru,
         warning: body.warning,
+        warning_ru: body.warning_ru,
+        table_arr: body.table_arr,
+        table_arr_ru: body.table_arr_ru,
       })
       .execute()
       .catch((e) => {
@@ -58,11 +63,16 @@ export class InformationTashkentServise {
 
     const updatedVideo = await InformationTashkentEntity.update(id, {
       title: body.title || findInformationTashkent.title,
+      title_ru : body.title_ru || findInformationTashkent.title_ru,
       type: body.type || findInformationTashkent.type,
       text: body.text || findInformationTashkent.text,
-      table_arr: body.table_arr || findInformationTashkent.table_arr,
+      text_ru :body.text_ru || findInformationTashkent.text_ru,
       mention: body.mention || findInformationTashkent.mention,
+      mention_ru :body.mention_ru || findInformationTashkent.mention_ru,
       warning: body.warning || findInformationTashkent.warning,
+      warning_ru: body.warning_ru || findInformationTashkent.warning_ru,
+      table_arr: body.table_arr || findInformationTashkent.table_arr,
+      table_arr_ru: body.table_arr_ru || findInformationTashkent.table_arr_ru,
     });
 
     return updatedVideo;

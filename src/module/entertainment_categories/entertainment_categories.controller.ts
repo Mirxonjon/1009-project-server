@@ -22,9 +22,9 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { EntertainmentCategoriesService } from './book_categories.service';
-import { CreateEntertainmentCategoryDto } from './dto/create-book_category.dto';
-import { UpdateEntertainmentCategory } from './dto/update-book_category.dto';
+import { EntertainmentCategoriesService } from './entertainment_categories.service';
+import { CreateEntertainmentCategoryDto } from './dto/create_entertainment_categories.dto';
+import { UpdateEntertainmentCategory } from './dto/update_entertainment_categories.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 
 @Controller('EntertainmentCategories')
@@ -64,6 +64,10 @@ export class EntertainmentCategoriesController {
           type: 'string',
           default: 'Teatr',
         },
+        title_ru: {
+          type: 'string',
+          default: 'Teatr',
+        },
       },
     },
   })
@@ -84,6 +88,10 @@ export class EntertainmentCategoriesController {
       type: 'object',
       properties: {
         title: {
+          type: 'string',
+          default: 'Teatr',
+        },
+        title_ru: {
           type: 'string',
           default: 'Teatr',
         },

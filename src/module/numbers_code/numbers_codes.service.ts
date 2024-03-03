@@ -30,11 +30,16 @@ export class NumbersCodesServise {
       .into(NumbersCodesEntity)
       .values({
         title: body.title,
+        title_ru : body.title_ru,
         text: body.text,
+        text_ru :body.text,
         table_arr: body.table_arr,
         mention: body.mention,
+        mention_ru :body.mention_ru,
         type: body.type,
         warning: body.warning,
+        warning_ru: body.warning_ru,
+        table_arr_ru: body.table_arr_ru
       })
       .execute()
       .catch((e) => {
@@ -55,11 +60,16 @@ export class NumbersCodesServise {
 
     const updatedVideo = await NumbersCodesEntity.update(id, {
       title: body.title || findNumbersCodes.title,
+      title_ru : body.title_ru || findNumbersCodes.title_ru,
       type: body.type || findNumbersCodes.type,
       text: body.text || findNumbersCodes.text,
-      table_arr: body.table_arr || findNumbersCodes.table_arr,
+      text_ru: body.text_ru || findNumbersCodes.text_ru,
       mention: body.mention || findNumbersCodes.mention,
+      mention_ru :body.mention_ru || findNumbersCodes.mention_ru,
       warning: body.warning || findNumbersCodes.warning,
+      warning_ru: body.warning_ru || findNumbersCodes.warning_ru,
+      table_arr: body.table_arr || findNumbersCodes.table_arr,
+      table_arr_ru: body.table_arr_ru || findNumbersCodes.table_arr_ru,
     });
 
     return updatedVideo;

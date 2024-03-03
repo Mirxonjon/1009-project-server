@@ -4,13 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from './config';
 import { connectDb } from './config/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
-import { EntertainmentCategoriesModule } from './module/entertainment_categories/book_categories.module';
-import { CommunalModule } from './module/entertainment_content/communals.module';
+import { EntertainmentCategoriesModule } from './module/entertainment_categories/entertainment_categories.module';
 import { AuthModule } from './module/auth/auth.module';
-import { EntertainmentsModule } from './module/communal_content/entertainments.module';
 import { InformationTashkentModule } from './module/information_tashkent/information_tashkents.module';
 import { KnowDataModule } from './module/know_data/know_data.module';
 import { NumbersCodesModule } from './module/numbers_code/numbers_codes.module';
+import { CommunalModule } from './module/communal_content/communals.module';
+import { EntertainmentsModule } from './module/entertainment_content/entertainments.module';
 
 @Module({
   imports: [

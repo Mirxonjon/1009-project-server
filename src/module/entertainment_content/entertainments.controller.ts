@@ -27,17 +27,17 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CommunalServise } from './communals.service';
+import { EntertainmentServise } from './entertainments.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { CreateCommunalDto } from './dto/create_communal.dto';
-import { UpdateCommunalDto } from './dto/update_communal.dto';
+import { CreateEntertainmentsDto } from './dto/create_entertainment.dto';
+import { UpdateEntertainmentsDto } from './dto/update_entertainment.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-@Controller('Communal')
-@ApiTags('Communal Content')
+@Controller('Entertainment')
+@ApiTags('Entertainment Content')
 @ApiBearerAuth('JWT-auth')
-export class CommunalController {
-  readonly #_service: CommunalServise;
-  constructor(service: CommunalServise) {
+export class EntertainmentsController {
+  readonly #_service: EntertainmentServise;
+  constructor(service: EntertainmentServise) {
     this.#_service = service;
   }
 
@@ -49,17 +49,38 @@ export class CommunalController {
     return await this.#_service.findAll();
   }
 
+  // @Get('withCategory/allWithPage/:id?')
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // async findallWithpage(
+  //   @Param('id') id: string,
+  //   @Query('pageNumber') pageNumber: number,
+  //   @Query('pageSize') pageSize: number,
+  // ) {
+  //   return await this.#_service.findAllwithCategory(id,);
+  // }
+
+  //
   @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['title', 'type'],
+      required: ['category_id', 'title', 'title_ru', 'type'],
       properties: {
+        category_id: {
+          type: 'string',
+          default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+        },
         title: {
           type: 'string',
           default: 'title',
+        },
+        title_ru: {
+          type: 'string',
+          default: 'title ru',
         },
         type: {
           type: 'string',
@@ -69,19 +90,38 @@ export class CommunalController {
           type: 'string',
           default: '<html> salom</html>',
         },
+        text_ru: {
+          type: 'string',
+          default: '<html> salom</html>',
+        },
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
+        mention_ru: {
+          type: 'string',
+          default: 'Mention text goes here ru',
+        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
+        },
+        warning_ru: {
+          type: 'string',
+          default: 'Warning text goes here ru',
         },
         table_arr: {
           type: 'object',
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
+          },
+        },
+        table_arr_ru: {
+          type: 'object',
+          default: {
+            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
+            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },
@@ -92,8 +132,8 @@ export class CommunalController {
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  async create(@Body() createCommunalDto: CreateCommunalDto) {
-    return await this.#_service.create(createCommunalDto);
+  async create(@Body() createEntertainmentsDto: CreateEntertainmentsDto) {
+    return await this.#_service.create(createEntertainmentsDto);
   }
 
   @UseGuards(jwtGuard)
@@ -103,9 +143,17 @@ export class CommunalController {
     schema: {
       type: 'object',
       properties: {
+        category_id: {
+          type: 'string',
+          default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+        },
         title: {
           type: 'string',
           default: 'title',
+        },
+        title_ru: {
+          type: 'string',
+          default: 'title ru',
         },
         type: {
           type: 'string',
@@ -115,19 +163,38 @@ export class CommunalController {
           type: 'string',
           default: '<html> salom</html>',
         },
+        text_ru: {
+          type: 'string',
+          default: '<html> salom</html>',
+        },
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
+        mention_ru: {
+          type: 'string',
+          default: 'Mention text goes here ru',
+        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
+        },
+        warning_ru: {
+          type: 'string',
+          default: 'Warning text goes here ru',
         },
         table_arr: {
           type: 'object',
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
+          },
+        },
+        table_arr_ru: {
+          type: 'object',
+          default: {
+            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
+            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },
@@ -138,9 +205,9 @@ export class CommunalController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateCommunalDto: UpdateCommunalDto,
+    @Body() updateEntertainmentsDto: UpdateEntertainmentsDto,
   ) {
-    await this.#_service.update(id, updateCommunalDto);
+    await this.#_service.update(id, updateEntertainmentsDto);
   }
 
   @UseGuards(jwtGuard)
