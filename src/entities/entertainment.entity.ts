@@ -29,10 +29,10 @@ export class EntertainmentsEntity extends BaseEntity {
   type: string;
 
   @Column({
-    type: 'character varying',
+    type: 'jsonb',
     nullable: true,
   })
-  text: string;
+  text: JSON;
 
 
   @Column({
@@ -60,10 +60,10 @@ export class EntertainmentsEntity extends BaseEntity {
   title_ru: string;
 
   @Column({
-    type: 'character varying',
+    type: 'jsonb',
     nullable: true,
   })
-  text_ru: string;
+  text_ru: JSON;
 
   @Column({
     type: 'jsonb',

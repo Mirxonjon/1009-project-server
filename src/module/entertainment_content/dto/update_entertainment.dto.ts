@@ -12,9 +12,8 @@ export class UpdateEntertainmentsDto {
   @IsString()
   title_ru: string;
 
-  text: string;
-  
-  text_ru: string;
+  text: object;
+  text_ru: object;
 
   table_arr: object;
 

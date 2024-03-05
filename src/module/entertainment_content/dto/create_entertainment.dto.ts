@@ -19,8 +19,8 @@ export class CreateEntertainmentsDto {
   type: string;
 
   // @IsString()
-  text: string;
-  text_ru: string;
+  text: object;
+  text_ru: object;
 
   // @IsObject()
   table_arr: object;

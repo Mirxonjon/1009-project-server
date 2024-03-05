@@ -87,12 +87,18 @@ export class EntertainmentsController {
           default: 'text',
         },
         text: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         text_ru: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         mention: {
           type: 'string',
@@ -160,12 +166,18 @@ export class EntertainmentsController {
           default: 'text',
         },
         text: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         text_ru: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         mention: {
           type: 'string',

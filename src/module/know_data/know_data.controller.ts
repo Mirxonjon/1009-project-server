@@ -65,12 +65,18 @@ export class KnowDataController {
           default: 'text',
         },
         text: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         text_ru: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         mention: {
           type: 'string',
@@ -150,12 +156,18 @@ export class KnowDataController {
           default: 'Warning text goes here ru',
         },
         text: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         text_ru: {
-          type: 'string',
-          default: '<html> salom</html>',
+          type: 'object',
+          default:  {
+            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
+          },
         },
         table_arr: {
           type: 'object',

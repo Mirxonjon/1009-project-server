@@ -10,8 +10,8 @@ export class UpdateNumbersCodesDto {
   @IsString()
   type: string;
 
-  text: string;
-  text_ru: string;
+  text: object;
+  text_ru: object;
 
   table_arr: object;
   table_arr_ru: object;
