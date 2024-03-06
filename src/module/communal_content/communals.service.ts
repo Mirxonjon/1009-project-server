@@ -7,8 +7,11 @@ import { CommunalEntity } from 'src/entities/communal.entity';
 
 @Injectable()
 export class CommunalServise {
-  async findAll() {
+  async findAll(language :string) {
     const findAll = await CommunalEntity.find({
+      where: {
+        language: language
+      },
       order: {
         data_sequence: 'asc',
       },
@@ -32,16 +35,12 @@ export class CommunalServise {
       .into(CommunalEntity)
       .values({
         title: body.title,
-        title_ru : body.title_ru,
+        language: body.language,
         text: body.text,
-        text_ru: body.text_ru,
         type: body.type,
         mention: body.mention,
-        mention_ru :body.mention_ru,
         warning: body.warning,
-        warning_ru: body.warning_ru,
         table_arr: body.table_arr,
-        table_arr_ru: body.table_arr_ru
       })
       .execute()
       .catch((e) => {
@@ -59,16 +58,12 @@ export class CommunalServise {
 
     const updatedVideo = await CommunalEntity.update(id, {
       title: body.title || findCommunal.title,
-      title_ru : body.title_ru || findCommunal.title_ru,
+      language: body.language || findCommunal.language,
       type: body.type || findCommunal.type,
       text: body.text || findCommunal.text,
-      text_ru :body.text_ru || findCommunal.text_ru,
       mention: body.mention || findCommunal.mention,
-      mention_ru :body.mention_ru || findCommunal.mention_ru,
       warning: body.warning || findCommunal.warning,
-      warning_ru: body.warning_ru || findCommunal.warning_ru,
       table_arr: body.table_arr || findCommunal.table_arr,
-      table_arr_ru: body.table_arr_ru || findCommunal.table_arr_ru,
 
     });
 

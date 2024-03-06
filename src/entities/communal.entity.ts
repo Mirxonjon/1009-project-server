@@ -18,12 +18,17 @@ export class CommunalEntity extends BaseEntity {
   })
   title: string;
 
-  
   @Column({
     type: 'character varying',
     nullable: false,
   })
   type: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: false,
+  })
+  language: string;
   
   @Column({
     type: 'jsonb',
@@ -47,33 +52,6 @@ export class CommunalEntity extends BaseEntity {
   })
   table_arr: JSON;
   
-  @Column({
-    type: 'character varying',
-    nullable: false,
-  })
-  title_ru: string;
-
-  @Column({
-    type: 'jsonb',
-    nullable: true,
-  })
-  text_ru: JSON;
-
-  @Column({
-    type: 'jsonb',
-    nullable: true,
-  })
-  table_arr_ru: JSON;
-
-  @Column({
-    type: 'character varying',
-  })
-  mention_ru: string;
-  
-  @Column({
-    type: 'character varying',
-  })
-  warning_ru: string;
 
   
   @UpdateDateColumn({ name: 'updated_at' })

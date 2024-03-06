@@ -9,8 +9,11 @@ import { KnowDataEntity } from 'src/entities/know_data.entity';
 
 @Injectable()
 export class KnowDataServise {
-  async findAll() {
+  async findAll(language: string) {
     const findAll = await KnowDataEntity.find({
+      where: {
+        language: language
+      },
       order: {
         data_sequence: 'asc',
       },
@@ -34,16 +37,12 @@ export class KnowDataServise {
       .into(KnowDataEntity)
       .values({
         title: body.title,
-        title_ru : body.title_ru,
+        language: body.language,
         type: body.type,
         text: body.text,
-        text_ru: body.text_ru,
         mention: body.mention,
-        mention_ru :body.mention_ru,
         warning: body.warning,
-        warning_ru: body.warning_ru,
         table_arr: body.table_arr,
-        table_arr_ru: body.table_arr_ru
       })
       .execute()
       .catch((e) => {
@@ -64,16 +63,12 @@ export class KnowDataServise {
 
     const updatedVideo = await KnowDataEntity.update(id, {
       title: body.title || findKnowData.title,
-      type: body.type || findKnowData.title,
+      type: body.type || findKnowData.type,
       text: body.text || findKnowData.text,
-      text_ru: body.text_ru || findKnowData.text_ru ,
+      language: body.language || findKnowData.language,
       mention: body.mention || findKnowData.mention,
-      mention_ru :body.mention_ru || findKnowData.mention_ru,
       warning: body.warning || findKnowData.warning,
-      warning_ru: body.warning_ru || findKnowData.warning_ru,
-      title_ru : body.title_ru || findKnowData.title_ru,
       table_arr: body.table_arr || findKnowData.table_arr,
-      table_arr_ru: body.table_arr_ru || findKnowData.table_arr_ru,
     });
 
     return updatedVideo;

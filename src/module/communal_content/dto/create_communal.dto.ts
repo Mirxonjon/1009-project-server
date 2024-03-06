@@ -5,26 +5,23 @@ export class CreateCommunalDto {
   @IsNotEmpty()
   title: string;
 
-  @IsString()
-  title_ru: string;
 
   @IsString()
   @IsNotEmpty()
   type: string;
 
+  @IsString()
+  @IsNotEmpty()
+  language: string;
   // @IsString()
   text: object;
-  text_ru : object
-  
   // @IsObject()
   table_arr: object;
-  table_arr_ru: object;
-  
+
   mention: string;
-  mention_ru: string;
-  
+
   warning: string;
-  warning_ru: string;
+
   
 
 

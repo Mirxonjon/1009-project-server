@@ -57,29 +57,7 @@ export class EntertainmentsEntity extends BaseEntity {
     type: 'character varying',
     nullable: false,
   })
-  title_ru: string;
-
-  @Column({
-    type: 'jsonb',
-    nullable: true,
-  })
-  text_ru: JSON;
-
-  @Column({
-    type: 'jsonb',
-    nullable: true,
-  })
-  table_arr_ru: JSON;
-
-  @Column({
-    type: 'character varying',
-  })
-  mention_ru: string;
-  
-  @Column({
-    type: 'character varying',
-  })
-  warning_ru: string;
+  language: string;
 
   
   @UpdateDateColumn({ name: 'updated_at' })

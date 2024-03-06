@@ -5,22 +5,17 @@ export class UpdateInformationTashkentDto {
   title: string;
   
   @IsString()
-  title_ru: string;
+  language: string;
 
   @IsString()
   type: string;
 
   text: object;
-  text_ru: object;
-
   table_arr: object;
-  table_arr_ru: object;
 
   mention: string;
-  mention_ru: string;
 
   warning: string;
-  warning_ru: string;
 
 
 

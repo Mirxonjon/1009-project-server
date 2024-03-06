@@ -5,8 +5,11 @@ import { NumbersCodesEntity } from 'src/entities/Numbers_codes.entity';
 
 @Injectable()
 export class NumbersCodesServise {
-  async findAll() {
+  async findAll(language : string) {
     const findAll = await NumbersCodesEntity.find({
+      where: {
+        language: language
+      },
       order: {
         data_sequence: 'asc',
       },
@@ -30,16 +33,12 @@ export class NumbersCodesServise {
       .into(NumbersCodesEntity)
       .values({
         title: body.title,
-        title_ru : body.title_ru,
+        language: body.language,
         text: body.text,
-        text_ru :body.text,
         table_arr: body.table_arr,
         mention: body.mention,
-        mention_ru :body.mention_ru,
         type: body.type,
         warning: body.warning,
-        warning_ru: body.warning_ru,
-        table_arr_ru: body.table_arr_ru
       })
       .execute()
       .catch((e) => {
@@ -60,16 +59,12 @@ export class NumbersCodesServise {
 
     const updatedVideo = await NumbersCodesEntity.update(id, {
       title: body.title || findNumbersCodes.title,
-      title_ru : body.title_ru || findNumbersCodes.title_ru,
+      language: body.language || findNumbersCodes.language,
       type: body.type || findNumbersCodes.type,
       text: body.text || findNumbersCodes.text,
-      text_ru: body.text_ru || findNumbersCodes.text_ru,
       mention: body.mention || findNumbersCodes.mention,
-      mention_ru :body.mention_ru || findNumbersCodes.mention_ru,
       warning: body.warning || findNumbersCodes.warning,
-      warning_ru: body.warning_ru || findNumbersCodes.warning_ru,
       table_arr: body.table_arr || findNumbersCodes.table_arr,
-      table_arr_ru: body.table_arr_ru || findNumbersCodes.table_arr_ru,
     });
 
     return updatedVideo;

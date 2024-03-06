@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -39,8 +40,10 @@ export class NumbersCodesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall() {
-    return await this.#_service.findAll();
+  async findall(
+    @Query('language') language: string,
+  ) {
+    return await this.#_service.findAll(language);
   }
 
   @UseGuards(jwtGuard)
@@ -49,15 +52,15 @@ export class NumbersCodesController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['title', 'type'],
+      required: ['title', 'type', 'language'],
       properties: {
         title: {
           type: 'string',
           default: 'title',
         },
-        title_ru: {
+        language: {
           type: 'string',
-          default: 'title ru',
+          default: 'ru',
         },
         type: {
           type: 'string',
@@ -70,41 +73,19 @@ export class NumbersCodesController {
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
         },
-        text_ru: {
-          type: 'object',
-          default:  {
-            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-          },
-        },
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
-        mention_ru: {
-          type: 'string',
-          default: 'Mention text goes here ru',
-        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
-        },
-        warning_ru: {
-          type: 'string',
-          default: 'Warning text goes here ru',
         },
         table_arr: {
           type: 'object',
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
-          },
-        },
-        table_arr_ru: {
-          type: 'object',
-          default: {
-            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
-            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },
@@ -130,9 +111,9 @@ export class NumbersCodesController {
           type: 'string',
           default: 'title',
         },
-        title_ru: {
+        language: {
           type: 'string',
-          default: 'title ru',
+          default: 'ru',
         },
         type: {
           type: 'string',
@@ -142,26 +123,11 @@ export class NumbersCodesController {
           type: 'string',
           default: 'Mention text goes here',
         },
-        mention_ru: {
-          type: 'string',
-          default: 'Mention text goes here ru',
-        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
         },
-        warning_ru: {
-          type: 'string',
-          default: 'Warning text goes here ru',
-        },
         text: {
-          type: 'object',
-          default:  {
-            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-          },
-        },
-        text_ru: {
           type: 'object',
           default:  {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
@@ -173,13 +139,6 @@ export class NumbersCodesController {
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
-          },
-        },
-        table_arr_ru: {
-          type: 'object',
-          default: {
-            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
-            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },

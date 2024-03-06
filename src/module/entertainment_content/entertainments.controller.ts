@@ -45,8 +45,10 @@ export class EntertainmentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall() {
-    return await this.#_service.findAll();
+  async findall(
+    @Query('language') language: string,
+  ) {
+    return await this.#_service.findAll(language);
   }
 
   // @Get('withCategory/allWithPage/:id?')
@@ -68,7 +70,7 @@ export class EntertainmentsController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['category_id', 'title', 'title_ru', 'type'],
+      required: ['category_id', 'title', 'language', 'type'],
       properties: {
         category_id: {
           type: 'string',
@@ -78,9 +80,9 @@ export class EntertainmentsController {
           type: 'string',
           default: 'title',
         },
-        title_ru: {
+        language: {
           type: 'string',
-          default: 'title ru',
+          default: 'ru',
         },
         type: {
           type: 'string',
@@ -93,41 +95,19 @@ export class EntertainmentsController {
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
         },
-        text_ru: {
-          type: 'object',
-          default:  {
-            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-          },
-        },
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
-        mention_ru: {
-          type: 'string',
-          default: 'Mention text goes here ru',
-        },
         warning: {
           type: 'string',
           default: 'Warning text goes here',
-        },
-        warning_ru: {
-          type: 'string',
-          default: 'Warning text goes here ru',
         },
         table_arr: {
           type: 'object',
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
-          },
-        },
-        table_arr_ru: {
-          type: 'object',
-          default: {
-            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
-            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },
@@ -157,9 +137,9 @@ export class EntertainmentsController {
           type: 'string',
           default: 'title',
         },
-        title_ru: {
+        language: {
           type: 'string',
-          default: 'title ru',
+          default: 'ru',
         },
         type: {
           type: 'string',
@@ -172,41 +152,22 @@ export class EntertainmentsController {
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
         },
-        text_ru: {
-          type: 'object',
-          default:  {
-            text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-            text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
-          },
-        },
+       
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
-        mention_ru: {
-          type: 'string',
-          default: 'Mention text goes here ru',
-        },
+       
         warning: {
           type: 'string',
           default: 'Warning text goes here',
         },
-        warning_ru: {
-          type: 'string',
-          default: 'Warning text goes here ru',
-        },
+       
         table_arr: {
           type: 'object',
           default: {
             header: [{ value: 'ustun' }, { value: 'ustun2' }],
             row: [{ value: 'qator' }, { value: 'qator2' }],
-          },
-        },
-        table_arr_ru: {
-          type: 'object',
-          default: {
-            header: [{ value: 'ustun ru' }, { value: 'ustun2 ru' }],
-            row: [{ value: 'qator ru' }, { value: 'qator2 ru' }],
           },
         },
       },

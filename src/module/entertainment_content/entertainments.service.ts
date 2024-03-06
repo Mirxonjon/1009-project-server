@@ -8,10 +8,13 @@ import { EntertainmentsEntity } from 'src/entities/entertainment.entity';
 
 @Injectable()
 export class EntertainmentServise {
-  async findAll() {
+  async findAll(language:string) {
     const allbooks = await EntertainmentsEntity.find({
       relations: {
         category_id: true,
+      },
+      where: {
+        language: language
       },
       order: {
         create_data: 'desc',
@@ -65,16 +68,12 @@ export class EntertainmentServise {
       .into(EntertainmentsEntity)
       .values({
         title: body.title,
-        title_ru : body.title_ru,
+        language: body.language,
         text: body.text,
-        text_ru : body.text_ru,
         type: body.type,
         mention: body.mention,
-        mention_ru :body.mention_ru,
         warning: body.warning,
-        warning_ru: body.warning_ru,
         table_arr: body.table_arr,
-        table_arr_ru: body.table_arr_ru,
         category_id: findCategory,
       })
       .execute()
@@ -95,16 +94,12 @@ export class EntertainmentServise {
 
     const updatedVideo = await EntertainmentsEntity.update(id, {
       title: body.title || findEntertainment.title,
-      title_ru : body.title_ru || findEntertainment.title_ru,
+      language: body.language || findEntertainment.language,
       text: body.text || findEntertainment.text,
-      text_ru : body.text_ru || findEntertainment.text_ru,
       type: body.type || findEntertainment.type,
       mention: body.mention || findEntertainment.mention,
-      mention_ru :body.mention_ru || findEntertainment.mention_ru,
       warning: body.warning || findEntertainment.warning,
-      warning_ru: body.warning_ru || findEntertainment.warning_ru,
       table_arr: body.table_arr || findEntertainment.table_arr,
-      table_arr_ru: body.table_arr_ru || findEntertainment.table_arr_ru ,
       category_id:
         body.category_id == 'null'
           ? (findEntertainment.category_id.id as any)

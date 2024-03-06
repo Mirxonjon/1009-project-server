@@ -11,30 +11,22 @@ export class CreateEntertainmentsDto {
 
   @IsString()
   @IsNotEmpty()
-  title_ru: string;
+  language: string;
 
 
   @IsString()
   @IsNotEmpty()
   type: string;
 
-  // @IsString()
+
   text: object;
-  text_ru: object;
 
-  // @IsObject()
   table_arr: object;
-  table_arr_ru: object;
-
 
   mention: string;
 
-  mention_ru: string;
-
-
   warning: string;
 
-  warning_ru: string;
 
 
 }
