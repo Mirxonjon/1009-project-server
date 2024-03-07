@@ -13,11 +13,14 @@ export class EntertainmentCategoriesService {
     return allEntertainmentCategory;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string , language :string) {
     const findCategory: EntertainmentCategoriesEntity =
       await EntertainmentCategoriesEntity.findOne({
         where: {
           id: id,
+          entertainments: {
+            language: language
+          }
         },
         relations: {
           entertainments: true,

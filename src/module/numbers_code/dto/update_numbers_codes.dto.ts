@@ -1,4 +1,4 @@
-import { IsEmpty, IsObject, IsString, MaxLength } from 'class-validator';
+import { IsEmpty, IsIn, IsObject, IsString, MaxLength } from 'class-validator';
 
 export class UpdateNumbersCodesDto {
   @IsString()
@@ -6,6 +6,7 @@ export class UpdateNumbersCodesDto {
   
 
   @IsString()
+  @IsIn(['ru', 'uz'])
   language: string;
 
   @IsString()

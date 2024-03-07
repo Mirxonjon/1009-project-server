@@ -48,8 +48,10 @@ export class EntertainmentCategoriesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string) {
-    return await this.#_service.findOne(id);
+  async findOne(@Param('id') id: string,
+  @Query('language') language: string,
+  ) {
+    return await this.#_service.findOne(id,language);
   }
 
   @UseGuards(jwtGuard)
@@ -58,7 +60,7 @@ export class EntertainmentCategoriesController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['title'],
+      required: ['title' , 'title_ru'],
       properties: {
         title: {
           type: 'string',

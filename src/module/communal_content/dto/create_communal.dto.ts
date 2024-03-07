@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MaxLength, IsObject } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsObject, IsIn } from 'class-validator';
 
 export class CreateCommunalDto {
   @IsString()
@@ -12,6 +12,7 @@ export class CreateCommunalDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsIn(['ru', 'uz'])
   language: string;
   // @IsString()
   text: object;
@@ -21,9 +22,5 @@ export class CreateCommunalDto {
   mention: string;
 
   warning: string;
-
-  
-
-
 
 }

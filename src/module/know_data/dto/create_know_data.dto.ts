@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MaxLength, IsObject } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsObject, IsIn } from 'class-validator';
 
 export class CreateKnowDataDto {
   @IsString()
@@ -8,6 +8,7 @@ export class CreateKnowDataDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsIn(['ru', 'uz'])
   language: string;
 
   @IsString()
