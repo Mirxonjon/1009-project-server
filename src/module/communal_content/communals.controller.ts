@@ -45,9 +45,7 @@ export class CommunalController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(
-    @Query('language') language: string,
-  ) {
+  async findall(@Query('language') language: string) {
     return await this.#_service.findAll(language);
   }
 
@@ -57,7 +55,7 @@ export class CommunalController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['title' , 'language', 'type'],
+      required: ['title', 'language', 'type'],
       properties: {
         title: {
           type: 'string',
@@ -73,12 +71,12 @@ export class CommunalController {
         },
         text: {
           type: 'object',
-          default:  {
+          default: {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
         },
-       
+
         mention: {
           type: 'string',
           default: 'Mention text goes here',
@@ -127,7 +125,7 @@ export class CommunalController {
         },
         text: {
           type: 'object',
-          default:  {
+          default: {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },

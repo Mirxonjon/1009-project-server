@@ -1,10 +1,15 @@
-import { IsString, IsNotEmpty, MaxLength, IsObject, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsObject,
+  IsIn,
+} from 'class-validator';
 
 export class CreateInformationTashkentDto {
   @IsString()
   @IsNotEmpty()
   title: string;
-  
 
   @IsString()
   @IsNotEmpty()
@@ -24,5 +29,4 @@ export class CreateInformationTashkentDto {
   mention: string;
 
   warning: string;
-
 }

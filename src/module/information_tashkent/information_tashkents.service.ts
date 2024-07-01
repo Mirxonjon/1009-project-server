@@ -8,10 +8,10 @@ import { InformationTashkentEntity } from 'src/entities/information_Tashkent.ent
 
 @Injectable()
 export class InformationTashkentServise {
-  async findAll(language : string) {
+  async findAll(language: string) {
     const findAll = await InformationTashkentEntity.find({
       where: {
-        language: language
+        language: language,
       },
       order: {
         data_sequence: 'asc',

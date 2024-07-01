@@ -1,10 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateKnowDataDto } from './dto/create_know_data.dto';
-
 import { UpdateKnowDataDto } from './dto/update_know_data.dto';
-
-import { CommunalEntity } from 'src/entities/communal.entity';
-import { InformationTashkentEntity } from 'src/entities/information_Tashkent.entity';
 import { KnowDataEntity } from 'src/entities/know_data.entity';
 
 @Injectable()
@@ -12,7 +8,7 @@ export class KnowDataServise {
   async findAll(language: string) {
     const findAll = await KnowDataEntity.find({
       where: {
-        language: language
+        language: language,
       },
       order: {
         data_sequence: 'asc',

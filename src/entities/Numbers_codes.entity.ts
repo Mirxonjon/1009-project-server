@@ -45,14 +45,13 @@ export class NumbersCodesEntity extends BaseEntity {
     type: 'character varying',
   })
   warning: string;
-  
+
   @Column({
     type: 'character varying',
     nullable: false,
   })
   language: string;
 
-  
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 
@@ -62,5 +61,3 @@ export class NumbersCodesEntity extends BaseEntity {
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
 }
-
-

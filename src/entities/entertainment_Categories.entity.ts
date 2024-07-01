@@ -25,7 +25,7 @@ export class EntertainmentCategoriesEntity extends BaseEntity {
     nullable: false,
   })
   title_ru: string;
-  
+
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 

@@ -34,7 +34,6 @@ export class EntertainmentsEntity extends BaseEntity {
   })
   text: JSON;
 
-
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -59,7 +58,6 @@ export class EntertainmentsEntity extends BaseEntity {
   })
   language: string;
 
-  
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 

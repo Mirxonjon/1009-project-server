@@ -23,7 +23,10 @@ import {
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
 import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
-import { ControlUserDto, CreateControlUserDto } from './dto/create_controlUser.dto';
+import {
+  ControlUserDto,
+  CreateControlUserDto,
+} from './dto/create_controlUser.dto';
 
 @Controller('Auth')
 @ApiTags('Auth')
@@ -96,28 +99,28 @@ export class AuthController {
     return await this.service.getSearchControlUsername(username);
   }
 
-  @Post('ControlUser/signIn')
-  @HttpCode(HttpStatus.OK)
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['username', 'password'],
-      properties: {
-        username: {
-          type: 'string',
-          default: 'Moderator',
-        },
-        password: {
-          type: 'string',
-          default: '123',
-        },
-      },
-    },
-  })
-  @ApiOperation({ summary: 'login for admin , moderator , operator'})
-  signInControlUser(@Body() body: ControlUserDto) {
-    return this.service.signInControlUser(body);
-  }
+  // @Post('ControlUser/signIn')
+  // @HttpCode(HttpStatus.OK)
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     required: ['username', 'password'],
+  //     properties: {
+  //       username: {
+  //         type: 'string',
+  //         default: 'Moderator',
+  //       },
+  //       password: {
+  //         type: 'string',
+  //         default: '123',
+  //       },
+  //     },
+  //   },
+  // })
+  // @ApiOperation({ summary: 'login for admin , moderator , operator' })
+  // signInControlUser(@Body() body: ControlUserDto) {
+  //   return this.service.signInControlUser(body);
+  // }
 
   @Post('/addControlUser')
   @HttpCode(HttpStatus.CREATED)

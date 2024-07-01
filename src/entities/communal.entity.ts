@@ -29,31 +29,29 @@ export class CommunalEntity extends BaseEntity {
     nullable: false,
   })
   language: string;
-  
+
   @Column({
     type: 'jsonb',
     nullable: true,
   })
   text: JSON;
-  
+
   @Column({
     type: 'character varying',
   })
   mention: string;
-  
+
   @Column({
     type: 'character varying',
   })
   warning: string;
-  
+
   @Column({
     type: 'jsonb',
     nullable: true,
   })
   table_arr: JSON;
-  
 
-  
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 

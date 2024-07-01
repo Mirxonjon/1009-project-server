@@ -52,7 +52,6 @@ export class InformationTashkentEntity extends BaseEntity {
   })
   language: string;
 
-  
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 

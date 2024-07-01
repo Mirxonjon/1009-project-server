@@ -41,9 +41,7 @@ export class KnowDataController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(
-    @Query('language') language: string,
-  ) {
+  async findall(@Query('language') language: string) {
     return await this.#_service.findAll(language);
   }
 
@@ -69,7 +67,7 @@ export class KnowDataController {
         },
         text: {
           type: 'object',
-          default:  {
+          default: {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
@@ -132,7 +130,7 @@ export class KnowDataController {
         },
         text: {
           type: 'object',
-          default:  {
+          default: {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },

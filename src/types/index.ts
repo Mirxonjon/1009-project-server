@@ -6,3 +6,9 @@ export interface CustomRequest extends Request {
 export interface CustomHeaders extends Headers {
   authorization: string;
 }
+
+export enum RolesEnum {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPERADMIN = 'moderator',
+}

@@ -7,6 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CommentAndRateEntity } from './commentAndRate.entity';
+import { Saved_Organization_Entity } from './saved_org.entity';
 
 @Entity()
 export class UsersEntity extends BaseEntity {
@@ -28,7 +30,13 @@ export class UsersEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-    nullable: false,
+    nullable: true,
+  })
+  username: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
   })
   phone: string;
 
@@ -45,6 +53,9 @@ export class UsersEntity extends BaseEntity {
     default: 'user',
   })
   role: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  create_data: Date;
 
   // @CreateDateColumn({ name: 'created_at' })
   // create_data: Date;
@@ -87,6 +98,9 @@ export class UsersEntity extends BaseEntity {
   // @OneToMany(() => TakeEntity, (course) => course.user_id)
   // active_users: TakeEntity[];
 
-  // @OneToMany(() => TakeBooksEntity, (take_book) => take_book.user_id)
-  // take_books_users: TakeEntity[];
+  @OneToMany(() => CommentAndRateEntity, (comment) => comment.user_id)
+  my_comments: CommentAndRateEntity[];
+
+  @OneToMany(() => Saved_Organization_Entity, (saved_org) => saved_org.user_id)
+  saved_organization: Saved_Organization_Entity[];
 }

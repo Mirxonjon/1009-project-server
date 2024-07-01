@@ -11,6 +11,13 @@ import { KnowDataModule } from './module/know_data/know_data.module';
 import { NumbersCodesModule } from './module/numbers_code/numbers_codes.module';
 import { CommunalModule } from './module/communal_content/communals.module';
 import { EntertainmentsModule } from './module/entertainment_content/entertainments.module';
+import { OrganizationModule } from './module/organization/organization.module';
+import { ImportedFilesModule } from './module/exported_files/importedFiles.module';
+import { OrganizationCategoriesModule } from './module/category_org/organization_categories.module';
+import { SubCategoryOrganizationModule } from './module/sub_category_organization/subcategoryorganization.module';
+import { SectionModule } from './module/section/section.module';
+import { SavedOrganizationModule } from './module/saved_org/savedorganization.module';
+import { RolesGuard } from './module/auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -23,14 +30,25 @@ import { EntertainmentsModule } from './module/entertainment_content/entertainme
       }),
     }),
     AuthModule,
+    OrganizationCategoriesModule,
+    SubCategoryOrganizationModule,
+    SectionModule,
+    OrganizationModule,
+    SavedOrganizationModule,
     EntertainmentCategoriesModule,
     EntertainmentsModule,
     CommunalModule,
     InformationTashkentModule,
     KnowDataModule,
     NumbersCodesModule,
+    ImportedFilesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: 'APP_GUARD',
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

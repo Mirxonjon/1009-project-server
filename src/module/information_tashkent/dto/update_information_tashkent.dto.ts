@@ -3,7 +3,7 @@ import { IsEmpty, IsIn, IsObject, IsString, MaxLength } from 'class-validator';
 export class UpdateInformationTashkentDto {
   @IsString()
   title: string;
-  
+
   @IsString()
   @IsIn(['ru', 'uz'])
   language: string;
@@ -17,8 +17,4 @@ export class UpdateInformationTashkentDto {
   mention: string;
 
   warning: string;
-
-
-
-
 }

@@ -13,14 +13,14 @@ export class EntertainmentCategoriesService {
     return allEntertainmentCategory;
   }
 
-  async findOne(id: string , language :string) {
+  async findOne(id: string, language: string) {
     const findCategory: EntertainmentCategoriesEntity =
       await EntertainmentCategoriesEntity.findOne({
         where: {
           id: id,
           entertainments: {
-            language: language
-          }
+            language: language,
+          },
         },
         relations: {
           entertainments: true,
@@ -73,7 +73,6 @@ export class EntertainmentCategoriesService {
       .set({
         title: body.title.toLowerCase() || findCategory.title,
         title_ru: body.title_ru.toLowerCase() || findCategory.title_ru,
-
       })
       .where({ id })
       .execute()

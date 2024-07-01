@@ -9,8 +9,6 @@ export class UpdateEntertainmentsDto {
   @IsString()
   type: string;
 
-
-  
   @IsString()
   @IsIn(['ru', 'uz'])
   language: string;
@@ -19,13 +17,7 @@ export class UpdateEntertainmentsDto {
 
   table_arr: object;
 
-
   mention: string;
 
-
   warning: string;
-
-
-
-
 }

@@ -1,10 +1,15 @@
-import { IsString, IsNotEmpty, MaxLength, IsObject, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsObject,
+  IsIn,
+} from 'class-validator';
 
 export class CreateNumbersCodesDto {
   @IsString()
   @IsNotEmpty()
   title: string;
-  
 
   @IsString()
   @IsNotEmpty()
@@ -18,15 +23,10 @@ export class CreateNumbersCodesDto {
   // @IsString()
   text: object;
 
-
   // @IsObject()
   table_arr: object;
 
   mention: string;
 
   warning: string;
-
-
-
-
 }

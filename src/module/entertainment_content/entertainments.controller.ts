@@ -28,7 +28,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EntertainmentServise } from './entertainments.service';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateEntertainmentsDto } from './dto/create_entertainment.dto';
 import { UpdateEntertainmentsDto } from './dto/update_entertainment.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
@@ -45,9 +44,7 @@ export class EntertainmentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(
-    @Query('language') language: string,
-  ) {
+  async findall(@Query('language') language: string) {
     return await this.#_service.findAll(language);
   }
 
@@ -90,7 +87,7 @@ export class EntertainmentsController {
         },
         text: {
           type: 'object',
-          default:  {
+          default: {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
@@ -147,22 +144,22 @@ export class EntertainmentsController {
         },
         text: {
           type: 'object',
-          default:  {
+          default: {
             text: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
             text1: [{ value: '<html> 1</html>' }, { value: '<html> 1</html>' }],
           },
         },
-       
+
         mention: {
           type: 'string',
           default: 'Mention text goes here',
         },
-       
+
         warning: {
           type: 'string',
           default: 'Warning text goes here',
         },
-       
+
         table_arr: {
           type: 'object',
           default: {

@@ -8,13 +8,13 @@ import { EntertainmentsEntity } from 'src/entities/entertainment.entity';
 
 @Injectable()
 export class EntertainmentServise {
-  async findAll(language:string) {
+  async findAll(language: string) {
     const allbooks = await EntertainmentsEntity.find({
       relations: {
         category_id: true,
       },
       where: {
-        language: language
+        language: language,
       },
       order: {
         create_data: 'desc',

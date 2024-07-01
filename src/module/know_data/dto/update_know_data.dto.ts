@@ -3,7 +3,7 @@ import { IsEmpty, IsIn, IsObject, IsString, MaxLength } from 'class-validator';
 export class UpdateKnowDataDto {
   @IsString()
   title: string;
-  
+
   @IsString()
   @IsIn(['ru', 'uz'])
   language: string;
@@ -16,7 +16,6 @@ export class UpdateKnowDataDto {
   table_arr: object;
 
   mention: string;
-  
-  warning: string;
 
+  warning: string;
 }

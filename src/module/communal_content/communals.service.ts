@@ -7,10 +7,10 @@ import { CommunalEntity } from 'src/entities/communal.entity';
 
 @Injectable()
 export class CommunalServise {
-  async findAll(language :string) {
+  async findAll(language: string) {
     const findAll = await CommunalEntity.find({
       where: {
-        language: language
+        language: language,
       },
       order: {
         data_sequence: 'asc',
@@ -64,7 +64,6 @@ export class CommunalServise {
       mention: body.mention || findCommunal.mention,
       warning: body.warning || findCommunal.warning,
       table_arr: body.table_arr || findCommunal.table_arr,
-
     });
 
     return updatedVideo;

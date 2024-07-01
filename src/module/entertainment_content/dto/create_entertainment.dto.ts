@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, MaxLength, IsObject, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsObject,
+  IsIn,
+} from 'class-validator';
 
 export class CreateEntertainmentsDto {
   @IsString()
@@ -14,11 +20,9 @@ export class CreateEntertainmentsDto {
   @IsIn(['ru', 'uz'])
   language: string;
 
-
   @IsString()
   @IsNotEmpty()
   type: string;
-
 
   text: object;
 
@@ -27,7 +31,4 @@ export class CreateEntertainmentsDto {
   mention: string;
 
   warning: string;
-
-
-
 }

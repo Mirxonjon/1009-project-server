@@ -5,10 +5,10 @@ import { NumbersCodesEntity } from 'src/entities/Numbers_codes.entity';
 
 @Injectable()
 export class NumbersCodesServise {
-  async findAll(language : string) {
+  async findAll(language: string) {
     const findAll = await NumbersCodesEntity.find({
       where: {
-        language: language
+        language: language,
       },
       order: {
         data_sequence: 'asc',

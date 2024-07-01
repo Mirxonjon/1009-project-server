@@ -1,15 +1,14 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create_user.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { SingInUserDto } from './dto/sign_in-user.dto';
-import { ControlUsersEntity } from 'src/entities/control_users.entity';
+// import { ControlUsersEntity } from 'src/entities/control_users.entity';
 import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
-import { ControlUserDto, CreateControlUserDto } from './dto/create_controlUser.dto';
+import {
+  ControlUserDto,
+  CreateControlUserDto,
+} from './dto/create_controlUser.dto';
 
 @Injectable()
 export class AuthServise {
@@ -27,7 +26,6 @@ export class AuthServise {
       throw new HttpException('Number already registered', HttpStatus.FOUND);
     }
     console.log(createUser);
-    
 
     const addedUser = await UsersEntity.createQueryBuilder()
       .insert()
@@ -37,17 +35,21 @@ export class AuthServise {
         phone: createUser.number,
         password: createUser.password,
       })
-      .returning(['id', 'role'])
+      .returning(['id', 'role', 'password'])
       .execute()
       .catch((e) => {
         console.log(e);
-        
+
         throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
       });
 
     return {
       message: 'You have successfully registered',
-      token: this.sign(addedUser.raw.at(-1).id, addedUser.raw.at(-1).role),
+      token: this.sign(
+        addedUser.raw.at(-1).id,
+        addedUser.raw.at(-1).role,
+        addedUser.raw.at(-1).password,
+      ),
     };
   }
   async signIn(signInDto: SingInUserDto) {
@@ -65,15 +67,14 @@ export class AuthServise {
     }
     return {
       message: 'successfully sing In',
-      token: this.sign(finduser.id, finduser.role),
+      token: this.sign(finduser.id, finduser.role, finduser.password),
     };
   }
 
- 
   async signInControlUser(body: ControlUserDto) {
-    const finduser = await ControlUsersEntity.findOne({
+    const finduser = await UsersEntity.findOne({
       where: {
-        username : body.username.trim().toLowerCase(),
+        username: body.username.trim().toLowerCase(),
         password: body.password.trim(),
       },
     }).catch((e) => {
@@ -85,28 +86,28 @@ export class AuthServise {
     }
     return {
       message: 'successfully sing In',
-      token: this.sign(finduser.id, finduser.role),
+      token: this.sign(finduser.id, finduser.role, finduser.password),
     };
   }
 
-  async getSearchControlUsername (username : string) {
-    const finduser = await ControlUsersEntity.findOne({
+  async getSearchControlUsername(username: string) {
+    const finduser = await UsersEntity.findOne({
       where: {
-        username : username.trim().toLowerCase()
+        username: username.trim().toLowerCase(),
       },
     }).catch(() => {
       throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
     });
 
-    if(finduser) {
-      return true
-    }else {
-      return false
+    if (finduser) {
+      return true;
+    } else {
+      return false;
     }
   }
 
   async getAllControlUsers(role: string) {
-    const findControlUser = await ControlUsersEntity.find({
+    const findControlUser = await UsersEntity.find({
       where: {
         role: role == 'null' ? null : role,
       },
@@ -121,7 +122,7 @@ export class AuthServise {
   }
 
   async createControlUser(body: CreateControlUserDto) {
-    const findControlUser = await ControlUsersEntity.findOne({
+    const findControlUser = await UsersEntity.findOne({
       where: {
         username: body.username.toLowerCase(),
       },
@@ -133,9 +134,9 @@ export class AuthServise {
       throw new HttpException('username alredy exist', HttpStatus.FOUND);
     }
 
-    await ControlUsersEntity.createQueryBuilder()
+    await UsersEntity.createQueryBuilder()
       .insert()
-      .into(ControlUsersEntity)
+      .into(UsersEntity)
       .values({
         full_name: body.full_name,
         username: body.username.trim().toLowerCase(),
@@ -151,18 +152,18 @@ export class AuthServise {
   }
 
   async updateControlUser(id: string, body: UpdateControlUserDto) {
-    const findControlUser = await ControlUsersEntity.findOne({
+    const findControlUser = await UsersEntity.findOne({
       where: { id },
     });
 
     if (!findControlUser) {
-      throw new HttpException('Control not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Control USER not found', HttpStatus.NOT_FOUND);
     }
 
-    const updatedVideo = await ControlUsersEntity.update(id, {
+    const updatedVideo = await UsersEntity.update(id, {
       full_name: body.full_name || findControlUser.full_name,
-      username: body.username || findControlUser.username,
-      password: body.password || findControlUser.password,
+      username: body.username.trim().toLowerCase() || findControlUser.username,
+      password: body.password.trim() || findControlUser.password,
       role: body.role || findControlUser.role,
     });
 
@@ -170,7 +171,7 @@ export class AuthServise {
   }
 
   async deleteControlUser(id: string) {
-    const findControlUser = await ControlUsersEntity.findOne({
+    const findControlUser = await UsersEntity.findOne({
       where: { id },
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
@@ -180,11 +181,26 @@ export class AuthServise {
       throw new HttpException('Control user not found', HttpStatus.NOT_FOUND);
     }
 
-    await ControlUsersEntity.delete({ id });
+    await UsersEntity.delete({ id });
   }
 
-  sign(id: string, role: string) {
-    return this.jwtServise.sign({ id, role });
+  async validateUser(id: string, pass: string): Promise<any> {
+    console.log('qqqq', id);
+
+    const user = await UsersEntity.findOne({
+      where: { id },
+    }).catch(() => {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    });
+    if (user && user.password === pass) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  sign(id: string, role: string, password: string) {
+    return this.jwtServise.sign({ id, role, password });
   }
 
   async verify(token: string) {
