@@ -31,12 +31,12 @@ export class RolesGuard implements CanActivate {
     const user = this.jwtService.verify(token);
 
     request.userId = user.id;
-    // console.log(request);
+    console.log(user);
 
     try {
       const user = this.jwtService.verify(token);
       request.userId = user.id;
-      return requiredRoles.some((role) => user.roles?.includes(role));
+      return requiredRoles.some((role) => user.role?.includes(role));
     } catch (error) {
       throw new ForbiddenException('Invalid token');
     }

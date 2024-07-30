@@ -18,6 +18,8 @@ import { SubCategoryOrganizationModule } from './module/sub_category_organizatio
 import { SectionModule } from './module/section/section.module';
 import { SavedOrganizationModule } from './module/saved_org/savedorganization.module';
 import { RolesGuard } from './module/auth/guards/roles.guard';
+import { CommentAndRateModule } from './module/comment_and_rate/subcategoryorganization.module';
+import { PictureModule } from './module/picture_org/header_image.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { RolesGuard } from './module/auth/guards/roles.guard';
     SectionModule,
     OrganizationModule,
     SavedOrganizationModule,
+    PictureModule,
+    CommentAndRateModule,
     EntertainmentCategoriesModule,
     EntertainmentsModule,
     CommunalModule,

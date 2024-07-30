@@ -31,7 +31,7 @@ import { RolesEnum } from 'src/types';
 // @ApiTags('role')
 // @ApiBearerAuth('JWT-auth')
 // @UseGuards(RolesGuard)
-@Controller('api/role')
+// @Controller('api/role')
 @Controller('OrganizationCategories')
 @ApiTags('Organization categories')
 @ApiBearerAuth('JWT-auth')

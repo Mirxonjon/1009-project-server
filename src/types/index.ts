@@ -1,6 +1,6 @@
 export interface CustomRequest extends Request {
   userId: string;
-  role: string;
+  // role: string;
 }
 
 export interface CustomHeaders extends Headers {
@@ -8,7 +8,7 @@ export interface CustomHeaders extends Headers {
 }
 
 export enum RolesEnum {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
+  USER = 'user',
+  ADMIN = 'admin',
   SUPERADMIN = 'moderator',
 }

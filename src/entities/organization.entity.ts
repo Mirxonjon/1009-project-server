@@ -123,10 +123,18 @@ export class OrganizationEntity extends BaseEntity {
   bank_account: string;
 
   @Column({
-    type: 'integer',
-    nullable: true,
+    type: 'float',
+    default: 0,
+    nullable : true
   })
   common_rate: number;
+
+  @Column({
+    type: 'integer',
+    default: 0,
+    nullable : true
+  })
+  number_of_raters: number;
 
   @ManyToOne(
     () => Sub_Category_Org_Entity,

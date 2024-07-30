@@ -6,7 +6,6 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { jwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthServise } from './auth.service';
-import { RolesGuard } from './guards/roles.guard';
 dotenv.config();
 
 @Module({

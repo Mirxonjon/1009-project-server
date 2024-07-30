@@ -1,7 +1,6 @@
 import { IsString } from 'class-validator';
 
 export class UpdateOrganizationDto {
-
   @IsString()
   // @IsNotEmpty()
   sub_category_id: string;

@@ -7,7 +7,6 @@ import {
 } from 'class-validator';
 
 export class CreateOrganizationDto {
-
   @IsString()
   // @IsNotEmpty()
   sub_category_id: string;
