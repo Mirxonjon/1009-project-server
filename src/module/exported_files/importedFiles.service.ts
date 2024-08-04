@@ -46,12 +46,12 @@ export class ImportedFilesServise {
             await OrganizationEntity.createQueryBuilder()
               .update(OrganizationEntity)
               .set({
-                title: e[1] || findOrg.title,
+                organization_name: e[1] || findOrg.organization_name,
                 segment: e[3] || findOrg.segment,
                 account: e[4] || findOrg.account,
                 inn: e[5] || findOrg.inn,
                 address: e[7] || findOrg.address,
-                e_mail: e[8] || findOrg.e_mail,
+                email: e[8] || findOrg.email,
               })
               .where('bank_account = :bank_account', { bank_account: e[6] })
               .execute()
@@ -108,13 +108,13 @@ export class ImportedFilesServise {
               .insert()
               .into(OrganizationEntity)
               .values({
-                title: e[1],
+                organization_name: e[1],
                 segment: e[3],
                 account: e[4],
                 inn: e[5],
                 bank_account: e[6],
                 address: e[7],
-                e_mail: e[8],
+                email: e[8],
                 added_by: 'sbs',
               })
               .returning(['id'])

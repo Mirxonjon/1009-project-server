@@ -7,28 +7,32 @@ import {
 } from 'class-validator';
 
 export class CreateOrganizationDto {
+  // @IsString()
+  // // @IsNotEmpty()
+  // sub_category_id: string;
   @IsString()
   // @IsNotEmpty()
   sub_category_id: string;
 
   @IsString()
+  main_organization: string;
+
+  @IsString()
   @IsNotEmpty()
-  title: string;
+  organization_name: string;
 
   @IsString()
   section: string;
 
   @IsString()
-  head_organization: string;
-
-  @IsString()
   manager: string;
 
   @IsString()
-  e_mail: string;
+  @IsNotEmpty()
+  email: string;
 
-  @IsString()
-  index: string;
+  // @IsString()
+  // index: string;
 
   @IsString()
   @IsNotEmpty()
@@ -50,22 +54,27 @@ export class CreateOrganizationDto {
   bank_account: string;
 
   @IsString()
-  more_info: string;
+  @IsNotEmpty()
+  comment: string;
 
   // @IsString()
   // @IsNotEmpty()
   // @IsIn(['ru', 'uz'])
   // language: string;
 
-  work_time: object;
+  // @IsNotEmpty()
+  scheduler: string;
 
   payment_type: string;
 
   transport: string;
 
   location: string;
-  // @IsString()
+
+  @IsNotEmpty()
   pictures: object;
+
   @IsString()
+  @IsNotEmpty()
   phones: string;
 }

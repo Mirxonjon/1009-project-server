@@ -58,51 +58,39 @@ export class OrganizationController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['title'],
+      required: ['organization_name', 'address' , 'e_mail' ,'pictures'],
       properties: {
-        // category_id: {
-        //   type: 'string',
-        //   default: '4141561fds4g964g498e',
-        // },
         sub_category_id: {
           type: 'string',
           default: 'sadf456asdf65asdf564asf',
         },
-        title: {
+        main_organization: {
           type: 'string',
           default: 'title',
-        },
-        section: {
-          type: 'string',
-          default: 'section',
-        },
-        head_organization: {
-          type: 'string',
-          default: 'head_organization',
         },
         manager: {
           type: 'string',
           default: 'manager',
         },
-        e_mail: {
+        section: {
+          type: 'string',
+          default: 'section',
+        },
+        organization_name: {
+          type: 'string',
+          default: 'head_organization',
+        },
+        email: {
           type: 'string',
           default: 'e_mail',
-        },
-        index: {
-          type: 'string',
-          default: 'index',
         },
         address: {
           type: 'string',
           default: 'address',
         },
-        work_time: {
-          type: 'string',
-          default: 'work_time',
-        },
         segment: {
           type: 'string',
-          default: 'segment',
+          default: 'B2B',
         },
         account: {
           type: 'string',
@@ -110,7 +98,7 @@ export class OrganizationController {
         },
         added_by: {
           type: 'string',
-          default: 'added_by',
+          default: 'cc',
         },
         inn: {
           type: 'string',
@@ -120,38 +108,42 @@ export class OrganizationController {
           type: 'string',
           default: 'bank_account',
         },
-        more_info: {
+        comment: {
           type: 'string',
-          default: 'bank_account',
-        },
-        warning: {
-          type: 'string',
-          default: 'Warning text goes here',
+          default: 'comment',
         },
         payment_type: {
           type: 'object',
           default: {
-            location: [{ cash: true, terminal: false, transfer: false }],
+             cash: true, terminal: false, transfer: false ,
+          },
+        },
+        scheduler: {
+          type: 'object',
+          default: {
+                breakfast_from: '08:00',
+                breakfast_to: '08:00',
+                dayoofs: 'Yaksahnba',
+                worktime_from: '18:00',
+                worktime_to: '20:00',
           },
         },
         transport: {
           type: 'object',
           default: {
-            location: [
-              {
+
                 bus: '8',
                 gazelle: '8',
                 metro_station: 'Tinchlik metro',
                 micro_bus: 'Miroavtobus 135',
-              },
-            ],
+         
           },
         },
         location: {
           type: 'object',
           default: {
-            location: [
-              { lon: '+dafijdnhsaifgnasdgvn', lat: 'agfnasdiofgnasdifn' },
+            coordinates: [
+              { lon: 'dafijdnhsaifgnasdgvn', lat: 'agfnasdiofgnasdifn' },
             ],
           },
         },
@@ -190,50 +182,41 @@ export class OrganizationController {
     schema: {
       type: 'object',
       properties: {
-        category_id: {
-          type: 'string',
-          default: '4141561fds4g964g498e',
-        },
+        // category_id: {
+        //   type: 'string',
+        //   default: '4141561fds4g964g498e',
+        // },
         sub_category_id: {
           type: 'string',
           default: 'sadf456asdf65asdf564asf',
         },
-        title: {
+        main_organization: {
           type: 'string',
           default: 'title',
-        },
-        section: {
-          type: 'string',
-          default: 'section',
-        },
-        head_organization: {
-          type: 'string',
-          default: 'head_organization',
         },
         manager: {
           type: 'string',
           default: 'manager',
         },
-        e_mail: {
+        section: {
+          type: 'string',
+          default: 'section',
+        },
+        organization_name: {
+          type: 'string',
+          default: 'head_organization',
+        },
+        email: {
           type: 'string',
           default: 'e_mail',
-        },
-        index: {
-          type: 'string',
-          default: 'index',
         },
         address: {
           type: 'string',
           default: 'address',
         },
-        work_time: {
-          type: 'string',
-          default: 'work_time',
-        },
-
         segment: {
           type: 'string',
-          default: 'segment',
+          default: 'B2B',
         },
         account: {
           type: 'string',
@@ -251,38 +234,42 @@ export class OrganizationController {
           type: 'string',
           default: 'bank_account',
         },
-        more_info: {
+        comment: {
           type: 'string',
           default: 'bank_account',
-        },
-        warning: {
-          type: 'string',
-          default: 'Warning text goes here',
         },
         payment_type: {
           type: 'object',
           default: {
-            location: [{ cash: true, terminal: false, transfer: false }],
+            cash: true, terminal: false, transfer: false ,
+          },
+        },
+        scheduler: {
+          type: 'object',
+          default: {
+                breakfast_from: '08:00',
+                breakfast_to: '08:00',
+                dayoofs: 'Yaksahnba',
+                worktime_from: '18:00',
+                worktime_to: '20:00',
           },
         },
         transport: {
           type: 'object',
           default: {
-            location: [
-              {
+
                 bus: '8',
                 gazelle: '8',
                 metro_station: 'Tinchlik metro',
                 micro_bus: 'Miroavtobus 135',
-              },
-            ],
+         
           },
         },
         location: {
           type: 'object',
           default: {
-            location: [
-              { lon: '+dafijdnhsaifgnasdgvn', lat: 'agfnasdiofgnasdifn' },
+            coordinates: [
+              { lon: 'dafijdnhsaifgnasdgvn', lat: 'agfnasdiofgnasdifn' },
             ],
           },
         },
@@ -299,6 +286,23 @@ export class OrganizationController {
             ],
           },
         },
+        pictures_create: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+
+        pictures_delete: {
+          type: 'object',
+          default: {
+            delete: [
+           'b2d40ef9-cf96-4e89-87a1-5cb63853751f',
+           'b2d40ef9-cf96-4e89-87a1-5cb63853751f'
+            ],
+          },
+        },
       },
     },
   })
@@ -310,8 +314,9 @@ export class OrganizationController {
   async update(
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
-    await this.#_service.update(id, updateOrganizationDto);
+    await this.#_service.update(id, updateOrganizationDto , files);
   }
 
   // @UseGuards(jwtGuard)

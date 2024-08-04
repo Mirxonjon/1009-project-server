@@ -1,27 +1,30 @@
 import { IsString } from 'class-validator';
 
 export class UpdateOrganizationDto {
+   // @IsString()
+  // // @IsNotEmpty()
+  // sub_category_id: string;
   @IsString()
   // @IsNotEmpty()
   sub_category_id: string;
 
   @IsString()
-  title: string;
+  main_organization: string;
+
+  @IsString()
+  organization_name: string;
 
   @IsString()
   section: string;
 
   @IsString()
-  head_organization: string;
-
-  @IsString()
   manager: string;
 
   @IsString()
-  e_mail: string;
+  email: string;
 
-  @IsString()
-  index: string;
+  // @IsString()
+  // index: string;
 
   @IsString()
   address: string;
@@ -42,18 +45,26 @@ export class UpdateOrganizationDto {
   bank_account: string;
 
   @IsString()
-  more_info: string;
+  comment: string;
 
-  work_time: object;
+  // @IsString()
+  // @IsNotEmpty()
+  // @IsIn(['ru', 'uz'])
+  // language: string;
+
+  // @IsNotEmpty()
+  scheduler: string;
 
   payment_type: string;
 
   transport: string;
 
   location: string;
-  // @IsString()
+
   pictures: object;
-  // @IsObject()
+
   @IsString()
   phones: string;
+
+  pictures_delete : string
 }

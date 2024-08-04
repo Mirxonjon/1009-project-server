@@ -89,17 +89,17 @@ export class OrganizationServise {
       .insert()
       .into(OrganizationEntity)
       .values({
-        title: body.title,
+        organization_name: body.organization_name,
         section: body.section,
-        head_organization: body.head_organization,
+        main_organization: body.main_organization,
         manager: body.manager,
-        e_mail: body.e_mail,
-        index: body.index,
+        email: body.email,
+        // index: body.index,
         address: body.address,
-        work_time: body.work_time,
+        scheduler:JSON.parse(body?.scheduler),
         payment_type: JSON.parse(body?.payment_type),
         transport: JSON.parse(body?.transport),
-        more_info: body.more_info,
+        comment: body.comment,
         location: JSON.parse(body?.location),
         segment: body.segment,
         account: body.account,
@@ -161,7 +161,7 @@ export class OrganizationServise {
     }
   }
 
-  async update(id: string, body: UpdateOrganizationDto) {
+  async update(id: string, body: UpdateOrganizationDto ,  pictures: Array<Express.Multer.File>, ) {
     const findOrganization = await OrganizationEntity.findOne({
       where: {
         id: id,
@@ -185,19 +185,18 @@ export class OrganizationServise {
     }
 
     const updatedOrganization = await OrganizationEntity.update(id, {
-      title: body.title || findOrganization.title,
-      section: body.section || findOrganization.head_organization,
-      head_organization:
-        body.head_organization || findOrganization.head_organization,
+      main_organization: body.main_organization || findOrganization.main_organization,
+      section: body.section || findOrganization.section,
+      organization_name:
+        body.organization_name || findOrganization.organization_name,
       manager: body.manager || findOrganization.manager,
-      e_mail: body.e_mail || findOrganization.e_mail,
-      index: body.index || findOrganization.index,
+      email: body.email || findOrganization.email,
       address: body.address || findOrganization.address,
-      work_time: body.work_time || findOrganization.work_time,
+      scheduler: JSON.parse(body?.scheduler) || findOrganization.scheduler,
       payment_type:
         JSON.parse(body?.payment_type) || findOrganization.payment_type,
       transport: JSON.parse(body?.transport) || findOrganization.transport,
-      more_info: body.more_info || findOrganization.more_info,
+      comment: body.comment || findOrganization.comment,
       location: JSON.parse(body?.location) || findOrganization.location,
       segment: body.segment || findOrganization.segment,
       account: body.account || findOrganization.account,
@@ -214,6 +213,7 @@ export class OrganizationServise {
     if (updatedOrganization) {
       console.log(body, body.phones);
       let phones = JSON.parse(body.phones);
+      let pictures_delete = JSON.parse(body.pictures_delete);
       console.log(phones, '111');
 
       // let a =  JSON.parse(phones)
@@ -282,6 +282,32 @@ export class OrganizationServise {
           }
         },
       );
+
+      pictures?.forEach(async (e: Express.Multer.File) => {
+        const formatImage = extname(e?.originalname).toLowerCase();
+        if (allowedImageFormats.includes(formatImage)) {
+          const linkImage: string = await googleCloudAsync(e);
+
+          await Picture_Organization_Entity.createQueryBuilder()
+            .insert()
+            .into(Picture_Organization_Entity)
+            .values({
+              image_link: linkImage,
+              organization_id: {
+                id: findOrganization.id,
+              },
+            })
+            .execute()
+            .catch((e) => {
+              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+            });
+        }
+      });
+
+      pictures_delete.forEach(async e => {
+        await Picture_Organization_Entity.delete({ id: e });
+      })
+      
       return;
     }
   }

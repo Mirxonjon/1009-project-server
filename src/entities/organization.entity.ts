@@ -23,7 +23,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'character varying',
     nullable: true,
   })
-  title: string;
+  organization_name: string;
 
   @Column({
     type: 'character varying',
@@ -35,7 +35,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'character varying',
     nullable: true,
   })
-  head_organization: string;
+  main_organization: string;
 
   @Column({
     type: 'character varying',
@@ -47,13 +47,13 @@ export class OrganizationEntity extends BaseEntity {
     type: 'character varying',
     nullable: true,
   })
-  e_mail: string;
+  email: string;
 
-  @Column({
-    type: 'character varying',
-    nullable: true,
-  })
-  index: string;
+  // @Column({
+  //   type: 'character varying',
+  //   nullable: true,
+  // })
+  // index: string;
 
   @Column({
     type: 'character varying',
@@ -65,7 +65,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  work_time: JSON;
+  scheduler: JSON;
 
   @Column({
     type: 'jsonb',
@@ -83,7 +83,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'character varying',
     nullable: true,
   })
-  more_info: string;
+  comment: string;
 
   @Column({
     type: 'jsonb',
