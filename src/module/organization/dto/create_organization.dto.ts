@@ -71,7 +71,6 @@ export class CreateOrganizationDto {
 
   location: string;
 
-  @IsNotEmpty()
   pictures: object;
 
   @IsString()

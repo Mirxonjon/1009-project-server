@@ -58,7 +58,7 @@ export class OrganizationController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['organization_name', 'address' , 'e_mail' ,'pictures'],
+      required: ['organization_name', 'address' , 'email' ,],
       properties: {
         sub_category_id: {
           type: 'string',
@@ -172,6 +172,8 @@ export class OrganizationController {
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
+    console.log(files,'oookkk');
+    
     return await this.#_service.create(createOrganizationDto, files);
   }
 

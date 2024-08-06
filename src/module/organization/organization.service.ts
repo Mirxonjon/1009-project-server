@@ -167,6 +167,8 @@ export class OrganizationServise {
         id: id,
       },
     }).catch((e) => {
+      console.log(e);
+      
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
@@ -207,6 +209,8 @@ export class OrganizationServise {
         id: findSubCategory?.id || null,
       },
     }).catch((e) => {
+      console.log(e);
+      
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
@@ -299,15 +303,19 @@ export class OrganizationServise {
             })
             .execute()
             .catch((e) => {
+              console.log(e);
+              
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
         }
       });
+      console.log(pictures_delete,'pic');
+      
 
-      pictures_delete.forEach(async e => {
+      pictures_delete?.delete?.forEach(async e => {
         await Picture_Organization_Entity.delete({ id: e });
       })
-      
+
       return;
     }
   }

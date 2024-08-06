@@ -4,11 +4,8 @@ import { CreateUserDto } from './dto/create_user.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { SingInUserDto } from './dto/sign_in-user.dto';
 // import { ControlUsersEntity } from 'src/entities/control_users.entity';
-import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
-import {
-  ControlUserDto,
-  CreateControlUserDto,
-} from './dto/create_controlUser.dto';
+
+// import { UpdateUserDto } from '../users/dto/update_book.dto';
 
 @Injectable()
 export class AuthServise {
@@ -34,12 +31,11 @@ export class AuthServise {
         full_name: createUser.full_name,
         phone: createUser.number,
         password: createUser.password,
+        role: createUser.role
       })
       .returning(['id', 'role', 'password'])
       .execute()
       .catch((e) => {
-        console.log(e);
-
         throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
       });
 
@@ -52,6 +48,7 @@ export class AuthServise {
       ),
     };
   }
+
   async signIn(signInDto: SingInUserDto) {
     const finduser = await UsersEntity.findOne({
       where: {
@@ -59,7 +56,7 @@ export class AuthServise {
         password: signInDto.password,
       },
     }).catch((e) => {
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     });
 
     if (!finduser) {
@@ -71,40 +68,40 @@ export class AuthServise {
     };
   }
 
-  async signInControlUser(body: ControlUserDto) {
-    const finduser = await UsersEntity.findOne({
-      where: {
-        username: body.username.trim().toLowerCase(),
-        password: body.password.trim(),
-      },
-    }).catch((e) => {
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-    });
+  // async signInControlUser(body: ControlUserDto) {
+  //   const finduser = await UsersEntity.findOne({
+  //     where: {
+  //       username: body.username.trim().toLowerCase(),
+  //       password: body.password.trim(),
+  //     },
+  //   }).catch((e) => {
+  //     throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+  //   });
 
-    if (!finduser) {
-      throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
-    }
-    return {
-      message: 'successfully sing In',
-      token: this.sign(finduser.id, finduser.role, finduser.password),
-    };
-  }
+  //   if (!finduser) {
+  //     throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
+  //   }
+  //   return {
+  //     message: 'successfully sing In',
+  //     token: this.sign(finduser.id, finduser.role, finduser.password),
+  //   };
+  // }
 
-  async getSearchControlUsername(username: string) {
-    const finduser = await UsersEntity.findOne({
-      where: {
-        username: username.trim().toLowerCase(),
-      },
-    }).catch(() => {
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-    });
+  // async getSearchControlUsername(username: string) {
+  //   const finduser = await UsersEntity.findOne({
+  //     where: {
+  //       username: username.trim().toLowerCase(),
+  //     },
+  //   }).catch(() => {
+  //     throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+  //   });
 
-    if (finduser) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  //   if (finduser) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   async getAllControlUsers(role: string) {
     const findControlUser = await UsersEntity.find({
@@ -121,56 +118,55 @@ export class AuthServise {
     return findControlUser;
   }
 
-  async createControlUser(body: CreateControlUserDto) {
-    const findControlUser = await UsersEntity.findOne({
-      where: {
-        username: body.username.toLowerCase(),
-      },
-    }).catch((e) => {
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-    });
+  // async createControlUser(body: CreateControlUserDto) {
+  //   const findControlUser = await UsersEntity.findOne({
+  //     where: {
+  //       username: body.username.toLowerCase(),
+  //     },
+  //   }).catch((e) => {
+  //     throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+  //   });
 
-    if (findControlUser) {
-      throw new HttpException('username alredy exist', HttpStatus.FOUND);
-    }
+  //   if (findControlUser) {
+  //     throw new HttpException('username alredy exist', HttpStatus.FOUND);
+  //   }
 
-    await UsersEntity.createQueryBuilder()
-      .insert()
-      .into(UsersEntity)
-      .values({
-        full_name: body.full_name,
-        username: body.username.trim().toLowerCase(),
-        password: body.password.trim(),
-        role: body.role.toLowerCase(),
-      })
-      .execute()
-      .catch((e) => {
-        console.log(e);
+  //   await UsersEntity.createQueryBuilder()
+  //     .insert()
+  //     .into(UsersEntity)
+  //     .values({
+  //       full_name: body.full_name,
+  //       username: body.username.trim().toLowerCase(),
+  //       password: body.password.trim(),
+  //       role: body.role.toLowerCase(),
+  //     })
+  //     .execute()
+  //     .catch((e) => {
+  //       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+  //     });
+  // }
 
-        throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-      });
-  }
+  // async updateUser(id: string, body: UpdateUserDto) {
+  //   const findControlUser = await UsersEntity.findOne({
+  //     where: { id },
+  //   });
 
-  async updateControlUser(id: string, body: UpdateControlUserDto) {
-    const findControlUser = await UsersEntity.findOne({
-      where: { id },
-    });
+  //   if (!findControlUser) {
+  //     throw new HttpException(' USER not found', HttpStatus.NOT_FOUND);
+  //   }
 
-    if (!findControlUser) {
-      throw new HttpException('Control USER not found', HttpStatus.NOT_FOUND);
-    }
+  //   const updatedVideo = await UsersEntity.update(id, {
+  //     full_name: body.full_name || findControlUser.full_name,
+  //     username: body.username.trim().toLowerCase() || findControlUser.username,
+  //     password: body.password.trim() || findControlUser.password,
+  //     phone: body
+  //     role: body.role || findControlUser.role,
+  //   });
 
-    const updatedVideo = await UsersEntity.update(id, {
-      full_name: body.full_name || findControlUser.full_name,
-      username: body.username.trim().toLowerCase() || findControlUser.username,
-      password: body.password.trim() || findControlUser.password,
-      role: body.role || findControlUser.role,
-    });
+  //   return updatedVideo;
+  // }
 
-    return updatedVideo;
-  }
-
-  async deleteControlUser(id: string) {
+  async deleteUser(id: string) {
     const findControlUser = await UsersEntity.findOne({
       where: { id },
     }).catch(() => {
@@ -178,7 +174,7 @@ export class AuthServise {
     });
 
     if (!findControlUser) {
-      throw new HttpException('Control user not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     await UsersEntity.delete({ id });

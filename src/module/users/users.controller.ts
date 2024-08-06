@@ -25,10 +25,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UsersServise } from './users.service';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { UpdateUserDto } from './dto/update_book.dto';
-import { jwtGuard } from '../auth/guards/jwt.guard';
-import { AddAdminDto } from './dto/add-admin.dto';
 @Controller('Users')
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')

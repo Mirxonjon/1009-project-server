@@ -1,8 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { extname } from 'path';
-import { deleteFileCloud, googleCloud } from 'src/utils/google_cloud';
-import { UpdateUserDto } from './dto/update_book.dto';
-import { allowedImageFormats } from 'src/utils/videoAndImageFormat';
 import { UsersEntity } from 'src/entities/users.entity';
 import { AddAdminDto } from './dto/add-admin.dto';
 import { AuthServise } from '../auth/auth.service';

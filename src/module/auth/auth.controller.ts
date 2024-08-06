@@ -22,11 +22,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
-import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
-import {
-  ControlUserDto,
-  CreateControlUserDto,
-} from './dto/create_controlUser.dto';
+// import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
+// import {
+//   ControlUserDto,
+//   CreateControlUserDto,
+// } from './dto/create_controlUser.dto';
 
 @Controller('Auth')
 @ApiTags('Auth')
@@ -44,6 +44,10 @@ export class AuthController {
           type: 'string',
           default: `Eshmat Eshmatov Eshmat o'g'li`,
         },
+        role: {
+              type: 'string',
+              default: 'moderator',
+           },
         number: {
           type: 'string',
           default: '+998933843484',
@@ -59,7 +63,8 @@ export class AuthController {
     return this.service.createUser(body);
   }
 
-  @Post('user/signIn')
+
+  @Post('user/sign-in')
   @HttpCode(HttpStatus.OK)
   @ApiBody({
     schema: {
@@ -81,23 +86,23 @@ export class AuthController {
     return this.service.signIn(body);
   }
 
-  @Get('addControlUser/all')
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  @ApiOperation({ summary: 'write role or null' })
-  async findall(@Query('role') role: string) {
-    return await this.service.getAllControlUsers(role);
-  }
+  // @Get('')
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // @ApiOperation({ summary: 'write role or null' })
+  // async findall(@Query('role') role: string) {
+  //   return await this.service.getAllControlUsers(role);
+  // }
 
-  @Get('addControlUser/search')
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  @ApiOperation({ summary: 'api for search username' })
-  async findusername(@Query('username') username: string) {
-    return await this.service.getSearchControlUsername(username);
-  }
+  // @Get('addControlUser/search')
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // @ApiOperation({ summary: 'api for search username' })
+  // async findusername(@Query('username') username: string) {
+  //   return await this.service.getSearchControlUsername(username);
+  // }
 
   // @Post('ControlUser/signIn')
   // @HttpCode(HttpStatus.OK)
@@ -122,77 +127,77 @@ export class AuthController {
   //   return this.service.signInControlUser(body);
   // }
 
-  @Post('/addControlUser')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['full_name', 'number', 'password'],
-      properties: {
-        full_name: {
-          type: 'string',
-          default: `Eshmat Eshmatov Eshmat o'g'li`,
-        },
-        role: {
-          type: 'string',
-          default: 'moderator',
-        },
-        username: {
-          type: 'string',
-          default: 'Moderator',
-        },
-        password: {
-          type: 'string',
-          default: '123',
-        },
-      },
-    },
-  })
-  createControlUser(@Body() createControlUserDto: CreateControlUserDto) {
-    return this.service.createControlUser(createControlUserDto);
-  }
+  // @Post('/addControlUser')
+  // @HttpCode(HttpStatus.CREATED)
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     required: ['full_name', 'number', 'password'],
+  //     properties: {
+  //       full_name: {
+  //         type: 'string',
+  //         default: `Eshmat Eshmatov Eshmat o'g'li`,
+  //       },
+  //       role: {
+  //         type: 'string',
+  //         default: 'moderator',
+  //       },
+  //       username: {
+  //         type: 'string',
+  //         default: 'Moderator',
+  //       },
+  //       password: {
+  //         type: 'string',
+  //         default: '123',
+  //       },
+  //     },
+  //   },
+  // })
+  // createControlUser(@Body() createControlUserDto: CreateControlUserDto) {
+  //   return this.service.createControlUser(createControlUserDto);
+  // }
 
-  @Patch('/updateControlUser/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        full_name: {
-          type: 'string',
-          default: `Eshmat Eshmatov Eshmat o'g'li`,
-        },
-        role: {
-          type: 'string',
-          default: 'moderator',
-        },
-        username: {
-          type: 'string',
-          default: 'Moderator',
-        },
-        password: {
-          type: 'string',
-          default: '123',
-        },
-      },
-    },
-  })
-  // @ApiOperation({ summary: 'Attendance Punch In' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  async updateControlUser(
-    @Param('id') id: string,
-    @Body() updateControlUserDto: UpdateControlUserDto,
-  ) {
-    await this.service.updateControlUser(id, updateControlUserDto);
-  }
+  // @Patch('/updateControlUser/:id')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       full_name: {
+  //         type: 'string',
+  //         default: `Eshmat Eshmatov Eshmat o'g'li`,
+  //       },
+  //       role: {
+  //         type: 'string',
+  //         default: 'moderator',
+  //       },
+  //       username: {
+  //         type: 'string',
+  //         default: 'Moderator',
+  //       },
+  //       password: {
+  //         type: 'string',
+  //         default: '123',
+  //       },
+  //     },
+  //   },
+  // })
+  // // @ApiOperation({ summary: 'Attendance Punch In' })
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // async updateControlUser(
+  //   @Param('id') id: string,
+  //   @Body() updateControlUserDto: UpdateControlUserDto,
+  // ) {
+  //   await this.service.updateControlUser(id, updateControlUserDto);
+  // }
 
-  @Delete('/deleteControlUser/:id')
+  @Delete('user/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
-  async deleteControlUser(@Param('id') id: string): Promise<void> {
-    await this.service.deleteControlUser(id);
+  async deleteUser(@Param('id') id: string): Promise<void> {
+    await this.service.deleteUser(id);
   }
 }
