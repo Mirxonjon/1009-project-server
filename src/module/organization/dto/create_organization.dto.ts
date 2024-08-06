@@ -10,11 +10,11 @@ export class CreateOrganizationDto {
   // @IsString()
   // // @IsNotEmpty()
   // sub_category_id: string;
-  @IsString()
+  // @IsString()
   // @IsNotEmpty()
   sub_category_id: string;
 
-  @IsString()
+  // @IsString()
   main_organization: string;
 
   @IsString()
@@ -24,7 +24,7 @@ export class CreateOrganizationDto {
   @IsString()
   section: string;
 
-  @IsString()
+  // @IsString()
   manager: string;
 
   @IsString()
@@ -38,19 +38,19 @@ export class CreateOrganizationDto {
   @IsNotEmpty()
   address: string;
 
-  @IsString()
+  // @IsString()
   segment: string;
 
-  @IsString()
+  // @IsString()
   account: string;
 
-  @IsString()
+  // @IsString()
   added_by: string;
 
-  @IsString()
+  // @IsString()
   inn: string;
 
-  @IsString()
+  // @IsString()
   bank_account: string;
 
   @IsString()
@@ -63,17 +63,17 @@ export class CreateOrganizationDto {
   // language: string;
 
   // @IsNotEmpty()
-  scheduler: string;
+  scheduler: object;
 
-  payment_type: string;
+  payment_type: object;
 
-  transport: string;
+  transport: object;
 
-  location: string;
+  location: object;
 
   pictures: object;
 
-  @IsString()
+  // @IsString()
   @IsNotEmpty()
-  phones: string;
+  phones: object;
 }

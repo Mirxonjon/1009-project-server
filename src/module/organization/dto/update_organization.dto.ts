@@ -4,47 +4,47 @@ export class UpdateOrganizationDto {
    // @IsString()
   // // @IsNotEmpty()
   // sub_category_id: string;
-  @IsString()
+  // @IsString()
   // @IsNotEmpty()
   sub_category_id: string;
 
-  @IsString()
+  // @IsString()
   main_organization: string;
 
-  @IsString()
+  // @IsString()
   organization_name: string;
 
-  @IsString()
+  // @IsString()
   section: string;
 
-  @IsString()
+  // @IsString()
   manager: string;
 
-  @IsString()
+  // @IsString()
   email: string;
 
   // @IsString()
   // index: string;
 
-  @IsString()
+  // @IsString()
   address: string;
 
-  @IsString()
+  // @IsString()
   segment: string;
 
-  @IsString()
+  // @IsString()
   account: string;
 
-  @IsString()
+  // @IsString()
   added_by: string;
 
-  @IsString()
+  // @IsString()
   inn: string;
 
-  @IsString()
+  // @IsString()/
   bank_account: string;
 
-  @IsString()
+  // @IsString()
   comment: string;
 
   // @IsString()
@@ -53,18 +53,18 @@ export class UpdateOrganizationDto {
   // language: string;
 
   // @IsNotEmpty()
-  scheduler: string;
+  scheduler: object;
 
-  payment_type: string;
+  payment_type: object;
 
-  transport: string;
+  transport: object;
 
-  location: string;
+  location: object;
 
   pictures: object;
 
-  @IsString()
-  phones: string;
+  // @IsString()
+  phones: object;
 
-  pictures_delete : string
+  pictures_delete : object
 }

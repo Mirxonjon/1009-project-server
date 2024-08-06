@@ -96,11 +96,11 @@ export class OrganizationServise {
         email: body.email,
         // index: body.index,
         address: body.address,
-        scheduler:JSON.parse(body?.scheduler),
-        payment_type: JSON.parse(body?.payment_type),
-        transport: JSON.parse(body?.transport),
+        scheduler:JSON.parse(body?.scheduler as any) ,
+        payment_type: JSON.parse(body?.payment_type as any),
+        transport: JSON.parse(body?.transport as any),
         comment: body.comment,
-        location: JSON.parse(body?.location),
+        location: JSON.parse(body?.location as any),
         segment: body.segment,
         account: body.account,
         added_by: body.added_by,
@@ -115,7 +115,7 @@ export class OrganizationServise {
         throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
       });
     if (createdOrg) {
-      let phones = JSON.parse(body?.phones);
+      let phones = JSON.parse(body?.phones as any);
 
       phones?.numbers?.forEach(
         async (e: { number: string; type_number: string }) => {
@@ -194,12 +194,12 @@ export class OrganizationServise {
       manager: body.manager || findOrganization.manager,
       email: body.email || findOrganization.email,
       address: body.address || findOrganization.address,
-      scheduler: JSON.parse(body?.scheduler) || findOrganization.scheduler,
+      scheduler: JSON.parse(body?.scheduler as any) || findOrganization.scheduler,
       payment_type:
-        JSON.parse(body?.payment_type) || findOrganization.payment_type,
-      transport: JSON.parse(body?.transport) || findOrganization.transport,
+        JSON.parse(body?.payment_type as any) || findOrganization.payment_type,
+      transport: JSON.parse(body?.transport as any) || findOrganization.transport,
       comment: body.comment || findOrganization.comment,
-      location: JSON.parse(body?.location) || findOrganization.location,
+      location: JSON.parse(body?.location as any) || findOrganization.location,
       segment: body.segment || findOrganization.segment,
       account: body.account || findOrganization.account,
       added_by: body.added_by || findOrganization.added_by,
@@ -216,8 +216,8 @@ export class OrganizationServise {
 
     if (updatedOrganization) {
       console.log(body, body.phones);
-      let phones = JSON.parse(body.phones);
-      let pictures_delete = JSON.parse(body.pictures_delete);
+      let phones = JSON.parse(body.phones as any);
+      let pictures_delete = JSON.parse(body.pictures_delete as any);
       console.log(phones, '111');
 
       // let a =  JSON.parse(phones)
