@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -169,9 +170,12 @@ export class OrganizationController {
   @ApiNotFoundResponse()
   @UseInterceptors(AnyFilesInterceptor())
   async create(
+    @Req() req : Request,
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
+    console.log(req);
+    
     // console.log(files,'oookkk');
     
     return await this.#_service.create(createOrganizationDto, files);
