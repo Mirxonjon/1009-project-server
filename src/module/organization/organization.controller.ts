@@ -154,13 +154,13 @@ export class OrganizationController {
             numbers: [{ number: '+998933843484', type_number: 'mobile' }],
           },
         },
-        pictures: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'binary',
-          },
-        },
+        // pictures: {
+        //   type: 'array',
+        //   items: {
+        //     type: 'string',
+        //     format: 'binary',
+        //   },
+        // },
       },
     },
   })
@@ -168,17 +168,17 @@ export class OrganizationController {
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  @UseInterceptors(AnyFilesInterceptor())
+  // @UseInterceptors(AnyFilesInterceptor())
   async create(
     @Req() req : Request,
     @Body() createOrganizationDto: CreateOrganizationDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    // @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
     console.log(req);
     
     // console.log(files,'oookkk');
     
-    return await this.#_service.create(createOrganizationDto, files);
+    return await this.#_service.create(createOrganizationDto);
   }
 
   // @UseGuards(jwtGuard)

@@ -53,10 +53,10 @@ export class OrganizationServise {
 
   async create(
     body: CreateOrganizationDto,
-    pictures: Array<Express.Multer.File>,
+    // pictures: Array<Express.Multer.File>,
   ) {
     console.log(body, 'body');
-    console.log(pictures, 'picture');
+    // console.log(pictures, 'picture');
 
     // let findCategory = null
 
@@ -139,29 +139,29 @@ export class OrganizationServise {
         },
       );
 
-      if(false){
-        pictures?.forEach(async (e: Express.Multer.File) => {
-          const formatImage = extname(e?.originalname).toLowerCase();
-          if (allowedImageFormats.includes(formatImage)) {
-            const linkImage: string = await googleCloudAsync(e);
+      // if(false){
+      //   pictures?.forEach(async (e: Express.Multer.File) => {
+      //     const formatImage = extname(e?.originalname).toLowerCase();
+      //     if (allowedImageFormats.includes(formatImage)) {
+      //       const linkImage: string = await googleCloudAsync(e);
   
-            await Picture_Organization_Entity.createQueryBuilder()
-              .insert()
-              .into(Picture_Organization_Entity)
-              .values({
-                image_link: linkImage,
-                organization_id: {
-                  id: createdOrg.raw[0].id,
-                },
-              })
-              .execute()
-              .catch((e) => {
-                console.log(e,'create picture');
-                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-              });
-          }
-        });
-      }
+      //       await Picture_Organization_Entity.createQueryBuilder()
+      //         .insert()
+      //         .into(Picture_Organization_Entity)
+      //         .values({
+      //           image_link: linkImage,
+      //           organization_id: {
+      //             id: createdOrg.raw[0].id,
+      //           },
+      //         })
+      //         .execute()
+      //         .catch((e) => {
+      //           console.log(e,'create picture');
+      //           throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      //         });
+      //     }
+      //   });
+      // }
 
     
 
