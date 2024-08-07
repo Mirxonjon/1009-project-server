@@ -55,7 +55,7 @@ export class OrganizationServise {
     body: CreateOrganizationDto,
     // pictures: Array<Express.Multer.File>,
   ) {
-    console.log(body, 'body');
+    console.log(body, 'BODY');
     // console.log(pictures, 'picture');
 
     // let findCategory = null
@@ -74,17 +74,22 @@ export class OrganizationServise {
 
     let findSubCategory = null;
 
+    console.log(body.sub_category_id, 'BODY SUB CATEG OUT')
+
     if (body.sub_category_id != 'null') {
+      console.log(body.sub_category_id, 'BODY SUB CATEG IN')
       findSubCategory = await Sub_Category_Org_Entity.findOne({
         where: {
           id: body.sub_category_id,
         },
       }).catch((e) => {
-        console.log(e,'subcategory');
+        console.log(e,': SUB CATEGORY');
 
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
     }
+
+    console.log(findSubCategory, 'FIND BY CATEGORY')
 
     const createdOrg = await OrganizationEntity.createQueryBuilder()
       .insert()
@@ -113,10 +118,13 @@ export class OrganizationServise {
       })
       .execute()
       .catch((e) => {
-        console.log(e,'create create');
+        console.log(e,': CREATE ERROR');
         throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
       });
+
+      console.log(createdOrg, 'CREATE ORG OUT')
     if (createdOrg) {
+      console.log(createdOrg, 'CREATE ORG IN')
       let phones = body?.phones as any;
 
       phones?.numbers?.forEach(
@@ -133,7 +141,7 @@ export class OrganizationServise {
             })
             .execute()
             .catch((e) => {
-              console.log(e,'phone create');
+              console.log(e,': PHONE CREATE');
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
         },
