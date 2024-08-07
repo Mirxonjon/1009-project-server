@@ -55,7 +55,8 @@ export class OrganizationServise {
     body: CreateOrganizationDto,
     pictures: Array<Express.Multer.File>,
   ) {
-    console.log(body);
+    console.log(body, 'body');
+    console.log(pictures, 'picture');
 
     // let findCategory = null
 
@@ -79,7 +80,7 @@ export class OrganizationServise {
           id: body.sub_category_id,
         },
       }).catch((e) => {
-        console.log(e);
+        console.log(e,'subcategory');
 
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
@@ -111,11 +112,12 @@ export class OrganizationServise {
         },
       })
       .execute()
-      .catch(() => {
-        throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+      .catch((e) => {
+        console.log(e,'create create');
+        throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
       });
     if (createdOrg) {
-      let phones = JSON.parse(body?.phones as any);
+      let phones = body?.phones as any;
 
       phones?.numbers?.forEach(
         async (e: { number: string; type_number: string }) => {
@@ -131,6 +133,7 @@ export class OrganizationServise {
             })
             .execute()
             .catch((e) => {
+              console.log(e,'phone create');
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
         },
@@ -152,6 +155,7 @@ export class OrganizationServise {
             })
             .execute()
             .catch((e) => {
+              console.log(e,'create picture');
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
         }

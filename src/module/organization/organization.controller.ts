@@ -172,7 +172,7 @@ export class OrganizationController {
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
-    console.log(files,'oookkk');
+    // console.log(files,'oookkk');
     
     return await this.#_service.create(createOrganizationDto, files);
   }
