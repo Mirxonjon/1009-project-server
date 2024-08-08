@@ -53,10 +53,10 @@ export class OrganizationServise {
 
   async create(
     body: CreateOrganizationDto,
-    // pictures: Array<Express.Multer.File>,
+    pictures: Array<Express.Multer.File>,
   ) {
     console.log(body, 'BODY');
-    // console.log(pictures, 'picture');
+    console.log(pictures, 'picture');
 
     // let findCategory = null
 
@@ -90,7 +90,7 @@ export class OrganizationServise {
     }
 
     console.log(findSubCategory, 'FIND BY CATEGORY')
-
+ 
     const createdOrg = await OrganizationEntity.createQueryBuilder()
       .insert()
       .into(OrganizationEntity)
@@ -102,11 +102,11 @@ export class OrganizationServise {
         email: body.email,
         // index: body.index,
         address: body.address,
-        scheduler:JSON.parse(body?.scheduler as any) ,
-        payment_type: JSON.parse(body?.payment_type as any),
-        transport: JSON.parse(body?.transport as any),
+        scheduler: JSON.stringify(body?.scheduler as any),
+        payment_type: JSON.stringify(body?.payment_type as any),
+        transport: JSON.stringify(body?.transport as any),
         comment: body.comment,
-        location: JSON.parse(body?.location as any),
+        location: JSON.stringify(body?.location as any),
         segment: body.segment,
         account: body.account,
         added_by: body.added_by,
@@ -123,58 +123,55 @@ export class OrganizationServise {
       });
 
       console.log(createdOrg, 'CREATE ORG OUT')
-    if (createdOrg) {
-      console.log(createdOrg, 'CREATE ORG IN')
-      let phones = body?.phones as any;
-
-      phones?.numbers?.forEach(
-        async (e: { number: string; type_number: string }) => {
-          await Phone_Organization_Entity.createQueryBuilder()
-            .insert()
-            .into(Phone_Organization_Entity)
-            .values({
-              number: e.number,
-              type_number: e.type_number,
-              organization: {
-                id: createdOrg.raw[0].id,
-              },
-            })
-            .execute()
-            .catch((e) => {
-              console.log(e,': PHONE CREATE');
-              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-            });
-        },
-      );
-
-      // if(false){
-      //   pictures?.forEach(async (e: Express.Multer.File) => {
-      //     const formatImage = extname(e?.originalname).toLowerCase();
-      //     if (allowedImageFormats.includes(formatImage)) {
-      //       const linkImage: string = await googleCloudAsync(e);
+      if (createdOrg) {
+        console.log(createdOrg, 'CREATE ORG IN')
+        let phones = body?.phones as any;
   
-      //       await Picture_Organization_Entity.createQueryBuilder()
-      //         .insert()
-      //         .into(Picture_Organization_Entity)
-      //         .values({
-      //           image_link: linkImage,
-      //           organization_id: {
-      //             id: createdOrg.raw[0].id,
-      //           },
-      //         })
-      //         .execute()
-      //         .catch((e) => {
-      //           console.log(e,'create picture');
-      //           throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      //         });
-      //     }
-      //   });
-      // }
-
+        phones?.numbers?.forEach(
+          async (e: { number: string; type_number: string }) => {
+            await Phone_Organization_Entity.createQueryBuilder()
+              .insert()
+              .into(Phone_Organization_Entity)
+              .values({
+                number: e.number,
+                type_number: e.type_number,
+                organization: {
+                  id: createdOrg.raw[0].id,
+                },
+              })
+              .execute()
+              .catch((e) => {
+                console.log(e,': PHONE CREATE');
+                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+              });
+          },
+        );
+  
+      
+          pictures?.forEach(async (e: Express.Multer.File) => {
+            const formatImage = extname(e?.originalname).toLowerCase();
+            if (allowedImageFormats.includes(formatImage)) {
+              const linkImage: string = await googleCloudAsync(e);
     
-
-      return;
-    }
+              await Picture_Organization_Entity.createQueryBuilder()
+                .insert()
+                .into(Picture_Organization_Entity)
+                .values({
+                  image_link: linkImage,
+                  organization_id: {
+                    id: createdOrg.raw[0].id,
+                  },
+                })
+                .execute()
+                .catch((e) => {
+                  console.log(e,'create picture');
+                  throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+                });
+            }
+          });
+        
+      }
+      
   }
 
   async update(id: string, body: UpdateOrganizationDto ,  pictures: Array<Express.Multer.File>, ) {

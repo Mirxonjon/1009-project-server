@@ -164,21 +164,21 @@ export class OrganizationController {
       },
     },
   })
-  // @ApiConsumes('multipart/form-data')
+  @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  // @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(AnyFilesInterceptor())
   async create(
     @Req() req : Request,
     @Body() createOrganizationDto: CreateOrganizationDto,
-    // @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
     console.log(req, "REQ");
     
-    // console.log(files,'oookkk');
+    console.log(files,'oookkk');
     
-    return await this.#_service.create(createOrganizationDto);
+    return await this.#_service.create(createOrganizationDto, files);
   }
 
   // @UseGuards(jwtGuard)

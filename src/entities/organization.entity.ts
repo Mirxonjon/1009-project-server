@@ -49,12 +49,6 @@ export class OrganizationEntity extends BaseEntity {
   })
   email: string;
 
-  // @Column({
-  //   type: 'character varying',
-  //   nullable: true,
-  // })
-  // index: string;
-
   @Column({
     type: 'character varying',
     nullable: true,
@@ -65,19 +59,19 @@ export class OrganizationEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  scheduler: JSON;
+  scheduler: string;
 
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  payment_type: JSON;
+  payment_type: string;
 
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  transport: JSON;
+  transport: string;
 
   @Column({
     type: 'character varying',
@@ -89,7 +83,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  location: JSON;
+  location: string;
 
   @Column({
     type: 'character varying',
