@@ -17,6 +17,7 @@ export class OrganizationServise {
       relations: {
         phones: true,
         pictures: true,
+        sub_category_org: true
       },
       order: {
         create_data: 'asc',
