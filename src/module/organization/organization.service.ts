@@ -83,14 +83,14 @@ export class OrganizationServise {
           id: body.sub_category_id,
         },
       }).catch((e) => {
-        console.log(e,': SUB CATEGORY');
+        console.log(e, ': SUB CATEGORY');
 
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
     }
 
     console.log(findSubCategory, 'FIND BY CATEGORY')
- 
+
     const createdOrg = await OrganizationEntity.createQueryBuilder()
       .insert()
       .into(OrganizationEntity)
@@ -118,70 +118,74 @@ export class OrganizationServise {
       })
       .execute()
       .catch((e) => {
-        console.log(e,': CREATE ERROR');
+        console.log(e, ': CREATE ERROR');
         throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
       });
 
-      console.log(createdOrg, 'CREATE ORG OUT')
-      if (createdOrg) {
-        console.log(createdOrg, 'CREATE ORG IN')
-        let phones = body?.phones as any;
-  
-        phones?.numbers?.forEach(
-          async (e: { number: string; type_number: string }) => {
-            await Phone_Organization_Entity.createQueryBuilder()
-              .insert()
-              .into(Phone_Organization_Entity)
-              .values({
-                number: e.number,
-                type_number: e.type_number,
-                organization: {
-                  id: createdOrg.raw[0].id,
-                },
-              })
-              .execute()
-              .catch((e) => {
-                console.log(e,': PHONE CREATE');
-                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-              });
-          },
-        );
-  
-      
-          pictures?.forEach(async (e: Express.Multer.File) => {
-            const formatImage = extname(e?.originalname).toLowerCase();
-            if (allowedImageFormats.includes(formatImage)) {
-              const linkImage: string = await googleCloudAsync(e);
-    
-              await Picture_Organization_Entity.createQueryBuilder()
-                .insert()
-                .into(Picture_Organization_Entity)
-                .values({
-                  image_link: linkImage,
-                  organization_id: {
-                    id: createdOrg.raw[0].id,
-                  },
-                })
-                .execute()
-                .catch((e) => {
-                  console.log(e,'create picture');
-                  throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-                });
-            }
-          });
-        
-      }
-      
+    console.log(createdOrg, 'CREATE ORG OUT')
+    if (createdOrg) {
+      console.log(createdOrg, 'CREATE ORG IN')
+      let phones = body?.phones as any;
+
+      console.log(phones, 'PHONES in IF')
+
+      phones?.numbers?.forEach(
+        async (e: { number: string; type_number: string }) => {
+          await Phone_Organization_Entity.createQueryBuilder()
+            .insert()
+            .into(Phone_Organization_Entity)
+            .values({
+              number: e.number,
+              type_number: e.type_number,
+              organization: {
+                id: createdOrg.raw[0].id,
+              },
+            })
+            .execute()
+            .catch((e) => {
+              console.log(e, ': PHONE CREATE');
+              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+            });
+        },
+      );
+
+      console.log(phones, 'AFTER INSERT PHONES')
+
+      pictures?.forEach(async (e: Express.Multer.File) => {
+        const formatImage = extname(e?.originalname).toLowerCase();
+        if (allowedImageFormats.includes(formatImage)) {
+          const linkImage: string = await googleCloudAsync(e);
+
+          await Picture_Organization_Entity.createQueryBuilder()
+            .insert()
+            .into(Picture_Organization_Entity)
+            .values({
+              image_link: linkImage,
+              organization_id: {
+                id: createdOrg.raw[0].id,
+              },
+            })
+            .execute()
+            .catch((e) => {
+              console.log(e, 'create picture');
+              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+            });
+        }
+      });
+
+      console.log(phones, 'AFTER INSERT FILES')
+    }
+
   }
 
-  async update(id: string, body: UpdateOrganizationDto ,  pictures: Array<Express.Multer.File>, ) {
+  async update(id: string, body: UpdateOrganizationDto, pictures: Array<Express.Multer.File>,) {
     const findOrganization = await OrganizationEntity.findOne({
       where: {
         id: id,
       },
     }).catch((e) => {
       console.log(e);
-      
+
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
@@ -223,7 +227,7 @@ export class OrganizationServise {
       },
     }).catch((e) => {
       console.log(e);
-      
+
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
@@ -317,13 +321,13 @@ export class OrganizationServise {
             .execute()
             .catch((e) => {
               console.log(e);
-              
+
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
         }
       });
-      console.log(pictures_delete,'pic');
-      
+      console.log(pictures_delete, 'pic');
+
 
       pictures_delete?.delete?.forEach(async e => {
         await Picture_Organization_Entity.delete({ id: e });
