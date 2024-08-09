@@ -42,7 +42,6 @@ export class OrganizationCategoriesController {
   }
 
   @Get('/all')
-  @RequiredRoles(RolesEnum.SUPERADMIN)
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
