@@ -5,7 +5,7 @@ import { UpdateSavedOrganizationDto } from './dto/update_savedorganization.dto';
 
 import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
 import { Category_Organization_Entity } from 'src/entities/category_org.entity';
-import { CustomHeaders } from 'src/types';
+import { CustomHeaders, UserType } from 'src/types';
 import { AuthServise } from '../auth/auth.service';
 import { Saved_Organization_Entity } from 'src/entities/saved_org.entity';
 import { UsersEntity } from 'src/entities/users.entity';
@@ -17,48 +17,41 @@ export class SavedOrganizationServise {
   constructor(auth: AuthServise) {
     this.#_auth = auth;
   }
-  async findAll(headers: CustomHeaders) {
-    if (headers.authorization) {
-      const data = await this.#_auth.verify(
-        headers.authorization.split(' ')[1],
-      );
-      const userId: string = data.id;
+  async findAll(user: UserType) {
+    console.log(user);
+    
 
-      const findUser = await UsersEntity.findOne({
-        where: {
-          id: userId,
-        },
-      }).catch((e) => {
-        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      });
-
-      if (!findUser) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
       const findAllSavedOrganization = await Saved_Organization_Entity.find({
         where: {
           user_id: {
-            id: findUser.id,
+            id:user.userId,
           },
         },
         order: {
           create_data: 'asc',
         },
         relations: {
+          user_id:true,
           organization_id: true,
         },
       }).catch((e) => {
-        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
       });
 
+      if(!findAllSavedOrganization) {
+        throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
+      }
+
       return findAllSavedOrganization;
-    }
+
   }
 
   async findOne(id: string) {
     const findOne = await Saved_Organization_Entity.find({
       where: {
-        id,
+        organization_id :{
+          id
+        }
       },
       relations: {
         organization_id: true,
@@ -91,7 +84,7 @@ export class SavedOrganizationServise {
 
       const findOrganization = await OrganizationEntity.findOne({
         where: {
-          id: body.oraganization_id,
+          id: body.organization_id,
         },
       }).catch((e) => {
         throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);

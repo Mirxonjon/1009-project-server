@@ -13,6 +13,8 @@ import { Phone_Organization_Entity } from './phone_organization.entity';
 import { CommentAndRateEntity } from './commentAndRate.entity';
 import { Picture_Organization_Entity } from './picture_organization.entity';
 import { Saved_Organization_Entity } from './saved_org.entity';
+import { UsersEntity } from './users.entity';
+import { Section_Entity } from './section.entity';
 
 @Entity()
 export class OrganizationEntity extends BaseEntity {
@@ -25,11 +27,11 @@ export class OrganizationEntity extends BaseEntity {
   })
   organization_name: string;
 
-  @Column({
-    type: 'character varying',
-    nullable: true,
-  })
-  section: string;
+  // @Column({
+  //   type: 'character varying',
+  //   nullable: true,
+  // })
+  // section: string;
 
   @Column({
     type: 'character varying',
@@ -130,6 +132,14 @@ export class OrganizationEntity extends BaseEntity {
   })
   number_of_raters: number;
 
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
+    default: '0'
+  })
+  status: string;
+
   @ManyToOne(
     () => Sub_Category_Org_Entity,
     (sub_category_org) => sub_category_org.organizations,
@@ -137,12 +147,27 @@ export class OrganizationEntity extends BaseEntity {
   )
   sub_category_org: Sub_Category_Org_Entity;
 
-  @OneToMany(() => Phone_Organization_Entity, (phone) => phone.organization)
+  @ManyToOne(
+    () => Section_Entity,
+    (section) => section.organizations,
+    { nullable: true },
+  )
+  sectionId: Section_Entity ;
+
+  @ManyToOne(
+    () => UsersEntity,
+    (user) => user.my_organization,
+    { nullable: true },
+  )
+  userId: UsersEntity;
+
+  @OneToMany(() => Phone_Organization_Entity, (phone) => phone.organization, {onDelete: 'CASCADE'})
   phones: Phone_Organization_Entity[];
 
   @OneToMany(
     () => Picture_Organization_Entity,
     (picture) => picture.organization_id,
+     {onDelete: 'CASCADE'}
   )
   pictures: Picture_Organization_Entity[];
 

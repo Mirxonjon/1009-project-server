@@ -9,5 +9,5 @@ import {
 export class CreateSavedOrganizationDto {
   @IsString()
   @IsNotEmpty()
-  oraganization_id: string;
+  organization_id: string;
 }

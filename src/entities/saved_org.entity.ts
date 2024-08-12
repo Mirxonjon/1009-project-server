@@ -17,10 +17,10 @@ export class Saved_Organization_Entity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => OrganizationEntity, (org) => org.comments)
+  @ManyToOne(() => OrganizationEntity, (org) => org.saved_organization)
   organization_id: OrganizationEntity;
 
-  @ManyToOne(() => UsersEntity, (user) => user.my_comments)
+  @ManyToOne(() => UsersEntity, (user) => user.saved_organization)
   user_id: UsersEntity;
 
   @UpdateDateColumn({ name: 'updated_at' })

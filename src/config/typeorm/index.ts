@@ -7,7 +7,6 @@ import { KnowDataEntity } from 'src/entities/know_data.entity';
 import { CommunalEntity } from 'src/entities/communal.entity';
 import { InformationTashkentEntity } from 'src/entities/information_Tashkent.entity';
 import { NumbersCodesEntity } from 'src/entities/Numbers_codes.entity';
-// import { ControlUsersEntity } from 'src/entities/control_users.entity';
 import { Category_Organization_Entity } from 'src/entities/category_org.entity';
 import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
 import { OrganizationEntity } from 'src/entities/organization.entity';

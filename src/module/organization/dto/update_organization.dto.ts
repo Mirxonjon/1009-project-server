@@ -1,4 +1,5 @@
 import { IsString } from 'class-validator';
+import { TNumbers } from 'src/types';
 
 export class UpdateOrganizationDto {
    // @IsString()
@@ -64,7 +65,7 @@ export class UpdateOrganizationDto {
   pictures: object;
 
   // @IsString()
-  phones: object;
+  phones: string | TNumbers;
 
-  pictures_delete : object
+  pictures_delete : { delete: string[]} |string
 }

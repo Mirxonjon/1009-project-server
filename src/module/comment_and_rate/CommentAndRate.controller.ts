@@ -87,7 +87,7 @@ export class CommentAndRateController {
     @Req() request : CustomRequest , 
     @Body() createSubCategoryOrganizationDto: CreateCommentAndRateDto,
   ) {
-    return await this.#_service.create(request, createSubCategoryOrganizationDto);
+    return await this.#_service.create(request.user, createSubCategoryOrganizationDto);
   }
 
   // // @UseGuards(jwtGuard)

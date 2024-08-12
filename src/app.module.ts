@@ -19,6 +19,7 @@ import { SectionModule } from './module/section/section.module';
 import { SavedOrganizationModule } from './module/saved_org/savedorganization.module';
 import { RolesGuard } from './module/auth/guards/roles.guard';
 import { CommentAndRateModule } from './module/comment_and_rate/subcategoryorganization.module';
+import { UsersModule } from './module/users/users.module';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { CommentAndRateModule } from './module/comment_and_rate/subcategoryorgan
       }),
     }),
     AuthModule,
+    UsersModule,
     OrganizationCategoriesModule,
     SubCategoryOrganizationModule,
     SectionModule,

@@ -28,6 +28,8 @@ import { OrganizationServise } from './organization.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CreateOrganizationDto } from './dto/create_organization.dto';
 import { UpdateOrganizationDto } from './dto/update_organization.dto';
+import { CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from '../auth/guards/roles.decorator';
 @Controller('organization')
 @ApiTags('Organization')
 @ApiBearerAuth('JWT-auth')
@@ -52,8 +54,17 @@ export class OrganizationController {
   async findOne(@Param('id') id: string) {
     return await this.#_service.findOne(id);
   }
+  
+  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
+  @Get('/my-organization')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findMyOrganization(    @Req() req : CustomRequest, ) {
+    return await this.#_service.findMyOrganization(req.user);
+  }
 
-  // @UseGuards(jwtGuard)
+  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -170,7 +181,7 @@ export class OrganizationController {
   @ApiNotFoundResponse()
   @UseInterceptors(AnyFilesInterceptor())
   async create(
-    @Req() req : Request,
+    @Req() req : CustomRequest,
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
@@ -178,7 +189,7 @@ export class OrganizationController {
     
     console.log(files,'oookkk');
     
-    return await this.#_service.create(createOrganizationDto, files);
+    return await this.#_service.create(req.user, createOrganizationDto, files);
   }
 
   // @UseGuards(jwtGuard)
@@ -332,6 +343,8 @@ export class OrganizationController {
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
+    console.log('okk');
+    
     await this.#_service.remove(id);
   }
 }

@@ -8,6 +8,8 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Query,
+  Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -22,9 +24,14 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { UsersServise } from './users.service';
+import { CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from '../auth/guards/roles.decorator';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UpdateUserDto } from './dto/update_user.dto';
 @Controller('Users')
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
@@ -34,17 +41,22 @@ export class UsersController {
     this.#_service = service;
   }
 
-  @Get('/one')
+  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER,RolesEnum.ADMIN)
+  @Get('/get-my-data')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  @ApiHeader({
-    name: 'authorization',
-    description: 'User Token',
-    required: false,
-  })
-  async findOne(@Headers() header: any) {
-    return await this.#_service.findOne(header);
+  async findMyDate(@Req() req : CustomRequest) {
+    return await this.#_service.findMyDate(req.user);
+  }
+
+  // @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER,RolesEnum.ADMIN)
+  @Get('/user/one/:id')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findOne(@Param('id') id: string) {
+    return await this.#_service.findOne(id);
   }
 
   // @UseGuards(jwtGuard)
@@ -52,87 +64,62 @@ export class UsersController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findAll() {
-    return await this.#_service.findAll();
+  @ApiQuery({ name: 'role', required: false })
+  async findAll(
+    @Query('role') role: string = 'null',
+  ) {
+    return await this.#_service.findAll(role);
   }
 
-  // @Patch('/UpdateAdmin')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     required: ['id'],
-  //     properties: {
-  //       id: {
-  //         type: 'string',
-  //         default: 'fsdgewfghwergkreomgbpregbmpmf',
-  //       },
-  //       role: {
-  //         type: 'string',
-  //         default: 'admin',
-  //       },
-  //     },
-  //   },
-  // })
-  // addAdmin(@Body() body: AddAdminDto) {
-  //   return this.#_service.AddAdmin(body);
-  // }
+
 
   // // @UseGuards(jwtGuard)
-  // @Patch('/update/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       surname: {
-  //         type: 'string',
-  //         default: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
-  //       },
-  //       name: {
-  //         type: 'string',
-  //         default: '1 chi dars',
-  //       },
-  //       phone: {
-  //         type: 'string',
-  //         default: '1 chi darsru',
-  //       },
-  //       email: {
-  //         type: 'string',
-  //         default: 'ru',
-  //       },
-  //       password: {
-  //         type: 'string',
-  //         default: 'uuid23422',
-  //       },
-  //       was_born_date: {
-  //         type: 'string',
-  //         default: 'Хорошее обучение',
-  //       },
-  //       image: {
-  //         type: 'string',
-  //         format: 'binary',
-  //       },
-  //     },
-  //   },
-  // })
-  // @ApiConsumes('multipart/form-data')
-  // @ApiOperation({ summary: 'Attendance Punch In' })
-  // @ApiBadRequestResponse()
-  // @ApiNotFoundResponse()
-  // @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateUserDto: UpdateUserDto,
-  //   @UploadedFiles()
-  //   file: { image?: Express.Multer.File },
-  // ) {
-  //   await this.#_service.update(
-  //     id,
-  //     updateUserDto,
-  //     file?.image ? file?.image[0] : null,
-  //   );
-  // }
+  @Patch('/update/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        full_name: {
+          type: 'string',
+          default: 'Eshmat',
+        },
+        number: {
+          type: 'string',
+          default: '+998933843484',
+        },
+        role: {
+          type: 'string',
+          default: 'admin',
+        },
+        password: {
+          type: 'string',
+          default: 'uuid23422',
+        },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Attendance Punch In' })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFiles()
+    file: { image?: Express.Multer.File },
+  ) {
+    await this.#_service.update(
+      id,
+      updateUserDto,
+      file?.image ? file?.image[0] : null,
+    );
+  }
 
   // // @UseGuards(jwtGuard)
   // @Delete('/delete/:id')

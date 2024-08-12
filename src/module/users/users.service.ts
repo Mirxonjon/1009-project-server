@@ -2,7 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersEntity } from 'src/entities/users.entity';
 import { AddAdminDto } from './dto/add-admin.dto';
 import { AuthServise } from '../auth/auth.service';
-import { CustomHeaders } from 'src/types';
+import { CustomHeaders, UserType } from 'src/types';
+import { UpdateUserDto } from './dto/update_user.dto';
+import { extname } from 'path';
+import { allowedImageFormats } from 'src/utils/videoAndImageFormat';
+import { deleteFileCloud, googleCloud } from 'src/utils/google_cloud';
 
 @Injectable()
 export class UsersServise {
@@ -10,23 +14,32 @@ export class UsersServise {
   constructor(authService: AuthServise) {
     this.#_authService = authService;
   }
-  async findOne(header: CustomHeaders) {
-    if (header.authorization) {
-      const user = await this.#_authService.verify(
-        header.authorization.split(' ')[1],
-      );
-      const findUser = await UsersEntity.findOneBy({ id: user.id });
+  async findMyDate(user :UserType) {
+
+      const findUser = await UsersEntity.findOneBy({ id: user.userId });
       if (!findUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
       return findUser;
-    } else {
-      throw new HttpException('token not found', HttpStatus.NOT_FOUND);
-    }
+    
   }
 
-  async findAll() {
-    const findUsers = await UsersEntity.find();
+  async findOne(userId: string) {
+
+    const findUser = await UsersEntity.findOneBy({ id:userId });
+    if (!findUser) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return findUser;
+  
+}
+
+  async findAll(role :string) {
+    const findUsers = await UsersEntity.find({
+      where : {
+        role: role == 'null' ? null : role
+      }
+    });
 
     if (!findUsers) {
       throw new HttpException('Users not found', HttpStatus.NOT_FOUND);
@@ -54,51 +67,50 @@ export class UsersServise {
     return updated;
   }
 
-  // async update(id: string, body: UpdateUserDto, image: Express.Multer.File) {
-  //   const findUser = await UsersEntity.findOne({
-  //     where: { id },
-  //   });
+  async update(id: string, body: UpdateUserDto, image: Express.Multer.File) {
+    const findUser = await UsersEntity.findOne({
+      where: { id },
+    });
 
-  //   if (!findUser) {
-  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-  //   }
+    if (!findUser) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
 
-  //   let formatImage: string = 'Not image';
+    let formatImage: string = 'Not image';
 
-  //   if (image) {
-  //     formatImage = extname(image.originalname).toLowerCase();
-  //   }
+    if (image) {
+      formatImage = extname(image.originalname).toLowerCase();
+    }
 
-  //   if (
-  //     allowedImageFormats.includes(formatImage) ||
-  //     formatImage === 'Not image'
-  //   ) {
-  //     let image_link: string = findUser.image;
+    if (
+      allowedImageFormats.includes(formatImage) ||
+      formatImage === 'Not image'
+    ) {
+      let image_link: string = findUser.image_link;
 
-  //     if (formatImage !== 'Not image') {
-  //       if (image_link) {
-  //         await deleteFileCloud(image_link);
-  //       }
-  //       image_link = googleCloud(image);
-  //     }
+      if (formatImage !== 'Not image') {
+        if (image_link) {
+          await deleteFileCloud(image_link);
+        }
+        image_link = googleCloud(image);
+      }
 
-  //     const updatedUser = await UsersEntity.update(id, {
-  //       name: body.name || findUser.name,
-  //       surname: body.surname || findUser.surname,
-  //       phone: body.phone || findUser.phone,
-  //       email: body.email || findUser.email,
-  //       password: body.password || findUser.password,
-  //       image: image_link,
-  //     });
+      const updatedUser = await UsersEntity.update(id, {
+        full_name: body.full_name || findUser.full_name,
+        phone: body.number || findUser.phone,
+        role: body.role || findUser.role,
+        password: body.password || findUser.password,
+        image_link: image_link,
+      });
 
-  //     return updatedUser;
-  //   } else {
-  //     throw new HttpException(
-  //       'Image should be in the format jpg, png, jpeg, pnmj, svg',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-  // }
+      return updatedUser;
+    } else {
+      throw new HttpException(
+        'Image should be in the format jpg, png, jpeg, pnmj, svg',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
   // async remove(id: string) {
   //   const findUser = await UsersEntity.findOneBy({ id }).catch(() => {
