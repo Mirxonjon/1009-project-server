@@ -182,7 +182,7 @@ export class OrganizationServise {
         // index: body.index,
         address: body.address,
         scheduler: JSON.stringify(body?.scheduler as any),
-        payment_type: JSON.stringify(body?.payment_type as any),
+        payment_types: JSON.stringify(body?.payment_types as any),
         transport: JSON.stringify(body?.transport as any),
         comment: body.comment,
         location: JSON.stringify(body?.location as any),
@@ -313,8 +313,8 @@ export class OrganizationServise {
       email: body.email || findOrganization.email,
       address: body.address || findOrganization.address,
       scheduler: JSON.stringify(body?.scheduler as any) || findOrganization.scheduler,
-      payment_type:
-        JSON.stringify(body?.payment_type as any) || findOrganization.payment_type,
+      payment_types:
+        JSON.stringify(body?.payment_types as any) || findOrganization.payment_types,
       transport: JSON.stringify(body?.transport as any) || findOrganization.transport,
       comment: body.comment || findOrganization.comment,
       location: JSON.stringify(body?.location as any) || findOrganization.location,

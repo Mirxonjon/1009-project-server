@@ -67,7 +67,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  payment_type: string;
+  payment_types: string;
 
   @Column({
     type: 'jsonb',

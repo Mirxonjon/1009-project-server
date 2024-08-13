@@ -65,7 +65,7 @@ export class CreateOrganizationDto {
   // @IsNotEmpty()
   scheduler: object;
 
-  payment_type: object;
+  payment_types: object;
 
   transport: object;
 
