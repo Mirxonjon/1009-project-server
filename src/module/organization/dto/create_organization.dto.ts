@@ -17,25 +17,25 @@ export class CreateOrganizationDto {
   // @IsString()
   main_organization: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   organization_name: string;
 
-  @IsString()
+  // @IsString()
   section: string;
 
   // @IsString()
   manager: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   email: string;
 
   // @IsString()
   // index: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   address: string;
 
   // @IsString()
@@ -53,8 +53,8 @@ export class CreateOrganizationDto {
   // @IsString()
   bank_account: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   comment: string;
 
   // @IsString()
@@ -74,6 +74,6 @@ export class CreateOrganizationDto {
   pictures: object;
 
   // @IsString()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   phones: object;
 }
