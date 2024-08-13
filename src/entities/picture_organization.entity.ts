@@ -19,7 +19,7 @@ export class Picture_Organization_Entity extends BaseEntity {
   })
   image_link: string;
 
-  @ManyToOne(() => OrganizationEntity, (org) => org.pictures)
+  @ManyToOne(() => OrganizationEntity, (org) => org.pictures, { onDelete: 'CASCADE' })
   organization_id: OrganizationEntity;
 
   @ManyToOne(() => OrganizationEntity, (org) => org.pictures)

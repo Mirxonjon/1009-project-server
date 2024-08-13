@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,7 +24,8 @@ import {
 import { SavedOrganizationServise } from './savedorganization.service';
 import { CreateSavedOrganizationDto } from './dto/create_savedorganization.dto';
 import { UpdateSavedOrganizationDto } from './dto/update_savedorganization.dto';
-import { CustomHeaders } from 'src/types';
+import { CustomHeaders, CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from '../auth/guards/roles.decorator';
 
 @Controller('SavedOrganization')
 @ApiTags('Saved Organization')
@@ -33,13 +35,15 @@ export class SavedOrganizationController {
   constructor(service: SavedOrganizationServise) {
     this.#_service = service;
   }
-
+  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(@Headers() headers: CustomHeaders) {
-    return await this.#_service.findAll(headers);
+  async findall(
+    @Req() req : CustomRequest,
+  ) {
+    return await this.#_service.findAll(req.user);
   }
 
   @Get('/one/:id')

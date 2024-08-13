@@ -29,7 +29,7 @@ export class Section_Entity extends BaseEntity {
   // )
   // category_org: Category_Organization_Entity;
 
-  @OneToMany(() => OrganizationEntity, (org) => org.sub_category_org)
+  @OneToMany(() => OrganizationEntity, (org) => org.sectionId)
   organizations: OrganizationEntity[];
 
   @UpdateDateColumn({ name: 'updated_at' })
