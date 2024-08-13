@@ -234,7 +234,7 @@ export class OrganizationServise {
       );
 
       console.log(phones, 'AFTER INSERT PHONES')
-
+      console.log(pictures, ' INSERT picture')
       pictures?.forEach(async (e: Express.Multer.File) => {
         const formatImage = extname(e?.originalname).toLowerCase();
         if (allowedImageFormats.includes(formatImage)) {
@@ -257,7 +257,7 @@ export class OrganizationServise {
         }
       });
 
-      console.log(phones, 'AFTER INSERT FILES')
+      console.log(pictures, 'AFTER INSERT FILES')
     }
 
   }
