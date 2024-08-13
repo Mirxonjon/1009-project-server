@@ -165,13 +165,13 @@ export class OrganizationController {
             numbers: [{ number: '+998933843484', type_number: 'mobile' }],
           },
         },
-        // pictures: {
-        //   type: 'array',
-        //   items: {
-        //     type: 'string',
-        //     format: 'binary',
-        //   },
-        // },
+        pictures: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
       },
     },
   })
@@ -185,7 +185,7 @@ export class OrganizationController {
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
-    console.log(req, "REQ");
+    // console.log(req, "REQ");
     
     console.log(files,'oookkk');
     
