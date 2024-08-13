@@ -64,7 +64,7 @@ export class OrganizationController {
     return await this.#_service.findMyOrganization(req.user);
   }
 
-  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
+  // @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -166,7 +166,7 @@ export class OrganizationController {
           },
         },
         pictures: {
-          type: 'array',
+          type: 'object',
           items: {
             type: 'string',
             format: 'binary',
@@ -185,7 +185,7 @@ export class OrganizationController {
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
-    // console.log(req, "REQ");
+    console.log(req, "REQ");
     
     console.log(files,'oookkk');
     
