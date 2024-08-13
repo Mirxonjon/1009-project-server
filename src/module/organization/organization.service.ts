@@ -17,7 +17,7 @@ export class OrganizationServise {
       relations: {
         phones: true,
         pictures: true,
-        sub_category_org: true
+        sub_category_org: true,
       },
       order: {
         create_data: 'asc',
@@ -75,10 +75,10 @@ export class OrganizationServise {
 
     let findSubCategory = null;
 
-    console.log(body.sub_category_id, 'BODY SUB CATEG OUT')
+    console.log(body.sub_category_id, 'BODY SUB CATEG OUT');
 
     if (body.sub_category_id != 'null') {
-      console.log(body.sub_category_id, 'BODY SUB CATEG IN')
+      console.log(body.sub_category_id, 'BODY SUB CATEG IN');
       findSubCategory = await Sub_Category_Org_Entity.findOne({
         where: {
           id: body.sub_category_id,
@@ -90,7 +90,7 @@ export class OrganizationServise {
       });
     }
 
-    console.log(findSubCategory, 'FIND BY CATEGORY')
+    console.log(findSubCategory, 'FIND BY CATEGORY');
 
     const createdOrg = await OrganizationEntity.createQueryBuilder()
       .insert()
@@ -123,12 +123,12 @@ export class OrganizationServise {
         throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
       });
 
-    console.log(createdOrg, 'CREATE ORG OUT')
+    console.log(createdOrg, 'CREATE ORG OUT');
     if (createdOrg) {
-      console.log(createdOrg, 'CREATE ORG IN')
-      let phones = body?.phones as any;
+      console.log(createdOrg, 'CREATE ORG IN');
+      const phones = body?.phones as any;
 
-      console.log(phones, 'PHONES in IF')
+      console.log(phones, 'PHONES in IF');
 
       phones?.numbers?.forEach(
         async (e: { number: string; type_number: string }) => {
@@ -150,7 +150,7 @@ export class OrganizationServise {
         },
       );
 
-      console.log(phones, 'AFTER INSERT PHONES')
+      console.log(phones, 'AFTER INSERT PHONES');
 
       pictures?.forEach(async (e: Express.Multer.File) => {
         const formatImage = extname(e?.originalname).toLowerCase();
@@ -174,12 +174,15 @@ export class OrganizationServise {
         }
       });
 
-      console.log(phones, 'AFTER INSERT FILES')
+      console.log(phones, 'AFTER INSERT FILES');
     }
-
   }
 
-  async update(id: string, body: UpdateOrganizationDto, pictures: Array<Express.Multer.File>,) {
+  async update(
+    id: string,
+    body: UpdateOrganizationDto,
+    pictures: Array<Express.Multer.File>,
+  ) {
     const findOrganization = await OrganizationEntity.findOne({
       where: {
         id: id,
@@ -205,17 +208,20 @@ export class OrganizationServise {
     }
 
     const updatedOrganization = await OrganizationEntity.update(id, {
-      main_organization: body.main_organization || findOrganization.main_organization,
+      main_organization:
+        body.main_organization || findOrganization.main_organization,
       section: body.section || findOrganization.section,
       organization_name:
         body.organization_name || findOrganization.organization_name,
       manager: body.manager || findOrganization.manager,
       email: body.email || findOrganization.email,
       address: body.address || findOrganization.address,
-      scheduler: JSON.parse(body?.scheduler as any) || findOrganization.scheduler,
+      scheduler:
+        JSON.parse(body?.scheduler as any) || findOrganization.scheduler,
       payment_type:
         JSON.parse(body?.payment_type as any) || findOrganization.payment_type,
-      transport: JSON.parse(body?.transport as any) || findOrganization.transport,
+      transport:
+        JSON.parse(body?.transport as any) || findOrganization.transport,
       comment: body.comment || findOrganization.comment,
       location: JSON.parse(body?.location as any) || findOrganization.location,
       segment: body.segment || findOrganization.segment,
@@ -234,8 +240,8 @@ export class OrganizationServise {
 
     if (updatedOrganization) {
       console.log(body, body.phones);
-      let phones = JSON.parse(body.phones as any);
-      let pictures_delete = JSON.parse(body.pictures_delete as any);
+      const phones = JSON.parse(body.phones as any);
+      const pictures_delete = JSON.parse(body.pictures_delete as any);
       console.log(phones, '111');
 
       // let a =  JSON.parse(phones)
@@ -329,10 +335,9 @@ export class OrganizationServise {
       });
       console.log(pictures_delete, 'pic');
 
-
-      pictures_delete?.delete?.forEach(async e => {
+      pictures_delete?.delete?.forEach(async (e) => {
         await Picture_Organization_Entity.delete({ id: e });
-      })
+      });
 
       return;
     }

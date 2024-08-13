@@ -119,14 +119,14 @@ export class OrganizationEntity extends BaseEntity {
   @Column({
     type: 'float',
     default: 0,
-    nullable : true
+    nullable: true,
   })
   common_rate: number;
 
   @Column({
     type: 'integer',
     default: 0,
-    nullable : true
+    nullable: true,
   })
   number_of_raters: number;
 

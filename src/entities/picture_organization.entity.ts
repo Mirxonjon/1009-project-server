@@ -22,6 +22,9 @@ export class Picture_Organization_Entity extends BaseEntity {
   @ManyToOne(() => OrganizationEntity, (org) => org.pictures)
   organization_id: OrganizationEntity;
 
+  @ManyToOne(() => OrganizationEntity, (org) => org.pictures)
+  organization_version_id?: OrganizationEntity;
+
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 
