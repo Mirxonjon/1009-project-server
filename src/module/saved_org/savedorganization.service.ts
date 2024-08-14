@@ -19,39 +19,37 @@ export class SavedOrganizationServise {
   }
   async findAll(user: UserType) {
     console.log(user);
-    
 
-      const findAllSavedOrganization = await Saved_Organization_Entity.find({
-        where: {
-          user_id: {
-            id:user.userId,
-          },
+    const findAllSavedOrganization = await Saved_Organization_Entity.find({
+      where: {
+        user_id: {
+          id: user.userId,
         },
-        order: {
-          create_data: 'asc',
-        },
-        relations: {
-          user_id:true,
-          organization_id: true,
-        },
-      }).catch((e) => {
-        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-      });
+      },
+      order: {
+        create_data: 'asc',
+      },
+      relations: {
+        user_id: true,
+        organization_id: true,
+      },
+    }).catch((e) => {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    });
 
-      if(!findAllSavedOrganization) {
-        throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
-      }
+    if (!findAllSavedOrganization) {
+      throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
+    }
 
-      return findAllSavedOrganization;
-
+    return findAllSavedOrganization;
   }
 
   async findOne(id: string) {
     const findOne = await Saved_Organization_Entity.find({
       where: {
-        organization_id :{
-          id
-        }
+        organization_id: {
+          id,
+        },
       },
       relations: {
         organization_id: true,
@@ -66,7 +64,7 @@ export class SavedOrganizationServise {
   async create(headers: CustomHeaders, body: CreateSavedOrganizationDto) {
     if (headers.authorization) {
       const data = await this.#_auth.verify(
-        headers.authorization.split(' ')[1],
+        headers.authorization.split(' ')[1]
       );
       const userId: string = data.id;
 
@@ -147,7 +145,7 @@ export class SavedOrganizationServise {
     if (!findSavedOrganization) {
       throw new HttpException(
         'Saved Organization not found',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 

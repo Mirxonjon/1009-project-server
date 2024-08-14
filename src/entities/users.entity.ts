@@ -57,13 +57,12 @@ export class UsersEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-    nullable: true
+    nullable: true,
   })
   image_link: string;
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
-
 
   @OneToMany(() => CommentAndRateEntity, (comment) => comment.user_id)
   my_comments: CommentAndRateEntity[];

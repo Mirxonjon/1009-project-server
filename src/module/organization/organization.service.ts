@@ -16,10 +16,18 @@ import {
   TNumbers,
   UserType,
   OrganizationStatus,
+  checkOrganizationType,
+  CheckOrganizationStatus,
+  OrganizationStatusType,
 } from 'src/types';
 import { UsersEntity } from 'src/entities/users.entity';
 import { Section_Entity } from 'src/entities/section.entity';
-import { Not } from 'typeorm';
+import { InsertResult, Not, Repository, UpdateResult } from 'typeorm';
+import { OrganizationVersionsEntity } from 'src/entities/organization_versions.entity';
+import { CheckOrganizationDto } from './dto/check_organization.dto';
+import { Picture_Organization_Versions_Entity } from 'src/entities/picture_organization_versions.entity';
+import { Phone_Organization_Versions_Entity } from 'src/entities/phone_organizations_versions.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrganizationServise {
@@ -124,7 +132,7 @@ export class OrganizationServise {
   async create(
     user: UserType,
     body: CreateOrganizationDto,
-    pictures: Array<Express.Multer.File>,
+    pictures: Array<Express.Multer.File>
   ) {
     console.log(body, 'BODY');
     this.logger.debug(body, 'BODY');
@@ -204,7 +212,7 @@ export class OrganizationServise {
         status:
           user.role == RolesEnum.SUPERADMIN
             ? OrganizationStatus.Accepted
-            : OrganizationStatus.Unaccepted,
+            : OrganizationStatus.Check,
         sub_category_org: {
           id: findSubCategory?.id,
         },
@@ -242,7 +250,7 @@ export class OrganizationServise {
               console.log(e, ': PHONE CREATE');
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
-        },
+        }
       );
 
       console.log(phones, 'AFTER INSERT PHONES');
@@ -276,11 +284,13 @@ export class OrganizationServise {
   async update(
     id: string,
     body: UpdateOrganizationDto,
-    pictures: Array<Express.Multer.File>,
+    pictures: Array<Express.Multer.File>
   ) {
     const phones = body?.phones as any;
     console.log(body, typeof phones, phones.numbers, ' : numbersd1');
-    const findOrganization = await OrganizationEntity.findOne({
+
+    // find organization
+    const organization = await OrganizationEntity.findOne({
       where: {
         id: id,
       },
@@ -290,10 +300,11 @@ export class OrganizationServise {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
-    let findSubCategory = findOrganization.sub_category_org;
+    // find sub category
+    let subCategoryId = organization.sub_category_org;
 
     if (body.sub_category_id != 'null') {
-      findSubCategory = await Sub_Category_Org_Entity.findOne({
+      subCategoryId = await Sub_Category_Org_Entity.findOne({
         where: {
           id: body.sub_category_id,
         },
@@ -303,13 +314,14 @@ export class OrganizationServise {
       });
     }
 
-    let findSection = findOrganization.sectionId;
+    // find section
+    let sectionId = organization.sectionId;
 
     console.log(body.section, 'BODY SUB CATEG OUT');
 
     if (body.section != 'null') {
       console.log(body.section, 'BODY SUB CATEG IN');
-      findSection = await Section_Entity.findOne({
+      sectionId = await Section_Entity.findOne({
         where: {
           id: body.section,
         },
@@ -322,30 +334,28 @@ export class OrganizationServise {
 
     const updatedOrganization = await OrganizationEntity.update(id, {
       main_organization:
-        body.main_organization || findOrganization.main_organization,
+        body.main_organization || organization.main_organization,
       organization_name:
-        body.organization_name || findOrganization.organization_name,
-      manager: body.manager || findOrganization.manager,
-      email: body.email || findOrganization.email,
-      address: body.address || findOrganization.address,
+        body.organization_name || organization.organization_name,
+      manager: body.manager || organization.manager,
+      email: body.email || organization.email,
+      address: body.address || organization.address,
       scheduler:
-        JSON.stringify(body?.scheduler as any) || findOrganization.scheduler,
+        JSON.stringify(body?.scheduler as any) || organization.scheduler,
       payment_type:
-        JSON.stringify(body?.payment_type as any) ||
-        findOrganization.payment_type,
+        JSON.stringify(body?.payment_type as any) || organization.payment_type,
       transport:
-        JSON.stringify(body?.transport as any) || findOrganization.transport,
-      comment: body.comment || findOrganization.comment,
-      location:
-        JSON.stringify(body?.location as any) || findOrganization.location,
-      segment: body.segment || findOrganization.segment,
-      account: body.account || findOrganization.account,
-      added_by: body.added_by || findOrganization.added_by,
-      inn: body.inn || findOrganization.inn,
-      bank_account: body.bank_account || findOrganization.bank_account,
-      sectionId: findSection,
+        JSON.stringify(body?.transport as any) || organization.transport,
+      comment: body.comment || organization.comment,
+      location: JSON.stringify(body?.location as any) || organization.location,
+      segment: body.segment || organization.segment,
+      account: body.account || organization.account,
+      added_by: body.added_by || organization.added_by,
+      inn: body.inn || organization.inn,
+      bank_account: body.bank_account || organization.bank_account,
+      sectionId,
       sub_category_org: {
-        id: findSubCategory?.id || null,
+        id: subCategoryId?.id || null,
       },
     }).catch((e) => {
       console.log(e);
@@ -431,7 +441,7 @@ export class OrganizationServise {
           .values({
             image_link: linkImage,
             organization_id: {
-              id: findOrganization.id,
+              id: organization.id,
             },
           })
           .execute()
@@ -492,6 +502,210 @@ export class OrganizationServise {
 
     return;
     // }
+  }
+
+  async check(organizationId: string, status: checkOrganizationType) {
+    const methodName = this.check.name;
+    const date = new Date();
+    const formattedDate = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+
+    try {
+      // find organization
+      const findOrganizationResult: OrganizationEntity | undefined =
+        await OrganizationEntity.findOne({
+          where: [
+            {
+              id: organizationId,
+            },
+          ],
+        });
+
+      if (findOrganizationResult) {
+        this.logger.debug(
+          `Method: ${methodName} - Organization Not Found: `,
+          findOrganizationResult
+        );
+        throw new HttpException('Organization Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      // check organization status
+      if (status == CheckOrganizationStatus.Accept) {
+        // update organization if req.status accept
+        const updateOrganizationResult: UpdateResult =
+          await OrganizationEntity.update(organizationId, {
+            status: OrganizationStatus.Accepted,
+            update_date: formattedDate,
+          });
+
+        this.logger.debug(
+          `Method: ${methodName} - updateOrganizationResult:`,
+          updateOrganizationResult
+        );
+
+        return updateOrganizationResult;
+      }
+
+      // insert organisation version if req.status reject
+      const organizationVersionResult: InsertResult =
+        await OrganizationVersionsEntity.createQueryBuilder()
+          .insert()
+          .into(OrganizationVersionsEntity)
+          .values({
+            organization_id: findOrganizationResult.id,
+            organization_name: findOrganizationResult.organization_name,
+            main_organization: findOrganizationResult.main_organization,
+            manager: findOrganizationResult.manager,
+            email: findOrganizationResult.email,
+            address: findOrganizationResult.address,
+            scheduler: findOrganizationResult.scheduler,
+            payment_type: findOrganizationResult.payment_type,
+            transport: findOrganizationResult.transport,
+            comment: findOrganizationResult.comment,
+            location: findOrganizationResult.location,
+            segment: findOrganizationResult.segment,
+            account: findOrganizationResult.account,
+            added_by: findOrganizationResult.added_by,
+            inn: findOrganizationResult.inn,
+            bank_account: findOrganizationResult.bank_account,
+            common_rate: findOrganizationResult.common_rate,
+            number_of_raters: findOrganizationResult.number_of_raters,
+            status: findOrganizationResult.status,
+            sub_category_org: findOrganizationResult.sub_category_org.toString(),
+            sectionId: findOrganizationResult.sectionId.toString(),
+            userId: findOrganizationResult.userId.toString(),
+          })
+          .execute();
+
+      this.logger.debug(
+        `Method: ${methodName} - organizationVersionResult:`,
+        organizationVersionResult
+      );
+
+      if (!organizationVersionResult.identifiers[0].id) {
+        this.logger.debug(
+          `Method: ${methodName} - organizationVersion insert error:`,
+          organizationVersionResult
+        );
+        throw new HttpException(
+          `Error in inserting to organization version`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      // find picture by organization id
+      const findPicturesResult = await Picture_Organization_Entity.find({
+        where: [
+          {
+            id: findOrganizationResult.id,
+          },
+        ],
+      });
+
+      if (!findPicturesResult) {
+        this.logger.debug(
+          `Method: ${methodName} - Pictures Not Found: `,
+          findPicturesResult
+        );
+        throw new HttpException('Pictures Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      // insert picture to version
+      for (let i = 0; i < findPicturesResult.length; i++) {
+        const insertPictureVersionResult =
+          await Picture_Organization_Versions_Entity.createQueryBuilder()
+            .insert()
+            .into(Picture_Organization_Versions_Entity)
+            .values({
+              image_link: findPicturesResult[i].image_link,
+              organization_id: organizationVersionResult.identifiers[0].id,
+            })
+            .execute();
+
+        this.logger.debug(
+          `Method: ${methodName} - insertPictureVersionResult:`,
+          insertPictureVersionResult
+        );
+
+        if (!insertPictureVersionResult.identifiers[0].id) {
+          this.logger.debug(
+            `Method: ${methodName} - insertPictureVersionResult Insert Error:`,
+            insertPictureVersionResult
+          );
+          throw new HttpException(
+            `Error in inserting to Picture Version`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+
+      // find phone by organization id
+      const findPhonesResult = await Phone_Organization_Entity.find({
+        where: [
+          {
+            id: findOrganizationResult.id,
+          },
+        ],
+      });
+
+      if (!findPhonesResult) {
+        this.logger.debug(
+          `Method: ${methodName} - Phones Not Found: `,
+          findPhonesResult
+        );
+        throw new HttpException('Phones Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      // inserting phones to version
+      for (let i = 0; i < findPhonesResult.length; i++) {
+        const insertPhoneVersionResult =
+          await Phone_Organization_Versions_Entity.createQueryBuilder()
+            .insert()
+            .into(Phone_Organization_Versions_Entity)
+            .values({
+              number: findPhonesResult[i].number,
+              type_number: findPhonesResult[i].type_number,
+              organization: organizationVersionResult.identifiers[0].id,
+            })
+            .execute();
+
+        this.logger.debug(
+          `Method: ${methodName} - insertPhoneVersionResult:`,
+          insertPhoneVersionResult
+        );
+
+        if (!insertPhoneVersionResult.identifiers[0].id) {
+          this.logger.debug(
+            `Method: ${methodName} - insertPhoneVersionResult Insert Error:`,
+            insertPhoneVersionResult
+          );
+          throw new HttpException(
+            `Error in inserting to Phone Version`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+
+      // update organization status if req.status reject
+      const updateOrganizationStatusResult: UpdateResult =
+        await OrganizationEntity.update(organizationId, {
+          status: OrganizationStatus.Rejected,
+          is_versioned: true,
+          update_date: formattedDate,
+        });
+
+      this.logger.debug(
+        `Method: ${methodName} - updateOrganizationStatusResult:`,
+        updateOrganizationStatusResult
+      );
+
+      return updateOrganizationStatusResult;
+    } catch (error) {
+      this.logger.debug(`Method: ${methodName} - Error trace: `, error.trace);
+      throw new HttpException(
+        error.toString(),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async remove(id: string) {

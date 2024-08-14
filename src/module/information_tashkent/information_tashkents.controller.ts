@@ -97,7 +97,7 @@ export class InformationTashkentController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Body() createInformationTashkentDto: CreateInformationTashkentDto,
+    @Body() createInformationTashkentDto: CreateInformationTashkentDto
   ) {
     return await this.#_service.create(createInformationTashkentDto);
   }
@@ -151,7 +151,7 @@ export class InformationTashkentController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateInformationTashkentDto: UpdateInformationTashkentDto,
+    @Body() updateInformationTashkentDto: UpdateInformationTashkentDto
   ) {
     await this.#_service.update(id, updateInformationTashkentDto);
   }

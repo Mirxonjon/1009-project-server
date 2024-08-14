@@ -13,7 +13,7 @@ export class CreateCommentAndRateDto {
   organization_id: string;
 
   @IsNumber()
-  rate: number
+  rate: number;
 
   @IsString()
   comment: string;

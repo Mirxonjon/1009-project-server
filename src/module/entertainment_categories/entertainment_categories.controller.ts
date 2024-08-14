@@ -75,7 +75,7 @@ export class EntertainmentCategoriesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Body() createEntertainmentCategoryDto: CreateEntertainmentCategoryDto,
+    @Body() createEntertainmentCategoryDto: CreateEntertainmentCategoryDto
   ) {
     return await this.#_service.create(createEntertainmentCategoryDto);
   }
@@ -102,7 +102,7 @@ export class EntertainmentCategoriesController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateEntertainmentCategory: UpdateEntertainmentCategory,
+    @Body() updateEntertainmentCategory: UpdateEntertainmentCategory
   ) {
     return await this.#_service.update(id, updateEntertainmentCategory);
   }

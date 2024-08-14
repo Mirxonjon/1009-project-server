@@ -175,7 +175,7 @@ export class EntertainmentsController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateEntertainmentsDto: UpdateEntertainmentsDto,
+    @Body() updateEntertainmentsDto: UpdateEntertainmentsDto
   ) {
     await this.#_service.update(id, updateEntertainmentsDto);
   }

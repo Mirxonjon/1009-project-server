@@ -2,7 +2,7 @@ import { IsString } from 'class-validator';
 import { TNumbers } from 'src/types';
 
 export class UpdateOrganizationDto {
-   // @IsString()
+  // @IsString()
   // // @IsNotEmpty()
   // sub_category_id: string;
   // @IsString()
@@ -67,5 +67,5 @@ export class UpdateOrganizationDto {
   // @IsString()
   phones: string | TNumbers;
 
-  pictures_delete : { delete: string[]} |string
+  pictures_delete: { delete: string[] } | string;
 }

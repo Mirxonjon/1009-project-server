@@ -70,7 +70,7 @@ export class ImportedFilesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async updateDate(
-    @Body() updateOrganizationDataDto: UpdateOrganizationDataDto,
+    @Body() updateOrganizationDataDto: UpdateOrganizationDataDto
   ) {
     await this.#_service.updateData(updateOrganizationDataDto);
   }
@@ -107,9 +107,9 @@ export class ImportedFilesController {
               'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           }),
         ],
-      }),
+      })
     )
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     return this.#_service.uploadFileExcel(body, file);
   }

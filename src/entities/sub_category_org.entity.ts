@@ -37,7 +37,7 @@ export class Sub_Category_Org_Entity extends BaseEntity {
   @ManyToOne(
     () => Category_Organization_Entity,
     (category_org) => category_org.sub_category_orgs,
-    { nullable: true },
+    { nullable: true }
   )
   category_org: Category_Organization_Entity;
 

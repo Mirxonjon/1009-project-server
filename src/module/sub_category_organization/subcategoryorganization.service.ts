@@ -73,7 +73,7 @@ export class SubCategoryOrganizationServise {
       findCategory = await Category_Organization_Entity.findOneBy({ id }).catch(
         (e) => {
           throw new HttpException('Not found Category', HttpStatus.NOT_FOUND);
-        },
+        }
       );
       if (!findCategory) {
         throw new HttpException('Not found Category', HttpStatus.NOT_FOUND);

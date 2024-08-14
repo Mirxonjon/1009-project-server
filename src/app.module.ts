@@ -21,7 +21,6 @@ import { RolesGuard } from './module/auth/guards/roles.guard';
 import { CommentAndRateModule } from './module/comment_and_rate/subcategoryorganization.module';
 import { UsersModule } from './module/users/users.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot(config),

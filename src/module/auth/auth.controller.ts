@@ -45,9 +45,9 @@ export class AuthController {
           default: `Eshmat Eshmatov Eshmat o'g'li`,
         },
         role: {
-              type: 'string',
-              default: 'moderator',
-           },
+          type: 'string',
+          default: 'moderator',
+        },
         number: {
           type: 'string',
           default: '+998933843484',
@@ -62,7 +62,6 @@ export class AuthController {
   register(@Body() body: CreateUserDto) {
     return this.service.createUser(body);
   }
-
 
   @Post('user/sign-in')
   @HttpCode(HttpStatus.OK)

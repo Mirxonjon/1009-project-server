@@ -30,6 +30,8 @@ import { CreateOrganizationDto } from './dto/create_organization.dto';
 import { UpdateOrganizationDto } from './dto/update_organization.dto';
 import { CustomRequest, RolesEnum } from 'src/types';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
+import { CheckOrganizationDto } from './dto/check_organization.dto';
+
 @Controller('organization')
 @ApiTags('Organization')
 @ApiBearerAuth('JWT-auth')
@@ -183,7 +185,7 @@ export class OrganizationController {
   async create(
     @Req() req: CustomRequest,
     @Body() createOrganizationDto: CreateOrganizationDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
     console.log(req, 'REQ');
 
@@ -331,9 +333,23 @@ export class OrganizationController {
   async update(
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
     await this.#_service.update(id, updateOrganizationDto, files);
+  }
+
+  @RequiredRoles(RolesEnum.SUPERADMIN)
+  @Patch('/organization/check')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({})
+  @ApiOperation({ summary: 'Check Organizations by moderator' })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  async checkOrganizationByModerator(
+    @Param('id') id: string,
+    @Body() checkOrganizationDto: CheckOrganizationDto
+  ): Promise<void> {
+    await this.#_service.check(id, checkOrganizationDto.status);
   }
 
   // @UseGuards(jwtGuard)

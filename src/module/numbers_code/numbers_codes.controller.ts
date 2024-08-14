@@ -146,7 +146,7 @@ export class NumbersCodesController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateNumbersCodesDto: UpdateNumbersCodesDto,
+    @Body() updateNumbersCodesDto: UpdateNumbersCodesDto
   ) {
     await this.#_service.update(id, updateNumbersCodesDto);
   }

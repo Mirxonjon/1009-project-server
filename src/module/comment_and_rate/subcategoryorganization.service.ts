@@ -35,13 +35,13 @@ export class CommentAndRateServise {
     return findOne;
   }
 
-  async create(user : UserType , body: CreateCommentAndRateDto) {
-    console.log(body,'jjj');
-    
+  async create(user: UserType, body: CreateCommentAndRateDto) {
+    console.log(body, 'jjj');
+
     const findOrganization = await OrganizationEntity.findOne({
       where: {
-        id : body.organization_id
-       },
+        id: body.organization_id,
+      },
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
@@ -50,83 +50,84 @@ export class CommentAndRateServise {
       throw new HttpException('Organization not found', HttpStatus.NOT_FOUND);
     }
 
-    const  findCommentAndRate = await CommentAndRateEntity.findOne({
-      where : {
-        user_id :{
-          id: user.userId
+    const findCommentAndRate = await CommentAndRateEntity.findOne({
+      where: {
+        user_id: {
+          id: user.userId,
         },
-        organization_id :{
-          id : findOrganization.id
-        }
-      }
-    } )
+        organization_id: {
+          id: findOrganization.id,
+        },
+      },
+    });
     console.log(findCommentAndRate);
-    
 
-    if(findCommentAndRate) {
-
-    const update=  await CommentAndRateEntity.update(findCommentAndRate.id, {
-        rate : +body.rate ,
+    if (findCommentAndRate) {
+      const update = await CommentAndRateEntity.update(findCommentAndRate.id, {
+        rate: +body.rate,
         comment: body.comment,
-    }).catch((e) => {
-      console.log(e);
-      
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-    });;
+      }).catch((e) => {
+        console.log(e);
 
-    if(update) {
-      const rate =  (findOrganization.number_of_raters * findOrganization.common_rate + body.rate - findCommentAndRate.rate)/(findOrganization.number_of_raters)
-      // console.log(rate,(findOrganization.number_of_raters * findOrganization.common_rate + body.rate),findOrganization.number_of_raters + 1 );
+        throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+      });
 
-       await OrganizationEntity.update(findOrganization.id, {
-        common_rate : rate ,
-        number_of_raters : findOrganization.number_of_raters
-    }).catch((e) => {
-      console.log(e);
-      
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-    });;
-    }
+      if (update) {
+        const rate =
+          (findOrganization.number_of_raters * findOrganization.common_rate +
+            body.rate -
+            findCommentAndRate.rate) /
+          findOrganization.number_of_raters;
+        // console.log(rate,(findOrganization.number_of_raters * findOrganization.common_rate + body.rate),findOrganization.number_of_raters + 1 );
+
+        await OrganizationEntity.update(findOrganization.id, {
+          common_rate: rate,
+          number_of_raters: findOrganization.number_of_raters,
+        }).catch((e) => {
+          console.log(e);
+
+          throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+        });
+      }
       // throw new HttpException('You alrady commented', HttpStatus.FOUND);
-    return
+      return;
     }
 
-
-   const createCommentAndRate = await CommentAndRateEntity.createQueryBuilder()
+    const createCommentAndRate = await CommentAndRateEntity.createQueryBuilder()
       .insert()
       .into(CommentAndRateEntity)
       .values({
-        rate : +body.rate ,
+        rate: +body.rate,
         comment: body.comment,
         organization_id: findOrganization,
         user_id: {
-          id : user.userId 
-        }
+          id: user.userId,
+        },
       })
       .execute()
       .catch((e) => {
         throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
       });
 
-      if(createCommentAndRate){
-        const rate =  (findOrganization.number_of_raters * findOrganization.common_rate + body.rate)/(findOrganization.number_of_raters + 1)
-        // console.log(rate,(findOrganization.number_of_raters * findOrganization.common_rate + body.rate),findOrganization.number_of_raters + 1 );
+    if (createCommentAndRate) {
+      const rate =
+        (findOrganization.number_of_raters * findOrganization.common_rate +
+          body.rate) /
+        (findOrganization.number_of_raters + 1);
+      // console.log(rate,(findOrganization.number_of_raters * findOrganization.common_rate + body.rate),findOrganization.number_of_raters + 1 );
 
-         await OrganizationEntity.update(findOrganization.id, {
-          common_rate : rate ,
-          number_of_raters : findOrganization.number_of_raters + 1
+      await OrganizationEntity.update(findOrganization.id, {
+        common_rate: rate,
+        number_of_raters: findOrganization.number_of_raters + 1,
       }).catch((e) => {
         console.log(e);
-        
+
         throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-      });;
+      });
 
-      return
-      }
-
-
+      return;
+    }
   }
-
 
   // async update(id: string, body: UpdateCommentAndRateDto) {
   //   const findSubCategoryOrg = await Sub_Category_Org_Entity.findOne({

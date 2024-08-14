@@ -41,7 +41,7 @@ export class OrganizationCategoriesService {
     if (findCategory) {
       throw new HttpException(
         'Already created this category',
-        HttpStatus.FOUND,
+        HttpStatus.FOUND
       );
     }
     await Category_Organization_Entity.createQueryBuilder()

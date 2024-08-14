@@ -31,7 +31,7 @@ export class AuthServise {
         full_name: createUser.full_name,
         phone: createUser.number,
         password: createUser.password,
-        role: createUser.role
+        role: createUser.role,
       })
       .returning(['id', 'role', 'password'])
       .execute()
@@ -44,7 +44,7 @@ export class AuthServise {
       token: this.sign(
         addedUser.raw.at(-1).id,
         addedUser.raw.at(-1).role,
-        addedUser.raw.at(-1).password,
+        addedUser.raw.at(-1).password
       ),
     };
   }

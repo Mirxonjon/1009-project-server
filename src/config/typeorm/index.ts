@@ -16,6 +16,9 @@ import { Picture_Organization_Entity } from 'src/entities/picture_organization.e
 import { ImportedFilesTitleEntity } from 'src/entities/imported_files_title.entity';
 import { Section_Entity } from 'src/entities/section.entity';
 import { Saved_Organization_Entity } from 'src/entities/saved_org.entity';
+import { OrganizationVersionsEntity } from 'src/entities/organization_versions.entity';
+import { Picture_Organization_Versions_Entity } from 'src/entities/picture_organization_versions.entity';
+import { Phone_Organization_Versions_Entity } from 'src/entities/phone_organizations_versions.entity';
 
 dotenv.config();
 
@@ -44,6 +47,9 @@ export const connectDb: TypeOrmModuleOptions = {
     CommentAndRateEntity,
     Picture_Organization_Entity,
     ImportedFilesTitleEntity,
+    OrganizationVersionsEntity,
+    Picture_Organization_Versions_Entity,
+    Phone_Organization_Versions_Entity
   ],
   autoLoadEntities: true,
   synchronize: true,

@@ -1,5 +1,5 @@
 export interface CustomRequest extends Request {
-  user : UserType
+  user: UserType;
 }
 export interface UserType {
   userId: string;
@@ -18,8 +18,8 @@ export enum RolesEnum {
 
 export enum PhoneActionEnum {
   create = 'create',
-  update =  'update',
-  delete = 'delete'
+  update = 'update',
+  delete = 'delete',
 }
 
 export interface PhoneAction {
@@ -30,11 +30,25 @@ export interface PhoneAction {
 }
 
 export type TNumbers = {
-   numbers:  PhoneAction[]
+  numbers: PhoneAction[];
+};
+
+export enum OrganizationStatus {
+  Check = '0',
+  Accepted = '1',
+  Rejected = '2',
 }
 
-export enum OrganizationStatus  {
-  Unaccepted='0',
-  Accepted= '1',
-  Rejected= '2',
+export type OrganizationStatusType =
+  | OrganizationStatus.Check
+  | OrganizationStatus.Accepted
+  | OrganizationStatus.Rejected
+
+export enum CheckOrganizationStatus {
+  Accept = 'accept',
+  Reject = 'reject',
 }
+
+export type checkOrganizationType =
+  | CheckOrganizationStatus.Accept
+  | CheckOrganizationStatus.Reject;

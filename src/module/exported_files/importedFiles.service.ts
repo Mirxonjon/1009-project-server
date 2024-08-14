@@ -24,7 +24,7 @@ export class ImportedFilesServise {
 
   async updateData(body: UpdateOrganizationDataDto) {
     const file = await readExcel(`${body.fileName}`).catch((e) =>
-      console.log(e),
+      console.log(e)
     );
 
     if (file) {
@@ -81,7 +81,7 @@ export class ImportedFilesServise {
                   .catch(() => {
                     throw new HttpException(
                       'Bad Request',
-                      HttpStatus.BAD_REQUEST,
+                      HttpStatus.BAD_REQUEST
                     );
                   });
               }
@@ -98,7 +98,7 @@ export class ImportedFilesServise {
                   .catch(() => {
                     throw new HttpException(
                       'Bad Request ',
-                      HttpStatus.BAD_REQUEST,
+                      HttpStatus.BAD_REQUEST
                     );
                   });
               }
@@ -136,7 +136,7 @@ export class ImportedFilesServise {
                   .catch(() => {
                     throw new HttpException(
                       'Bad Request ',
-                      HttpStatus.BAD_REQUEST,
+                      HttpStatus.BAD_REQUEST
                     );
                   });
               }
@@ -153,7 +153,7 @@ export class ImportedFilesServise {
 
   async uploadFileExcel(
     body: UpdateOrganizationDataDto,
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     const fileName = `${body.fileName}${extname(file.originalname)}`;
     const filePath = join(process.cwd(), 'src', 'importedFiles', fileName);
@@ -173,7 +173,7 @@ export class ImportedFilesServise {
     } catch (error) {
       throw new HttpException(
         'Faylni saqlashda xatolik yuz berdi',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
     return {
@@ -186,13 +186,13 @@ export class ImportedFilesServise {
     const findFile = await ImportedFilesTitleEntity.findOneBy({ id }).catch(
       () => {
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-      },
+      }
     );
     const filePath = join(
       process.cwd(),
       'src',
       'importedFiles',
-      `${findFile.title}.xlsx`,
+      `${findFile.title}.xlsx`
     );
 
     if (!findFile) {
@@ -203,7 +203,7 @@ export class ImportedFilesServise {
     } catch (error) {
       throw new HttpException(
         `Faylni o'chirishdada xatolik yuz berdi`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
     await ImportedFilesTitleEntity.delete({ id });

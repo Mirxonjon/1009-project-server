@@ -47,7 +47,7 @@ export class EntertainmentServise {
     if (!body.text && !body.table_arr) {
       throw new HttpException(
         'text or table_arr should not be empty',
-        HttpStatus.NO_CONTENT,
+        HttpStatus.NO_CONTENT
       );
     }
 
