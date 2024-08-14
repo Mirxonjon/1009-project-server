@@ -17,31 +17,85 @@ export class SavedOrganizationServise {
   constructor(auth: AuthServise) {
     this.#_auth = auth;
   }
-  async findAll(user: UserType) {
-    console.log(user);
-
-    const findAllSavedOrganization = await SavedOrganizationEntity.find({
-      where: {
-        user_id: {
-          id: user.userId,
+  async findAll(user: UserType, page: string , pageSize : string) {
+    if(pageSize == 'all') {
+      const [result, total] = await OrganizationEntity.findAndCount({
+        where: {
+          saved_organization : {
+            user_id: {
+              id: user.userId,
+            }
+          }
         },
+        relations: {
+          phones: true,
+          pictures: true,
+          sub_category_org: {
+            category_org: true,
+          },
+          saved_organization: true,
+          comments: true,
+        },
+        order: {
+          create_data: 'asc',
+        },
+      }).catch((e) => {
+        // this.logger.error(`Error in find All Org`);
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+    return {
+      result  ,
+      pagination: {
+        currentPage: page,
+        totalPages : 1,
+        pageSize,
+        totalItems: total,
       },
-      order: {
-        create_data: 'asc',
-      },
-      relations: {
-        user_id: true,
-        organization_id: true,
-      },
-    }).catch((e) => {
-      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-    });
+    };
+    } else {
+      const offset = (+page - 1) * +pageSize;
 
-    if (!findAllSavedOrganization) {
-      throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
+      const [result, total] = await OrganizationEntity.findAndCount({
+        where: {
+          saved_organization : {
+            user_id: {
+              id: user.userId,
+            }
+          }
+        },
+        relations: {
+          phones: true,
+          pictures: true,
+          sub_category_org: {
+            category_org: true,
+          },
+          saved_organization: true,
+          comments: true,
+        },
+        order: {
+          create_data: 'asc',
+        },
+        
+      skip: offset,
+      take: +pageSize,
+      }).catch((e) => {
+        // this.logger.error(`Error in find All Org`);
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+
+      const totalPages = Math.ceil(total / +pageSize);
+    return {
+      result  ,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        pageSize,
+        totalItems: total,
+      },
+    };
+
     }
 
-    return findAllSavedOrganization;
   }
 
   async findOne(id: string) {

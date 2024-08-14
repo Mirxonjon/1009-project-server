@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import {
@@ -19,6 +20,7 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { SavedOrganizationServise } from './savedorganization.service';
@@ -40,8 +42,12 @@ export class SavedOrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(@Req() req: CustomRequest) {
-    return await this.#_service.findAll(req.user);
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  async findall(@Req() req: CustomRequest,
+  @Query('page') page: string = '1',
+  @Query('pageSize') pageSize: string = '10',) {
+    return await this.#_service.findAll(req.user, page, pageSize);
   }
 
   @Get('/one/:id')

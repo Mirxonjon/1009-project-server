@@ -25,26 +25,74 @@ import { Not } from 'typeorm';
 export class OrganizationServise {
   private logger = new Logger(OrganizationServise.name);
 
-  async findAll() {
-    const findAll = await OrganizationEntity.find({
-      relations: {
-        phones: true,
-        pictures: true,
-        sub_category_org: {
-          category_org: true,
+  async findAll(page: string , pageSize : string) {
+    if(pageSize == 'all') {
+      const [result, total] = await OrganizationEntity.findAndCount({
+        relations: {
+          phones: true,
+          pictures: true,
+          sub_category_org: {
+            category_org: true,
+          },
+          saved_organization: true,
+          comments: true,
         },
-        saved_organization: true,
-        comments: true,
+        order: {
+          create_data: 'asc',
+        },
+      }).catch((e) => {
+        this.logger.error(`Error in find All Org`);
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+    return {
+      result  ,
+      pagination: {
+        currentPage: page,
+        totalPages : 1,
+        pageSize,
+        totalItems: total,
       },
-      order: {
-        create_data: 'asc',
-      },
-    }).catch((e) => {
-      this.logger.error(`Error in find All Org`);
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
+    };
+    } else {
+      const offset = (+page - 1) * +pageSize;
 
-    return findAll;
+      const [result, total] = await OrganizationEntity.findAndCount({
+        relations: {
+          phones: true,
+          pictures: true,
+          sub_category_org: {
+            category_org: true,
+          },
+          saved_organization: true,
+          comments: true,
+        },
+        order: {
+          create_data: 'asc',
+        },
+        
+      skip: offset,
+      take: +pageSize,
+      }).catch((e) => {
+        this.logger.error(`Error in find All Org`);
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+
+      const totalPages = Math.ceil(total / +pageSize);
+    return {
+      result  ,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        pageSize,
+        totalItems: total,
+      },
+    };
+
+    }
+
+
+   
+
   }
 
   async findOne(id: string) {
@@ -89,39 +137,112 @@ export class OrganizationServise {
     return findOne;
   }
 
-  async findMyOrganization(user: UserType) {
-    // console.log(us);
-
-    const findMyOrganization = await UsersEntity.findOne({
+  async findMyOrganization(user: UserType,page: string , pageSize : string) {
+    if(pageSize == 'all') {
+    const [result, total] = await OrganizationEntity.findAndCount({
       where: {
-        id: user.userId,
+        userId :{
+          id: user.userId
+        }
       },
       relations: {
-        my_organization: {
-          sectionId: true,
-          comments: true,
-          phones: true,
-          pictures: true,
-          sub_category_org: {
-            category_org: true,
-          },
-          saved_organization: true,
+        phones: true,
+        pictures: true,
+        sub_category_org: {
+          category_org: true,
         },
+        saved_organization: true,
+        comments: true,
       },
       order: {
         create_data: 'asc',
       },
     }).catch((e) => {
+      this.logger.error(`Error in find All Org`);
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    });
+  return {
+    result  ,
+    pagination: {
+      currentPage: page,
+      totalPages : 1,
+      pageSize,
+      totalItems: total,
+    },
+  };
+  } else {
+    const offset = (+page - 1) * +pageSize;
+
+    const [result, total] = await OrganizationEntity.findAndCount({
+      where: {
+        userId :{
+          id: user.userId
+        }
+      },
+      relations: {
+        phones: true,
+        pictures: true,
+        sub_category_org: {
+          category_org: true,
+        },
+        saved_organization: true,
+        comments: true,
+      },
+      order: {
+        create_data: 'asc',
+      },
+      
+    skip: offset,
+    take: +pageSize,
+    }).catch((e) => {
+      this.logger.error(`Error in find All Org`);
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
-    if (!findMyOrganization) {
-      this.logger.error(`Error in find My Org`);
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    const totalPages = Math.ceil(total / +pageSize);
+  return {
+    result  ,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      pageSize,
+      totalItems: total,
+    },
+  };
 
-    return findMyOrganization;
+    // console.log(us);
+
+    // const findMyOrganization = await UsersEntity.findOne({
+    //   where: {
+    //     id: user.userId,
+    //   },
+    //   relations: {
+    //     my_organization: {
+    //       sectionId: true,
+    //       comments: true,
+    //       phones: true,
+    //       pictures: true,
+    //       sub_category_org: {
+    //         category_org: true,
+    //       },
+    //       saved_organization: true,
+    //     },
+    //   },
+    //   order: {
+    //     create_data: 'asc',
+    //   },
+    // }).catch((e) => {
+    //   throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    // });
+
+    // if (!findMyOrganization) {
+    //   this.logger.error(`Error in find My Org`);
+    //   throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    // }
+
+    // return findMyOrganization;
   }
+}
 
   async create(
     user: UserType,
