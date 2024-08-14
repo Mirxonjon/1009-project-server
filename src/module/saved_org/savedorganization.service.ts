@@ -3,11 +3,11 @@ import { CreateSavedOrganizationDto } from './dto/create_savedorganization.dto';
 
 import { UpdateSavedOrganizationDto } from './dto/update_savedorganization.dto';
 
-import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
+import { SubCategoryOrgEntity } from 'src/entities/sub_category_org.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
 import { CustomHeaders, UserType } from 'src/types';
 import { AuthServise } from '../auth/auth.service';
-import { Saved_Organization_Entity } from 'src/entities/saved_org.entity';
+import { SavedOrganizationEntity } from 'src/entities/saved_org.entity';
 import { UsersEntity } from 'src/entities/users.entity';
 import { OrganizationEntity } from 'src/entities/organization.entity';
 
@@ -19,39 +19,37 @@ export class SavedOrganizationServise {
   }
   async findAll(user: UserType) {
     console.log(user);
-    
 
-      const findAllSavedOrganization = await Saved_Organization_Entity.find({
-        where: {
-          user_id: {
-            id:user.userId,
-          },
+    const findAllSavedOrganization = await SavedOrganizationEntity.find({
+      where: {
+        user_id: {
+          id: user.userId,
         },
-        order: {
-          create_data: 'asc',
-        },
-        relations: {
-          user_id:true,
-          organization_id: true,
-        },
-      }).catch((e) => {
-        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-      });
+      },
+      order: {
+        create_data: 'asc',
+      },
+      relations: {
+        user_id: true,
+        organization_id: true,
+      },
+    }).catch((e) => {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    });
 
-      if(!findAllSavedOrganization) {
-        throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
-      }
+    if (!findAllSavedOrganization) {
+      throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
+    }
 
-      return findAllSavedOrganization;
-
+    return findAllSavedOrganization;
   }
 
   async findOne(id: string) {
-    const findOne = await Saved_Organization_Entity.find({
+    const findOne = await SavedOrganizationEntity.find({
       where: {
-        organization_id :{
-          id
-        }
+        organization_id: {
+          id,
+        },
       },
       relations: {
         organization_id: true,
@@ -63,51 +61,54 @@ export class SavedOrganizationServise {
     return findOne;
   }
 
-  async create(headers: CustomHeaders, body: CreateSavedOrganizationDto) {
-    if (headers.authorization) {
-      const data = await this.#_auth.verify(
-        headers.authorization.split(' ')[1],
-      );
-      const userId: string = data.id;
+  async create(user: UserType, body: CreateSavedOrganizationDto) {
+    const findOrganization = await OrganizationEntity.findOne({
+      where: {
+        id: body.organization_id,
+      },
+    }).catch((e) => {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    });
 
-      const findUser = await UsersEntity.findOne({
-        where: {
-          id: userId,
-        },
-      }).catch((e) => {
-        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      });
-
-      if (!findUser) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-
-      const findOrganization = await OrganizationEntity.findOne({
-        where: {
-          id: body.organization_id,
-        },
-      }).catch((e) => {
-        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      });
-
-      if (!findOrganization) {
-        throw new HttpException('Not found organization', HttpStatus.NOT_FOUND);
-      }
-      await Saved_Organization_Entity.createQueryBuilder()
-        .insert()
-        .into(Saved_Organization_Entity)
-        .values({
-          user_id: findUser,
-          organization_id: findOrganization,
-        })
-        .execute()
-        .catch((e) => {
-          throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-        });
-    } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    if (!findOrganization) {
+      throw new HttpException('Not found organization', HttpStatus.NOT_FOUND);
     }
+
+    const findSavedOrg = await SavedOrganizationEntity.findOne({
+      where: {
+        organization_id: {
+          id: findOrganization.id,
+        },
+        user_id: {
+          id: user.userId,
+        },
+      },
+    }).catch((e) => {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    });
+
+    if (findSavedOrg) {
+      throw new HttpException(
+        'Already saved organization',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await SavedOrganizationEntity.createQueryBuilder()
+      .insert()
+      .into(SavedOrganizationEntity)
+      .values({
+        user_id: {
+          id: user.userId,
+        },
+        organization_id: findOrganization,
+      })
+      .execute()
+      .catch((e) => {
+        throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+      });
   }
+
   // async update(id: string,headers :CustomHeaders, body: UpdateSavedOrganizationDto) {
   //   const findSavedOrganization= await Saved_Organization_Entity.findOne({
   //     where: { id },
@@ -138,7 +139,7 @@ export class SavedOrganizationServise {
   // }
 
   async remove(id: string) {
-    const findSavedOrganization = await Saved_Organization_Entity.findOneBy({
+    const findSavedOrganization = await SavedOrganizationEntity.findOneBy({
       id,
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
@@ -151,6 +152,6 @@ export class SavedOrganizationServise {
       );
     }
 
-    await Saved_Organization_Entity.delete({ id });
+    await SavedOrganizationEntity.delete({ id });
   }
 }

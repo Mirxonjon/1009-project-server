@@ -3,20 +3,20 @@ import { CreateOrganizationCategoryDto } from './dto/create_organization_categor
 import { UpdateOrganizationCategoryDto } from './dto/update_organization_categories.dto';
 import { Like } from 'typeorm';
 import { EntertainmentCategoriesEntity } from 'src/entities/entertainment_Categories.entity';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
 @Injectable()
 export class OrganizationCategoriesService {
   async findAll() {
     const allOrganizationCategory =
-      await Category_Organization_Entity.find().catch((e) => {
+      await CategoryOrganizationEntity.find().catch((e) => {
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
     return allOrganizationCategory;
   }
 
   async findOne(id: string) {
-    const findCategory: Category_Organization_Entity =
-      await Category_Organization_Entity.findOne({
+    const findCategory: CategoryOrganizationEntity =
+      await CategoryOrganizationEntity.findOne({
         where: {
           id: id,
         },
@@ -34,7 +34,7 @@ export class OrganizationCategoriesService {
   }
 
   async create(body: CreateOrganizationCategoryDto) {
-    const findCategory = await Category_Organization_Entity.findOneBy({
+    const findCategory = await CategoryOrganizationEntity.findOneBy({
       title: body.title,
     });
 
@@ -44,9 +44,9 @@ export class OrganizationCategoriesService {
         HttpStatus.FOUND,
       );
     }
-    await Category_Organization_Entity.createQueryBuilder()
+    await CategoryOrganizationEntity.createQueryBuilder()
       .insert()
-      .into(Category_Organization_Entity)
+      .into(CategoryOrganizationEntity)
       .values({
         title: body.title.toLowerCase(),
       })
@@ -57,7 +57,7 @@ export class OrganizationCategoriesService {
   }
 
   async update(id: string, body: UpdateOrganizationCategoryDto) {
-    const findCategory = await Category_Organization_Entity.findOneBy({
+    const findCategory = await CategoryOrganizationEntity.findOneBy({
       id: id,
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
@@ -67,8 +67,8 @@ export class OrganizationCategoriesService {
       throw new HttpException('Not found Category', HttpStatus.NOT_FOUND);
     }
 
-    await Category_Organization_Entity.createQueryBuilder()
-      .update(Category_Organization_Entity)
+    await CategoryOrganizationEntity.createQueryBuilder()
+      .update(CategoryOrganizationEntity)
       .set({
         title: body.title.toLowerCase() || findCategory.title,
       })
@@ -80,7 +80,7 @@ export class OrganizationCategoriesService {
   }
 
   async remove(id: string) {
-    const findCategory = await Category_Organization_Entity.findOneBy({
+    const findCategory = await CategoryOrganizationEntity.findOneBy({
       id: id,
     }).catch(() => {
       throw new HttpException('Not found Category', HttpStatus.BAD_REQUEST);
@@ -90,9 +90,9 @@ export class OrganizationCategoriesService {
       throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
     }
 
-    await Category_Organization_Entity.createQueryBuilder()
+    await CategoryOrganizationEntity.createQueryBuilder()
       .delete()
-      .from(Category_Organization_Entity)
+      .from(CategoryOrganizationEntity)
       .where({ id })
       .execute();
   }

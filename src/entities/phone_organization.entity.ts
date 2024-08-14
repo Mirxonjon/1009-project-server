@@ -11,7 +11,7 @@ import {
 import { OrganizationEntity } from './organization.entity';
 
 @Entity()
-export class Phone_Organization_Entity extends BaseEntity {
+export class PhoneOrganizationEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -27,7 +27,9 @@ export class Phone_Organization_Entity extends BaseEntity {
   })
   type_number: string;
 
-  @ManyToOne(() => OrganizationEntity, (org) => org.phones , { onDelete: 'CASCADE' })
+  @ManyToOne(() => OrganizationEntity, (org) => org.phones, {
+    onDelete: 'CASCADE',
+  })
   organization: OrganizationEntity;
 
   @UpdateDateColumn({ name: 'updated_at' })

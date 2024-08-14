@@ -3,13 +3,13 @@ import { CreateSubCategoryOrganizationDto } from './dto/create_subcategoryorgani
 
 import { UpdateSubCategoryOrganizationDto } from './dto/update_subcategoryorganization.dto';
 
-import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
+import { SubCategoryOrgEntity } from 'src/entities/sub_category_org.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
 
 @Injectable()
 export class SubCategoryOrganizationServise {
   async findAll() {
-    const findAllSubCategories = await Sub_Category_Org_Entity.find({
+    const findAllSubCategories = await SubCategoryOrgEntity.find({
       order: {
         create_data: 'asc',
       },
@@ -21,7 +21,7 @@ export class SubCategoryOrganizationServise {
   }
 
   async findOne(id: string) {
-    const findOne = await Sub_Category_Org_Entity.find({
+    const findOne = await SubCategoryOrgEntity.find({
       where: {
         id,
       },
@@ -36,7 +36,7 @@ export class SubCategoryOrganizationServise {
   }
 
   async create(body: CreateSubCategoryOrganizationDto) {
-    const findCategory = await Category_Organization_Entity.findOne({
+    const findCategory = await CategoryOrganizationEntity.findOne({
       where: {
         id: body.category_id,
       },
@@ -48,9 +48,9 @@ export class SubCategoryOrganizationServise {
       throw new HttpException(' Category not found', HttpStatus.NOT_FOUND);
     }
 
-    await Sub_Category_Org_Entity.createQueryBuilder()
+    await SubCategoryOrgEntity.createQueryBuilder()
       .insert()
-      .into(Sub_Category_Org_Entity)
+      .into(SubCategoryOrgEntity)
       .values({
         title: body.title,
         category_org: findCategory,
@@ -61,16 +61,16 @@ export class SubCategoryOrganizationServise {
       });
   }
   async update(id: string, body: UpdateSubCategoryOrganizationDto) {
-    const findSubCategoryOrg = await Sub_Category_Org_Entity.findOne({
+    const findSubCategoryOrg = await SubCategoryOrgEntity.findOne({
       where: { id },
     });
 
     if (!findSubCategoryOrg) {
       throw new HttpException('Sub Category not found', HttpStatus.NOT_FOUND);
     }
-    let findCategory: Category_Organization_Entity | null = null;
+    let findCategory: CategoryOrganizationEntity | null = null;
     if (body.category_id) {
-      findCategory = await Category_Organization_Entity.findOneBy({ id }).catch(
+      findCategory = await CategoryOrganizationEntity.findOneBy({ id }).catch(
         (e) => {
           throw new HttpException('Not found Category', HttpStatus.NOT_FOUND);
         },
@@ -80,7 +80,7 @@ export class SubCategoryOrganizationServise {
       }
     }
 
-    const updatedVideo = await Sub_Category_Org_Entity.update(id, {
+    const updatedVideo = await SubCategoryOrgEntity.update(id, {
       title: body.title.toLowerCase() || findSubCategoryOrg.title,
 
       category_org: findCategory,
@@ -90,7 +90,7 @@ export class SubCategoryOrganizationServise {
   }
 
   async remove(id: string) {
-    const findSubCatgory = await Sub_Category_Org_Entity.findOneBy({
+    const findSubCatgory = await SubCategoryOrgEntity.findOneBy({
       id,
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
@@ -100,6 +100,6 @@ export class SubCategoryOrganizationServise {
       throw new HttpException('Sub Catgeory not found', HttpStatus.NOT_FOUND);
     }
 
-    await Sub_Category_Org_Entity.delete({ id });
+    await SubCategoryOrgEntity.delete({ id });
   }
 }

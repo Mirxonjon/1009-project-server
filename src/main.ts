@@ -10,9 +10,11 @@ import * as Config from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: Config.Logger.allLogs ? ['log', 'debug', 'error', 'verbose', 'warn'] : ['log', 'error', 'warn'],
+    logger: Config.Logger.allLogs
+      ? ['log', 'debug', 'error', 'verbose', 'warn']
+      : ['log', 'error', 'warn'],
     //logger: ['log', 'debug', 'error', 'verbose', 'warn'],
-});
+  });
 
   app.use(
     cors({
@@ -23,9 +25,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new ErrorHandle());
   app.setGlobalPrefix('api/v1');
-
-
-
 
   const config = app.get(ConfigService);
   const host = config.getOrThrow<string>('app.host');

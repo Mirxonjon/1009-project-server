@@ -2,16 +2,23 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateOrganizationDto } from './dto/create_organization.dto';
 import { UpdateOrganizationDto } from './dto/update_organization.dto';
 import { OrganizationEntity } from 'src/entities/organization.entity';
-import { Phone_Organization_Entity } from 'src/entities/phone_organization.entity';
+import { PhoneOrganizationEntity } from 'src/entities/phone_organization.entity';
 import { extname } from 'path';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
-import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
-import { Picture_Organization_Entity } from 'src/entities/picture_organization.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
+import { SubCategoryOrgEntity } from 'src/entities/sub_category_org.entity';
+import { PictureOrganizationEntity } from 'src/entities/picture_organization.entity';
 import { allowedImageFormats } from 'src/utils/videoAndImageFormat';
 import { deleteFileCloud, googleCloudAsync } from 'src/utils/google_cloud';
-import { PhoneAction, PhoneActionEnum, RolesEnum, TNumbers, UserType,OrganizationStatus } from 'src/types';
+import {
+  PhoneAction,
+  PhoneActionEnum,
+  RolesEnum,
+  TNumbers,
+  UserType,
+  OrganizationStatus,
+} from 'src/types';
 import { UsersEntity } from 'src/entities/users.entity';
-import { Section_Entity } from 'src/entities/section.entity';
+import { SectionEntity } from 'src/entities/section.entity';
 import { Not } from 'typeorm';
 
 @Injectable()
@@ -24,14 +31,16 @@ export class OrganizationServise {
         phones: true,
         pictures: true,
         sub_category_org: {
-          category_org: true
+          category_org: true,
         },
-        saved_organization:true
+        saved_organization: true,
+        comments: true,
       },
       order: {
         create_data: 'asc',
       },
     }).catch((e) => {
+      this.logger.error(`Error in find All Org`);
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
 
@@ -40,29 +49,31 @@ export class OrganizationServise {
 
   async findOne(id: string) {
     const findOne = await OrganizationEntity.find({
-      where: [{
-        id,
-        // comments: {
-        //   comment:  Not(null)
-        // }
-      },{
-      id,
-      comments: {
-        comment:  Not(null)
-      }
-    }
-    ],
+      where: [
+        {
+          id,
+          // comments: {
+          //   comment:  Not(null)
+          // }
+        },
+        {
+          id,
+          comments: {
+            comment: Not(null),
+          },
+        },
+      ],
       relations: {
         sectionId: true,
         phones: true,
         pictures: true,
-        comments :{
-          user_id:true
+        comments: {
+          user_id: true,
         },
         sub_category_org: {
-          category_org: true
+          category_org: true,
         },
-        saved_organization:true
+        saved_organization: true,
       },
       order: {
         create_data: 'asc',
@@ -78,25 +89,25 @@ export class OrganizationServise {
     return findOne;
   }
 
-  async findMyOrganization(user: UserType ) {
+  async findMyOrganization(user: UserType) {
     // console.log(us);
-    
+
     const findMyOrganization = await UsersEntity.findOne({
       where: {
-        id: user.userId
+        id: user.userId,
       },
       relations: {
-        my_organization : {
-          sectionId :true ,
-            comments: true,
-            phones: true,
-            pictures: true,
-            sub_category_org: {
-              category_org: true ,  
+        my_organization: {
+          sectionId: true,
+          comments: true,
+          phones: true,
+          pictures: true,
+          sub_category_org: {
+            category_org: true,
+          },
+          saved_organization: true,
         },
-        saved_organization:true
       },
-    },
       order: {
         create_data: 'asc',
       },
@@ -105,20 +116,20 @@ export class OrganizationServise {
     });
 
     if (!findMyOrganization) {
-      this.logger.error(`Error in find My Org`)
+      this.logger.error(`Error in find My Org`);
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
 
-    return findMyOrganization
-
+    return findMyOrganization;
   }
 
-  async create(user: UserType, 
+  async create(
+    user: UserType,
     body: CreateOrganizationDto,
     pictures: Array<Express.Multer.File>,
   ) {
     console.log(body, 'BODY');
-    this.logger.debug(body, 'BODY')
+    this.logger.debug(body, 'BODY');
     console.log(pictures, 'picture');
     // let findCategory = null
 
@@ -136,11 +147,11 @@ export class OrganizationServise {
 
     let findSubCategory = null;
 
-    console.log(body.sub_category_id, 'BODY SUB CATEG OUT')
+    console.log(body.sub_category_id, 'BODY SUB CATEG OUT');
 
     if (body.sub_category_id != 'null') {
-      console.log(body.sub_category_id, 'BODY SUB CATEG IN')
-      findSubCategory = await Sub_Category_Org_Entity.findOne({
+      console.log(body.sub_category_id, 'BODY SUB CATEG IN');
+      findSubCategory = await SubCategoryOrgEntity.findOne({
         where: {
           id: body.sub_category_id,
         },
@@ -153,11 +164,11 @@ export class OrganizationServise {
 
     let findSection = null;
 
-    console.log(body.section, 'BODY SUB CATEG OUT')
+    console.log(body.section, 'BODY SUB CATEG OUT');
 
     if (body.section != 'null') {
-      console.log(body.section, 'BODY SUB CATEG IN')
-      findSection = await Section_Entity.findOne({
+      console.log(body.section, 'BODY SUB CATEG IN');
+      findSection = await SectionEntity.findOne({
         where: {
           id: body.section,
         },
@@ -168,7 +179,8 @@ export class OrganizationServise {
       });
     }
 
-    console.log(findSection, 'FIND BY CATEGORY')
+    console.log(findSection, 'FIND BY CATEGORY');
+    // console.log(body, 'BODY');
 
     const createdOrg = await OrganizationEntity.createQueryBuilder()
       .insert()
@@ -181,43 +193,46 @@ export class OrganizationServise {
         email: body.email,
         // index: body.index,
         address: body.address,
-        scheduler: JSON.stringify(body?.scheduler as any),
-        payment_types: JSON.stringify(body?.payment_types as any),
-        transport: JSON.stringify(body?.transport as any),
+        scheduler: JSON.parse(body.scheduler as any),
+        payment_types: JSON.parse(body.payment_types as any),
+        transport: JSON.parse(body.transport as any),
         comment: body.comment,
-        location: JSON.stringify(body?.location as any),
+        location: JSON.parse(body.transport as any),
         segment: body.segment,
         account: body.account,
         added_by: body.added_by,
         inn: body.inn,
         bank_account: body.bank_account,
-        sectionId:findSection,
-        status: user.role == RolesEnum.SUPERADMIN ?  OrganizationStatus.Accepted : OrganizationStatus.Unaccepted, 
+        sectionId: findSection,
+        status:
+          user.role == RolesEnum.SUPERADMIN
+            ? OrganizationStatus.Accepted
+            : OrganizationStatus.Unaccepted,
         sub_category_org: {
           id: findSubCategory?.id,
         },
-        userId:{
-          id: user.userId
-        }
+        userId: {
+          id: user.userId,
+        },
       })
       .execute()
       .catch((e) => {
-        console.log(e, ': CREATE ERROR');
+        console.log('1111', e, ': CREATE ERROR');
         throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
       });
 
-    console.log(createdOrg, 'CREATE ORG OUT')
+    console.log(createdOrg, 'CREATE ORG OUT');
     if (createdOrg) {
-      console.log(createdOrg, 'CREATE ORG IN')
+      console.log(createdOrg, 'CREATE ORG IN');
       let phones = body?.phones as any;
 
-      console.log(phones, 'PHONES in IF')
+      console.log(phones, 'PHONES in IF');
 
       phones?.numbers?.forEach(
         async (e: { number: string; type_number: string }) => {
-          await Phone_Organization_Entity.createQueryBuilder()
+          await PhoneOrganizationEntity.createQueryBuilder()
             .insert()
-            .into(Phone_Organization_Entity)
+            .into(PhoneOrganizationEntity)
             .values({
               number: e.number,
               type_number: e.type_number,
@@ -233,16 +248,16 @@ export class OrganizationServise {
         },
       );
 
-      console.log(phones, 'AFTER INSERT PHONES')
-      console.log(pictures, ' INSERT picture')
+      console.log(phones, 'AFTER INSERT PHONES');
+      console.log(pictures, ' INSERT picture');
       pictures?.forEach(async (e: Express.Multer.File) => {
         const formatImage = extname(e?.originalname).toLowerCase();
         if (allowedImageFormats.includes(formatImage)) {
           const linkImage: string = await googleCloudAsync(e);
 
-          await Picture_Organization_Entity.createQueryBuilder()
+          await PictureOrganizationEntity.createQueryBuilder()
             .insert()
-            .into(Picture_Organization_Entity)
+            .into(PictureOrganizationEntity)
             .values({
               image_link: linkImage,
               organization_id: {
@@ -257,14 +272,17 @@ export class OrganizationServise {
         }
       });
 
-      console.log(pictures, 'AFTER INSERT FILES')
+      console.log(pictures, 'AFTER INSERT FILES');
     }
-
   }
 
-  async update(id: string, body: UpdateOrganizationDto, pictures: Array<Express.Multer.File>,) {
-    let phones =  body?.phones as any
-    console.log(body,typeof(phones), phones.numbers  , ' : numbersd1');
+  async update(
+    id: string,
+    body: UpdateOrganizationDto,
+    pictures: Array<Express.Multer.File>,
+  ) {
+    let phones = body?.phones as any;
+    console.log(body, typeof phones, phones.numbers, ' : numbersd1');
     const findOrganization = await OrganizationEntity.findOne({
       where: {
         id: id,
@@ -278,7 +296,7 @@ export class OrganizationServise {
     let findSubCategory = findOrganization.sub_category_org;
 
     if (body.sub_category_id != 'null') {
-      findSubCategory = await Sub_Category_Org_Entity.findOne({
+      findSubCategory = await SubCategoryOrgEntity.findOne({
         where: {
           id: body.sub_category_id,
         },
@@ -290,11 +308,11 @@ export class OrganizationServise {
 
     let findSection = findOrganization.sectionId;
 
-    console.log(body.section, 'BODY SUB CATEG OUT')
+    console.log(body.section, 'BODY SUB CATEG OUT');
 
     if (body.section != 'null') {
-      console.log(body.section, 'BODY SUB CATEG IN')
-      findSection = await Section_Entity.findOne({
+      console.log(body.section, 'BODY SUB CATEG IN');
+      findSection = await SectionEntity.findOne({
         where: {
           id: body.section,
         },
@@ -306,18 +324,19 @@ export class OrganizationServise {
     }
 
     const updatedOrganization = await OrganizationEntity.update(id, {
-      main_organization: body.main_organization || findOrganization.main_organization,
+      main_organization:
+        body.main_organization || findOrganization.main_organization,
       organization_name:
         body.organization_name || findOrganization.organization_name,
       manager: body.manager || findOrganization.manager,
       email: body.email || findOrganization.email,
       address: body.address || findOrganization.address,
-      scheduler: JSON.stringify(body?.scheduler as any) || findOrganization.scheduler,
-      payment_types:
-        JSON.stringify(body?.payment_types as any) || findOrganization.payment_types,
-      transport: JSON.stringify(body?.transport as any) || findOrganization.transport,
-      comment: body.comment || findOrganization.comment,
-      location: JSON.stringify(body?.location as any) || findOrganization.location,
+      // scheduler: JSON.stringify(body?.scheduler as any) || findOrganization.scheduler,
+      // payment_types:
+      // JSON.stringify(body?.payment_types as any) || findOrganization.payment_types,
+      // transport: JSON.stringify(body?.transport as any) || findOrganization.transport,
+      // comment: body.comment || findOrganization.comment,
+      // location: JSON.stringify(body?.location as any) || findOrganization.location,
       segment: body.segment || findOrganization.segment,
       account: body.account || findOrganization.account,
       added_by: body.added_by || findOrganization.added_by,
@@ -333,23 +352,20 @@ export class OrganizationServise {
     });
 
     if (updatedOrganization) {
+      let phones: string | TNumbers = body?.phones;
 
-
-      let phones: string | TNumbers = body?.phones
-
-      if (typeof phones === "string") {
+      if (typeof phones === 'string') {
         phones = JSON.parse(phones) as { numbers: PhoneAction[] };
         console.log(phones);
       }
 
+      let allPhones = phones?.numbers;
 
-      let allPhones = phones?.numbers
-
-       for(let i = 0; i < allPhones.length; i++) {
+      for (let i = 0; i < allPhones.length; i++) {
         if (allPhones[i].action == PhoneActionEnum.create) {
-          await Phone_Organization_Entity.createQueryBuilder()
+          await PhoneOrganizationEntity.createQueryBuilder()
             .insert()
-            .into(Phone_Organization_Entity)
+            .into(PhoneOrganizationEntity)
             .values({
               number: allPhones[i].number,
               type_number: allPhones[i].type_number,
@@ -363,14 +379,14 @@ export class OrganizationServise {
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
         } else if (allPhones[i].action == PhoneActionEnum.update) {
-          const findPhone = await Phone_Organization_Entity.findOne({
+          const findPhone = await PhoneOrganizationEntity.findOne({
             where: {
               id: allPhones[i].id,
             },
           });
 
           if (findPhone) {
-            await Phone_Organization_Entity.update(allPhones[i].id, {
+            await PhoneOrganizationEntity.update(allPhones[i].id, {
               number: allPhones[i].number,
               type_number: allPhones[i].type_number,
             }).catch((e) => {
@@ -379,7 +395,7 @@ export class OrganizationServise {
             });
           }
         } else if (allPhones[i].action == PhoneActionEnum.create) {
-          const findPhone = await Phone_Organization_Entity.findOne({
+          const findPhone = await PhoneOrganizationEntity.findOne({
             where: {
               id: allPhones[i].id,
             },
@@ -389,121 +405,107 @@ export class OrganizationServise {
           });
 
           if (findPhone) {
-            await Phone_Organization_Entity.delete({ id: allPhones[i].id }).catch(
+            await PhoneOrganizationEntity.delete({ id: allPhones[i].id }).catch(
               (e) => {
                 console.log(e);
-                throw new HttpException(
-                  e.message,
-                  HttpStatus.BAD_REQUEST,
-                );
+                throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
               },
             );
           } else {
-            throw new HttpException(
-             "Not found number",
-              HttpStatus.NOT_FOUND,
-            );
+            throw new HttpException('Not found number', HttpStatus.NOT_FOUND);
           }
         }
-       }
- 
       }
-      console.log('okkk1');
-      
+    }
+    console.log('okkk1');
 
-      for(let i = 0; i < pictures?.length; i++) {
-        const formatImage = extname(pictures[i]?.originalname).toLowerCase();
-        if (allowedImageFormats.includes(formatImage)) {
-          const linkImage: string = await googleCloudAsync(pictures[i]);
+    for (let i = 0; i < pictures?.length; i++) {
+      const formatImage = extname(pictures[i]?.originalname).toLowerCase();
+      if (allowedImageFormats.includes(formatImage)) {
+        const linkImage: string = await googleCloudAsync(pictures[i]);
 
-          await Picture_Organization_Entity.createQueryBuilder()
-            .insert()
-            .into(Picture_Organization_Entity)
-            .values({
-              image_link: linkImage,
-              organization_id: {
-                id: findOrganization.id,
-              },
-            })
-            .execute()
-            .catch((e) => {
-              console.log(e);
+        await PictureOrganizationEntity.createQueryBuilder()
+          .insert()
+          .into(PictureOrganizationEntity)
+          .values({
+            image_link: linkImage,
+            organization_id: {
+              id: findOrganization.id,
+            },
+          })
+          .execute()
+          .catch((e) => {
+            console.log(e);
 
-              throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-            });
-        }
+            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+          });
       }
-    
+    }
 
-      let pictures_delete: string | {delete: string[]} = body.pictures_delete;
+    let pictures_delete: string | { delete: string[] } = body.pictures_delete;
 
-      if (typeof pictures_delete === "string") {
-        pictures_delete = JSON.parse(pictures_delete) as {delete: string[]} ;
-        console.log(pictures_delete);
+    if (typeof pictures_delete === 'string') {
+      pictures_delete = JSON.parse(pictures_delete) as { delete: string[] };
+      console.log(pictures_delete);
+    }
+    let AllPictureDelete = pictures_delete.delete;
+    for (let i = 0; i < AllPictureDelete.length; i++) {
+      const findPicture = await PictureOrganizationEntity.findOne({
+        where: {
+          id: AllPictureDelete[i],
+        },
+      });
+
+      if (!findPicture) {
+        throw new HttpException('Not found picture', HttpStatus.NOT_FOUND);
       }
-      let AllPictureDelete =
-       pictures_delete.delete
-      for(let i = 0; i < AllPictureDelete.length; i++) {
-        const  findPicture = await Picture_Organization_Entity.findOne({
-          where:{
-            id : AllPictureDelete[i]
-          }
-        })
-
-        if(!findPicture) {
-          throw new HttpException(
-            "Not found picture",
-             HttpStatus.NOT_FOUND,
-           );
-        }
-        await deleteFileCloud(AllPictureDelete[i])
-        await Picture_Organization_Entity.delete({ id: AllPictureDelete[i] }).catch((e) => {
+      await deleteFileCloud(AllPictureDelete[i]);
+      await PictureOrganizationEntity.delete({ id: AllPictureDelete[i] }).catch(
+        (e) => {
           console.log(e);
           throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-        });;
-      }
-      // pictures_delete?.delete?.forEach(async e => {
-      //   const  findPicture = await Picture_Organization_Entity.findOne({
-      //     where:{
-      //       id : e
-      //     }
-      //   })
+        },
+      );
+    }
+    // pictures_delete?.delete?.forEach(async e => {
+    //   const  findPicture = await Picture_Organization_Entity.findOne({
+    //     where:{
+    //       id : e
+    //     }
+    //   })
 
-      //   if(!findPicture) {
-      //     throw new HttpException(
-      //       "Not found picture",
-      //        HttpStatus.NOT_FOUND,
-      //      );
-      //   }
-      //   await deleteFileCloud(e)
-      //   await Picture_Organization_Entity.delete({ id: e }).catch((e) => {
-      //     console.log(e);
-      //     throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-      //   });;
+    //   if(!findPicture) {
+    //     throw new HttpException(
+    //       "Not found picture",
+    //        HttpStatus.NOT_FOUND,
+    //      );
+    //   }
+    //   await deleteFileCloud(e)
+    //   await Picture_Organization_Entity.delete({ id: e }).catch((e) => {
+    //     console.log(e);
+    //     throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    //   });;
 
-      // })
-      console.log('okkk');
-      
+    // })
+    console.log('okkk');
 
-      return;
+    return;
     // }
   }
 
   async remove(id: string) {
     console.log('keld');
-    
-    const findOrganization = await OrganizationEntity.findOne({ 
-      where :{
-        id
+
+    const findOrganization = await OrganizationEntity.findOne({
+      where: {
+        id,
       },
-      relations : {
-        pictures: true
-      }
-     }).catch(
-      (e) => {
-        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+      relations: {
+        pictures: true,
       },
-    );
+    }).catch((e) => {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    });
 
     console.log('keldoooooo');
 
@@ -515,10 +517,8 @@ export class OrganizationServise {
     //   await deleteFileCloud(e.image_link)
     // })
 
-    await OrganizationEntity.delete({ id }).catch(
-      (e) => {
-        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-      },
-    );;
+    await OrganizationEntity.delete({ id }).catch((e) => {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    });
   }
 }

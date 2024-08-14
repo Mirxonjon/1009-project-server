@@ -8,13 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Sub_Category_Org_Entity } from './sub_category_org.entity';
-import { Phone_Organization_Entity } from './phone_organization.entity';
-import { CommentAndRateEntity } from './commentAndRate.entity';
-import { Picture_Organization_Entity } from './picture_organization.entity';
-import { Saved_Organization_Entity } from './saved_org.entity';
+import { SubCategoryOrgEntity } from './sub_category_org.entity';
+import { PhoneOrganizationEntity } from './phone_organization.entity';
+import { CommentAndRateEntity } from './comment_and_rate';
+import { PictureOrganizationEntity } from './picture_organization.entity';
+import { SavedOrganizationEntity } from './saved_org.entity';
 import { UsersEntity } from './users.entity';
-import { Section_Entity } from './section.entity';
+import { SectionEntity } from './section.entity';
 
 @Entity()
 export class OrganizationEntity extends BaseEntity {
@@ -61,19 +61,19 @@ export class OrganizationEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  scheduler: string;
+  scheduler: JSON;
 
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  payment_types: string;
+  payment_types: JSON;
 
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  transport: string;
+  transport: JSON;
 
   @Column({
     type: 'character varying',
@@ -85,7 +85,7 @@ export class OrganizationEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  location: string;
+  location: JSON;
 
   @Column({
     type: 'character varying',
@@ -121,64 +121,61 @@ export class OrganizationEntity extends BaseEntity {
   @Column({
     type: 'float',
     default: 0,
-    nullable : true
+    nullable: true,
   })
   common_rate: number;
 
   @Column({
     type: 'integer',
     default: 0,
-    nullable : true
+    nullable: true,
   })
   number_of_raters: number;
-
 
   @Column({
     type: 'character varying',
     nullable: true,
-    default: '0'
+    default: '0',
   })
   status: string;
 
   @ManyToOne(
-    () => Sub_Category_Org_Entity,
+    () => SubCategoryOrgEntity,
     (sub_category_org) => sub_category_org.organizations,
     { nullable: true },
   )
-  sub_category_org: Sub_Category_Org_Entity;
+  sub_category_org: SubCategoryOrgEntity;
 
-  @ManyToOne(
-    () => Section_Entity,
-    (section) => section.organizations,
-    { nullable: true },
-  )
-  sectionId: Section_Entity ;
+  @ManyToOne(() => SectionEntity, (section) => section.organizations, {
+    nullable: true,
+  })
+  sectionId: SectionEntity;
 
-  @ManyToOne(
-    () => UsersEntity,
-    (user) => user.my_organization,
-    { nullable: true },
-  )
+  @ManyToOne(() => UsersEntity, (user) => user.my_organization, {
+    nullable: true,
+  })
   userId: UsersEntity;
 
-  @OneToMany(() => Phone_Organization_Entity, (phone) => phone.organization, {onDelete: 'CASCADE'})
-  phones: Phone_Organization_Entity[];
+  @OneToMany(() => PhoneOrganizationEntity, (phone) => phone.organization, {
+    onDelete: 'CASCADE',
+  })
+  phones: PhoneOrganizationEntity[];
 
   @OneToMany(
-    () => Picture_Organization_Entity,
+    () => PictureOrganizationEntity,
     (picture) => picture.organization_id,
-     {onDelete: 'CASCADE'}
+    { onDelete: 'CASCADE' },
   )
-  pictures: Picture_Organization_Entity[];
+  pictures: PictureOrganizationEntity[];
 
   @OneToMany(() => CommentAndRateEntity, (comment) => comment.organization_id)
   comments: CommentAndRateEntity[];
 
   @OneToMany(
-    () => Saved_Organization_Entity,
+    () => SavedOrganizationEntity,
     (saved_org) => saved_org.organization_id,
   )
-  saved_organization: Saved_Organization_Entity[];
+  saved_organization: SavedOrganizationEntity[];
 
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;

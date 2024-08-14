@@ -41,12 +41,12 @@ export class UsersController {
     this.#_service = service;
   }
 
-  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER,RolesEnum.ADMIN)
+  @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER, RolesEnum.ADMIN)
   @Get('/get-my-data')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findMyDate(@Req() req : CustomRequest) {
+  async findMyDate(@Req() req: CustomRequest) {
     return await this.#_service.findMyDate(req.user);
   }
 
@@ -65,13 +65,9 @@ export class UsersController {
   @ApiNotFoundResponse()
   @ApiOkResponse()
   @ApiQuery({ name: 'role', required: false })
-  async findAll(
-    @Query('role') role: string = 'null',
-  ) {
+  async findAll(@Query('role') role: string = 'null') {
     return await this.#_service.findAll(role);
   }
-
-
 
   // // @UseGuards(jwtGuard)
   @Patch('/update/:id')

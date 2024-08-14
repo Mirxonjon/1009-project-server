@@ -54,13 +54,13 @@ export class OrganizationController {
   async findOne(@Param('id') id: string) {
     return await this.#_service.findOne(id);
   }
-  
-  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
+
+  @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
   @Get('/my-organization')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findMyOrganization(    @Req() req : CustomRequest, ) {
+  async findMyOrganization(@Req() req: CustomRequest) {
     return await this.#_service.findMyOrganization(req.user);
   }
 
@@ -70,7 +70,7 @@ export class OrganizationController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['organization_name', 'address' , 'email' ,],
+      required: ['organization_name', 'address', 'email'],
       properties: {
         sub_category_id: {
           type: 'string',
@@ -124,31 +124,31 @@ export class OrganizationController {
           type: 'string',
           default: 'comment',
         },
-        payment_type: {
+        payment_types: {
           type: 'object',
           default: {
-             cash: true, terminal: false, transfer: false ,
+            cash: true,
+            terminal: false,
+            transfer: false,
           },
         },
         scheduler: {
           type: 'object',
           default: {
-                breakfast_from: '08:00',
-                breakfast_to: '08:00',
-                dayoofs: 'Yaksahnba',
-                worktime_from: '18:00',
-                worktime_to: '20:00',
+            breakfast_from: '08:00',
+            breakfast_to: '08:00',
+            dayoofs: 'Yaksahnba',
+            worktime_from: '18:00',
+            worktime_to: '20:00',
           },
         },
         transport: {
           type: 'object',
           default: {
-
-                bus: '8',
-                gazelle: '8',
-                metro_station: 'Tinchlik metro',
-                micro_bus: 'Miroavtobus 135',
-         
+            bus: '8',
+            gazelle: '8',
+            metro_station: 'Tinchlik metro',
+            micro_bus: 'Miroavtobus 135',
           },
         },
         location: {
@@ -166,7 +166,7 @@ export class OrganizationController {
           },
         },
         pictures: {
-          type: 'object',
+          type: 'array',
           items: {
             type: 'string',
             format: 'binary',
@@ -181,14 +181,14 @@ export class OrganizationController {
   @ApiNotFoundResponse()
   @UseInterceptors(AnyFilesInterceptor())
   async create(
-    @Req() req : CustomRequest,
+    @Req() req: CustomRequest,
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
-    console.log(req, "REQ");
-    
-    console.log(files,'oookkk');
-    
+    console.log(req, 'REQ');
+
+    console.log(files, 'oookkk');
+
     return await this.#_service.create(req.user, createOrganizationDto, files);
   }
 
@@ -258,28 +258,28 @@ export class OrganizationController {
         payment_type: {
           type: 'object',
           default: {
-            cash: true, terminal: false, transfer: false ,
+            cash: true,
+            terminal: false,
+            transfer: false,
           },
         },
         scheduler: {
           type: 'object',
           default: {
-                breakfast_from: '08:00',
-                breakfast_to: '08:00',
-                dayoofs: 'Yaksahnba',
-                worktime_from: '18:00',
-                worktime_to: '20:00',
+            breakfast_from: '08:00',
+            breakfast_to: '08:00',
+            dayoofs: 'Yaksahnba',
+            worktime_from: '18:00',
+            worktime_to: '20:00',
           },
         },
         transport: {
           type: 'object',
           default: {
-
-                bus: '8',
-                gazelle: '8',
-                metro_station: 'Tinchlik metro',
-                micro_bus: 'Miroavtobus 135',
-         
+            bus: '8',
+            gazelle: '8',
+            metro_station: 'Tinchlik metro',
+            micro_bus: 'Miroavtobus 135',
           },
         },
         location: {
@@ -315,8 +315,8 @@ export class OrganizationController {
           type: 'object',
           default: {
             delete: [
-           'b2d40ef9-cf96-4e89-87a1-5cb63853751f',
-           'b2d40ef9-cf96-4e89-87a1-5cb63853751f'
+              'b2d40ef9-cf96-4e89-87a1-5cb63853751f',
+              'b2d40ef9-cf96-4e89-87a1-5cb63853751f',
             ],
           },
         },
@@ -333,7 +333,7 @@ export class OrganizationController {
     @Body() updateOrganizationDto: UpdateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<void> {
-    await this.#_service.update(id, updateOrganizationDto , files);
+    await this.#_service.update(id, updateOrganizationDto, files);
   }
 
   // @UseGuards(jwtGuard)
@@ -344,7 +344,7 @@ export class OrganizationController {
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
     console.log('okk');
-    
+
     await this.#_service.remove(id);
   }
 }

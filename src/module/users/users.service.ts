@@ -14,31 +14,27 @@ export class UsersServise {
   constructor(authService: AuthServise) {
     this.#_authService = authService;
   }
-  async findMyDate(user :UserType) {
-
-      const findUser = await UsersEntity.findOneBy({ id: user.userId });
-      if (!findUser) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-      return findUser;
-    
-  }
-
-  async findOne(userId: string) {
-
-    const findUser = await UsersEntity.findOneBy({ id:userId });
+  async findMyDate(user: UserType) {
+    const findUser = await UsersEntity.findOneBy({ id: user.userId });
     if (!findUser) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return findUser;
-  
-}
+  }
 
-  async findAll(role :string) {
+  async findOne(userId: string) {
+    const findUser = await UsersEntity.findOneBy({ id: userId });
+    if (!findUser) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return findUser;
+  }
+
+  async findAll(role: string) {
     const findUsers = await UsersEntity.find({
-      where : {
-        role: role == 'null' ? null : role
-      }
+      where: {
+        role: role == 'null' ? null : role,
+      },
     });
 
     if (!findUsers) {

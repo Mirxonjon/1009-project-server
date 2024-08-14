@@ -11,4 +11,3 @@ export const config: ConfigModuleOptions = {
 export const Logger = {
   allLogs: 'true',
 };
-

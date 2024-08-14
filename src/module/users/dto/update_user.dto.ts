@@ -1,6 +1,6 @@
 import { IsString, MaxLength } from 'class-validator';
 
-export class UpdateUserDto  {
+export class UpdateUserDto {
   @IsString()
   full_name: string;
 
@@ -12,5 +12,4 @@ export class UpdateUserDto  {
 
   @IsString()
   password: string;
-
 }

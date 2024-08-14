@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString,  } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdateCommentAndRateDto {
   @IsString()
@@ -6,7 +6,7 @@ export class UpdateCommentAndRateDto {
   organization_id: string;
 
   @IsNumber()
-  rate: number
+  rate: number;
 
   @IsString()
   comment: string;

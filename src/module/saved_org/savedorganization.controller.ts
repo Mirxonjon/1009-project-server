@@ -35,14 +35,12 @@ export class SavedOrganizationController {
   constructor(service: SavedOrganizationServise) {
     this.#_service = service;
   }
-  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
+  @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(
-    @Req() req : CustomRequest,
-  ) {
+  async findall(@Req() req: CustomRequest) {
     return await this.#_service.findAll(req.user);
   }
 
@@ -56,6 +54,7 @@ export class SavedOrganizationController {
 
   //
   // @UseGuards(jwtGuard)
+  @RequiredRoles(RolesEnum.USER)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -75,11 +74,11 @@ export class SavedOrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Headers() headers: CustomHeaders,
+    @Req() req: CustomRequest,
     @Body() createSubCategoryOrganizationDto: CreateSavedOrganizationDto,
   ) {
     return await this.#_service.create(
-      headers,
+      req.user,
       createSubCategoryOrganizationDto,
     );
   }

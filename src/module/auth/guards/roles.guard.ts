@@ -29,7 +29,7 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
     const user = this.jwtService.verify(token);
-    console.log(user,'lllll');
+    console.log(user, 'lllll');
 
     // request.user.userId = user.id;
     // request.user.role = user.role;
@@ -40,14 +40,14 @@ export class RolesGuard implements CanActivate {
       // request.user.role = user?.role;
       request.user = {
         userId: user.id,
-        role: user.role
-      }
-      console.log(user,'sss');
-      
+        role: user.role,
+      };
+      console.log(user, 'sss');
+
       return requiredRoles.some((role) => user.role?.includes(role));
     } catch (error) {
       console.log(error);
-      
+
       throw new ForbiddenException('Invalid token');
     }
   }

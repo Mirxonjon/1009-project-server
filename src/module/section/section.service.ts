@@ -3,19 +3,19 @@ import { CreateSectionDto } from './dto/create_section.dto';
 import { UpdateSectionDto } from './dto/update_section.dto';
 import { Like } from 'typeorm';
 import { EntertainmentCategoriesEntity } from 'src/entities/entertainment_Categories.entity';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
-import { Section_Entity } from 'src/entities/section.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
+import { SectionEntity } from 'src/entities/section.entity';
 @Injectable()
 export class SectionService {
   async findAll() {
-    const allSection = await Section_Entity.find().catch((e) => {
+    const allSection = await SectionEntity.find().catch((e) => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
     return allSection;
   }
 
   async findOne(id: string) {
-    const findSection: Section_Entity = await Section_Entity.findOne({
+    const findSection: SectionEntity = await SectionEntity.findOne({
       where: {
         id: id,
       },
@@ -28,16 +28,16 @@ export class SectionService {
   }
 
   async create(body: CreateSectionDto) {
-    const findSection = await Section_Entity.findOneBy({
+    const findSection = await SectionEntity.findOneBy({
       title: body.title,
     });
 
     if (findSection) {
       throw new HttpException('Already created this section', HttpStatus.FOUND);
     }
-    await Section_Entity.createQueryBuilder()
+    await SectionEntity.createQueryBuilder()
       .insert()
-      .into(Section_Entity)
+      .into(SectionEntity)
       .values({
         title: body.title.toLowerCase(),
       })
@@ -48,7 +48,7 @@ export class SectionService {
   }
 
   async update(id: string, body: UpdateSectionDto) {
-    const findSection = await Section_Entity.findOneBy({
+    const findSection = await SectionEntity.findOneBy({
       id: id,
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
@@ -58,8 +58,8 @@ export class SectionService {
       throw new HttpException('Not found Category', HttpStatus.NOT_FOUND);
     }
 
-    await Section_Entity.createQueryBuilder()
-      .update(Section_Entity)
+    await SectionEntity.createQueryBuilder()
+      .update(SectionEntity)
       .set({
         title: body.title.toLowerCase() || findSection.title,
       })
@@ -71,7 +71,7 @@ export class SectionService {
   }
 
   async remove(id: string) {
-    const findSection = await Section_Entity.findOneBy({
+    const findSection = await SectionEntity.findOneBy({
       id: id,
     }).catch(() => {
       throw new HttpException('Not found section', HttpStatus.BAD_REQUEST);
@@ -81,9 +81,9 @@ export class SectionService {
       throw new HttpException('section not found', HttpStatus.NOT_FOUND);
     }
 
-    await Section_Entity.createQueryBuilder()
+    await SectionEntity.createQueryBuilder()
       .delete()
-      .from(Section_Entity)
+      .from(SectionEntity)
       .where({ id })
       .execute();
   }

@@ -3,7 +3,7 @@ import { ImportedFilesTitleEntity } from 'src/entities/imported_files_title.enti
 import { readExcel } from 'src/utils/uploadDataToDatabase';
 import { UpdateOrganizationDataDto } from './dto/update_importedFiles.dto';
 import { OrganizationEntity } from 'src/entities/organization.entity';
-import { Phone_Organization_Entity } from 'src/entities/phone_organization.entity';
+import { PhoneOrganizationEntity } from 'src/entities/phone_organization.entity';
 import { extname } from 'path';
 import * as fs from 'fs';
 import { join } from 'path';
@@ -59,7 +59,7 @@ export class ImportedFilesServise {
                 throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
               });
 
-            const findPhoneOrg = await Phone_Organization_Entity.findOne({
+            const findPhoneOrg = await PhoneOrganizationEntity.findOne({
               where: {
                 organization: {
                   id: findOrg.id,
@@ -71,8 +71,8 @@ export class ImportedFilesServise {
             });
             if (findPhoneOrg) {
               if (e[2]) {
-                await Phone_Organization_Entity.createQueryBuilder()
-                  .update(Phone_Organization_Entity)
+                await PhoneOrganizationEntity.createQueryBuilder()
+                  .update(PhoneOrganizationEntity)
                   .set({
                     number: e[2] || findPhoneOrg.number,
                   })
@@ -87,9 +87,9 @@ export class ImportedFilesServise {
               }
             } else {
               if (e[2]) {
-                await Phone_Organization_Entity.createQueryBuilder()
+                await PhoneOrganizationEntity.createQueryBuilder()
                   .insert()
-                  .into(Phone_Organization_Entity)
+                  .into(PhoneOrganizationEntity)
                   .values({
                     number: e[2],
                     organization: { id: findOrg.id },
@@ -125,9 +125,9 @@ export class ImportedFilesServise {
 
             if (createOrg) {
               if (e[2]) {
-                await Phone_Organization_Entity.createQueryBuilder()
+                await PhoneOrganizationEntity.createQueryBuilder()
                   .insert()
-                  .into(Phone_Organization_Entity)
+                  .into(PhoneOrganizationEntity)
                   .values({
                     number: e[2],
                     organization: { id: createOrg.raw[0].id },

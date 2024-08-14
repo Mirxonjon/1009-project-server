@@ -31,7 +31,7 @@ export class AuthServise {
         full_name: createUser.full_name,
         phone: createUser.number,
         password: createUser.password,
-        role: createUser.role
+        role: createUser.role,
       })
       .returning(['id', 'role', 'password'])
       .execute()
