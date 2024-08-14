@@ -64,7 +64,7 @@ export class OrganizationController {
     return await this.#_service.findMyOrganization(req.user);
   }
 
-  // @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
+  @RequiredRoles(RolesEnum.SUPERADMIN,RolesEnum.USER)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
