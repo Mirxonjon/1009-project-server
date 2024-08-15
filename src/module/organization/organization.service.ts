@@ -318,7 +318,7 @@ export class OrganizationServise {
         payment_types: JSON.parse(body.payment_types as any),
         transport: JSON.parse(body.transport as any),
         comment: body.comment,
-        location: JSON.parse(body.transport as any),
+        location: JSON.parse(body.location as any),
         segment: body.segment,
         account: body.account,
         added_by: body.added_by,
@@ -345,7 +345,7 @@ export class OrganizationServise {
     console.log(createdOrg, 'CREATE ORG OUT');
     if (createdOrg) {
       console.log(createdOrg, 'CREATE ORG IN');
-      let phones = body?.phones as any;
+      let phones =  JSON.parse(body.phones as any)
 
       console.log(phones, 'PHONES in IF');
 
