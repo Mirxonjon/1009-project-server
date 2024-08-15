@@ -3,16 +3,16 @@ import { CreateCommentAndRateDto } from './dto/create_CommentAndRate.dto';
 
 import { UpdateCommentAndRateDto } from './dto/update_CommentAndRate.dto';
 
-import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
-import { CommentAndRateEntity } from 'src/entities/commentAndRate.entity';
+import { SubCategoryOrgEntity } from 'src/entities/sub_category_org.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
+import { CommentAndRateEntity } from 'src/entities/comment_and_rate';
 import { CustomRequest, UserType } from 'src/types';
 import { OrganizationEntity } from 'src/entities/organization.entity';
 
 @Injectable()
 export class CommentAndRateServise {
   async findAll() {
-    const findAllSubCategories = await Sub_Category_Org_Entity.find({
+    const findAllSubCategories = await SubCategoryOrgEntity.find({
       order: {
         create_data: 'asc',
       },

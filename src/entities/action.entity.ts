@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Action_Entity extends BaseEntity {
+export class ActionEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

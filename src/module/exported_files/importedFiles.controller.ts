@@ -8,10 +8,8 @@ import {
   HttpStatus,
   Param,
   ParseFilePipe,
-  ParseFilePipeBuilder,
   Patch,
   Post,
-  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,7 +20,6 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
-  ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -33,8 +30,7 @@ import { ImportedFilesServise } from './importedFiles.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 import { UpdateOrganizationDataDto } from './dto/update_importedFiles.dto';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+
 @Controller('importedFiles')
 @ApiTags('imported Files')
 @ApiBearerAuth('JWT-auth')
@@ -75,44 +71,44 @@ export class ImportedFilesController {
     await this.#_service.updateData(updateOrganizationDataDto);
   }
 
-  @Post('excel')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['file'],
-      properties: {
-        fileName: {
-          type: 'string',
-        },
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Attendance Punch In' })
-  @ApiCreatedResponse()
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFileExcel(
-    @Body() body: UpdateOrganizationDataDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({
-            fileType:
-              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          }),
-        ],
-      })
-    )
-    file: Express.Multer.File
-  ) {
-    return this.#_service.uploadFileExcel(body, file);
-  }
+  // @Post('excel')
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     required: ['file'],
+  //     properties: {
+  //       fileName: {
+  //         type: 'string',
+  //       },
+  //       file: {
+  //         type: 'string',
+  //         format: 'binary',
+  //       },
+  //     },
+  //   },
+  // })
+  // @ApiConsumes('multipart/form-data')
+  // @ApiOperation({ summary: 'Attendance Punch In' })
+  // @ApiCreatedResponse()
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @UseInterceptors(FileInterceptor('file'))
+  // uploadFileExcel(
+  //   @Body() body: UpdateOrganizationDataDto,
+  //   @UploadedFile(
+  //     new ParseFilePipe({
+  //       validators: [
+  //         new FileTypeValidator({
+  //           fileType:
+  //             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //         }),
+  //       ],
+  //     }),
+  //   )
+  //   file: Express.Multer.File,
+  // ) {
+  //   return this.#_service.uploadFileExcel(body, file);
+  // }
 
   @UseGuards(jwtGuard)
   @Delete('/delete/:id')

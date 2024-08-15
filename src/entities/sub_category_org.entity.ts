@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category_Organization_Entity } from './category_org.entity';
+import { CategoryOrganizationEntity } from './category_org.entity';
 import { OrganizationEntity } from './organization.entity';
 
 @Entity()
-export class Sub_Category_Org_Entity extends BaseEntity {
+export class SubCategoryOrgEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -35,11 +35,11 @@ export class Sub_Category_Org_Entity extends BaseEntity {
   // title_en: string;
 
   @ManyToOne(
-    () => Category_Organization_Entity,
+    () => CategoryOrganizationEntity,
     (category_org) => category_org.sub_category_orgs,
     { nullable: true }
   )
-  category_org: Category_Organization_Entity;
+  category_org: CategoryOrganizationEntity;
 
   @OneToMany(() => OrganizationEntity, (org) => org.sub_category_org)
   organizations: OrganizationEntity[];

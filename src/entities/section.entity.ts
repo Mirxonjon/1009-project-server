@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category_Organization_Entity } from './category_org.entity';
+import { CategoryOrganizationEntity } from './category_org.entity';
 import { OrganizationEntity } from './organization.entity';
 
 @Entity()
-export class Section_Entity extends BaseEntity {
+export class SectionEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

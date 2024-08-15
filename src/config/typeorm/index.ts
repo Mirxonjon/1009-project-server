@@ -7,18 +7,18 @@ import { KnowDataEntity } from 'src/entities/know_data.entity';
 import { CommunalEntity } from 'src/entities/communal.entity';
 import { InformationTashkentEntity } from 'src/entities/information_Tashkent.entity';
 import { NumbersCodesEntity } from 'src/entities/Numbers_codes.entity';
-import { Category_Organization_Entity } from 'src/entities/category_org.entity';
-import { Sub_Category_Org_Entity } from 'src/entities/sub_category_org.entity';
+import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
+import { SubCategoryOrgEntity } from 'src/entities/sub_category_org.entity';
 import { OrganizationEntity } from 'src/entities/organization.entity';
-import { Phone_Organization_Entity } from 'src/entities/phone_organization.entity';
-import { CommentAndRateEntity } from 'src/entities/commentAndRate.entity';
-import { Picture_Organization_Entity } from 'src/entities/picture_organization.entity';
+import { PhoneOrganizationEntity } from 'src/entities/phone_organization.entity';
+import { CommentAndRateEntity } from 'src/entities/comment_and_rate';
+import { PictureOrganizationEntity } from 'src/entities/picture_organization.entity';
 import { ImportedFilesTitleEntity } from 'src/entities/imported_files_title.entity';
-import { Section_Entity } from 'src/entities/section.entity';
-import { Saved_Organization_Entity } from 'src/entities/saved_org.entity';
 import { OrganizationVersionsEntity } from 'src/entities/organization_versions.entity';
 import { Picture_Organization_Versions_Entity } from 'src/entities/picture_organization_versions.entity';
 import { Phone_Organization_Versions_Entity } from 'src/entities/phone_organizations_versions.entity';
+import { SectionEntity } from 'src/entities/section.entity';
+import { SavedOrganizationEntity } from 'src/entities/saved_org.entity';
 
 dotenv.config();
 
@@ -38,14 +38,14 @@ export const connectDb: TypeOrmModuleOptions = {
     InformationTashkentEntity,
     KnowDataEntity,
     NumbersCodesEntity,
-    Category_Organization_Entity,
-    Sub_Category_Org_Entity,
-    Section_Entity,
+    CategoryOrganizationEntity,
+    SubCategoryOrgEntity,
+    SectionEntity,
     OrganizationEntity,
-    Saved_Organization_Entity,
-    Phone_Organization_Entity,
+    SavedOrganizationEntity,
+    PhoneOrganizationEntity,
     CommentAndRateEntity,
-    Picture_Organization_Entity,
+    PictureOrganizationEntity,
     ImportedFilesTitleEntity,
     OrganizationVersionsEntity,
     Picture_Organization_Versions_Entity,

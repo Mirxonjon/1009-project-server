@@ -8,12 +8,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category_Organization_Entity } from './category_org.entity';
+import { CategoryOrganizationEntity } from './category_org.entity';
 import { OrganizationEntity } from './organization.entity';
 import { UsersEntity } from './users.entity';
 
 @Entity()
-export class Saved_Organization_Entity extends BaseEntity {
+export class SavedOrganizationEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

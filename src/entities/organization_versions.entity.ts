@@ -9,13 +9,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Sub_Category_Org_Entity } from './sub_category_org.entity';
-import { Phone_Organization_Entity } from './phone_organization.entity';
-import { CommentAndRateEntity } from './commentAndRate.entity';
-import { Picture_Organization_Entity } from './picture_organization.entity';
-import { Saved_Organization_Entity } from './saved_org.entity';
-import { UsersEntity } from './users.entity';
-import { Section_Entity } from './section.entity';
 import { Phone_Organization_Versions_Entity } from './phone_organizations_versions.entity';
 import { Picture_Organization_Versions_Entity } from './picture_organization_versions.entity';
 import { OrganizationEntity } from './organization.entity';
@@ -62,19 +55,19 @@ export class OrganizationVersionsEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  scheduler: string;
+  scheduler: JSON;
 
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  payment_type: string;
+  payment_types: JSON;
 
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  transport: string;
+  transport: JSON;
 
   @Column({
     type: 'character varying',
@@ -86,7 +79,7 @@ export class OrganizationVersionsEntity extends BaseEntity {
     type: 'jsonb',
     nullable: true,
   })
-  location: string;
+  location: JSON;
 
   @Column({
     type: 'character varying',

@@ -7,8 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommentAndRateEntity } from './commentAndRate.entity';
-import { Saved_Organization_Entity } from './saved_org.entity';
+import { CommentAndRateEntity } from './comment_and_rate';
+import { SavedOrganizationEntity } from './saved_org.entity';
 import { OrganizationEntity } from './organization.entity';
 
 @Entity()
@@ -67,8 +67,8 @@ export class UsersEntity extends BaseEntity {
   @OneToMany(() => CommentAndRateEntity, (comment) => comment.user_id)
   my_comments: CommentAndRateEntity[];
 
-  @OneToMany(() => Saved_Organization_Entity, (saved_org) => saved_org.user_id)
-  saved_organization: Saved_Organization_Entity[];
+  @OneToMany(() => SavedOrganizationEntity, (saved_org) => saved_org.user_id)
+  saved_organization: SavedOrganizationEntity[];
 
   @OneToMany(() => OrganizationEntity, (org) => org.userId)
   my_organization: OrganizationEntity[];

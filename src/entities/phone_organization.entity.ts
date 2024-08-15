@@ -11,7 +11,7 @@ import {
 import { OrganizationEntity } from './organization.entity';
 
 @Entity()
-export class Phone_Organization_Entity extends BaseEntity {
+export class PhoneOrganizationEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -7,10 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Sub_Category_Org_Entity } from './sub_category_org.entity';
+import { SubCategoryOrgEntity } from './sub_category_org.entity';
 
 @Entity()
-export class Category_Organization_Entity extends BaseEntity {
+export class CategoryOrganizationEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -33,10 +33,10 @@ export class Category_Organization_Entity extends BaseEntity {
   // title_en: string;
 
   @OneToMany(
-    () => Sub_Category_Org_Entity,
-    (sub_category_org) => sub_category_org.category_org
+    () => SubCategoryOrgEntity,
+    (sub_category_org) => sub_category_org.category_org,
   )
-  sub_category_orgs: Sub_Category_Org_Entity[];
+  sub_category_orgs: SubCategoryOrgEntity[];
 
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;

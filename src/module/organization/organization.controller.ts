@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UploadedFiles,
   UseInterceptors,
@@ -22,6 +23,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { OrganizationServise } from './organization.service';
@@ -45,15 +47,22 @@ export class OrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall() {
-    return await this.#_service.findAll();
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  async findall(
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '10',
+  ) {
+    return await this.#_service.findAll(page, pageSize);
   }
 
   @Get('/one/:id')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string) {
+
+  async findOne(@Param('id') id: string,
+  ) {
     return await this.#_service.findOne(id);
   }
 
@@ -62,8 +71,12 @@ export class OrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findMyOrganization(@Req() req: CustomRequest) {
-    return await this.#_service.findMyOrganization(req.user);
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  async findMyOrganization(@Req() req: CustomRequest,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '10',) {
+    return await this.#_service.findMyOrganization(req.user, page, pageSize);
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
@@ -126,7 +139,7 @@ export class OrganizationController {
           type: 'string',
           default: 'comment',
         },
-        payment_type: {
+        payment_types: {
           type: 'object',
           default: {
             cash: true,
@@ -167,13 +180,13 @@ export class OrganizationController {
             numbers: [{ number: '+998933843484', type_number: 'mobile' }],
           },
         },
-        // pictures: {
-        //   type: 'array',
-        //   items: {
-        //     type: 'string',
-        //     format: 'binary',
-        //   },
-        // },
+        pictures: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
       },
     },
   })
