@@ -3,7 +3,7 @@ import { UsersEntity } from 'src/entities/users.entity';
 import { AddAdminDto } from './dto/add-admin.dto';
 import { AuthServise } from '../auth/auth.service';
 import { CustomHeaders, UserType } from 'src/types';
-import { UpdateUserDto } from './dto/update_user.dto';
+import { UpdateUserDto, UpdateUserOneDto } from './dto/update_user.dto';
 import { extname } from 'path';
 import { allowedImageFormats } from 'src/utils/videoAndImageFormat';
 import { deleteFileCloud, googleCloud } from 'src/utils/google_cloud';
@@ -109,17 +109,17 @@ export class UsersServise {
   }
 
   
-  async updateUser(id: string, body: UpdateUserDto, image: Express.Multer.File) {
+  async updateUser(user: UserType, body: UpdateUserOneDto, image: Express.Multer.File) {
     const findUser = await UsersEntity.findOne({
-      where: { id },
+      where: { id: user.userId },
     });
 
     if (!findUser) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    if(findUser.password === body.password){
-      throw new HttpException('Password not change', HttpStatus.BAD_REQUEST);
+    if(findUser.password != body.password){
+      throw new HttpException('Your previous password is incorrect', HttpStatus.BAD_REQUEST);
     }
 
     let formatImage: string = 'Not image';
@@ -141,9 +141,9 @@ export class UsersServise {
         image_link = googleCloud(image);
       }
 
-      const updatedUser = await UsersEntity.update(id, {
+      const updatedUser = await UsersEntity.update(findUser.id, {
         full_name: body.full_name || findUser.full_name,
-        password: body.password || findUser.password,
+        password: body.newpassword || findUser.password,
         image_link: image_link,
       });
 

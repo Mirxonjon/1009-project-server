@@ -6,6 +6,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { CommentAndRateEntity } from './comment_and_rate';
 import { SavedOrganizationEntity } from './saved_org.entity';
@@ -61,8 +62,32 @@ export class UsersEntity extends BaseEntity {
   })
   image_link: string;
 
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  sms_code: number;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  sms_code_updated_at: Date;
+  
+  @Column({
+    type: 'int',
+    nullable: true,
+    default: 0,
+  })
+  attempt: number;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  update_date: Date;
+
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
+  
+
 
   @OneToMany(() => CommentAndRateEntity, (comment) => comment.user_id)
   my_comments: CommentAndRateEntity[];

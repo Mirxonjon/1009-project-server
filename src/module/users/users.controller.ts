@@ -31,7 +31,7 @@ import { UsersServise } from './users.service';
 import { CustomRequest, RolesEnum } from 'src/types';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { UpdateUserDto } from './dto/update_user.dto';
+import { UpdateUserDto, UpdateUserOneDto } from './dto/update_user.dto';
 @Controller('Users')
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
@@ -117,6 +117,7 @@ export class UsersController {
     );
   }
 
+  @RequiredRoles(RolesEnum.USER)
   @Patch('/update-user/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -148,14 +149,14 @@ export class UsersController {
   @ApiNotFoundResponse()
   @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
   async updateUser(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: CustomRequest,
+    @Body() UpdateUserOneDto: UpdateUserOneDto,
     @UploadedFiles()
     file: { image?: Express.Multer.File },
   ) {
     await this.#_service.updateUser(
-      id,
-      updateUserDto,
+      req.user,
+      UpdateUserOneDto,
       file?.image ? file?.image[0] : null,
     );
   }

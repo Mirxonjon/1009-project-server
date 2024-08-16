@@ -3,6 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create_user.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { SingInUserDto } from './dto/sign_in-user.dto';
+import { generateRandomNumber, secondsSinceGivenTime } from 'src/utils/generateNumber';
+import { VerifySmsCodeDto } from './dto/verify_sms_code.dto';
+import { UpdateNumberDto, UpdateNumberVerifySmsCodeDto } from './dto/update_number.dto';
+import { UserType } from 'src/types';
 // import { ControlUsersEntity } from 'src/entities/control_users.entity';
 
 // import { UpdateUserDto } from '../users/dto/update_book.dto';
@@ -16,13 +20,15 @@ export class AuthServise {
         phone: createUser.number,
       },
     }).catch((e) => {
-      throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     });
 
     if (findUser) {
       throw new HttpException('Number already registered', HttpStatus.FOUND);
     }
     console.log(createUser);
+
+    const  smsCode = await generateRandomNumber();
 
     const addedUser = await UsersEntity.createQueryBuilder()
       .insert()
@@ -32,6 +38,9 @@ export class AuthServise {
         phone: createUser.number,
         password: createUser.password,
         role: createUser.role,
+        sms_code : smsCode,
+        attempt: 1,
+        sms_code_updated_at: new Date(),
       })
       .returning(['id', 'role', 'password'])
       .execute()
@@ -41,11 +50,13 @@ export class AuthServise {
 
     return {
       message: 'You have successfully registered',
-      token: this.sign(
-        addedUser.raw.at(-1).id,
-        addedUser.raw.at(-1).role,
-        addedUser.raw.at(-1).password,
-      ),
+      smsCode : smsCode,
+      userId : addedUser.raw.at(-1).id
+      // token: this.sign(
+      //   addedUser.raw.at(-1).id,
+      //   addedUser.raw.at(-1).role,
+      //   addedUser.raw.at(-1).password,
+      // ),
     };
   }
 
@@ -68,40 +79,165 @@ export class AuthServise {
     };
   }
 
-  // async signInControlUser(body: ControlUserDto) {
-  //   const finduser = await UsersEntity.findOne({
-  //     where: {
-  //       username: body.username.trim().toLowerCase(),
-  //       password: body.password.trim(),
-  //     },
-  //   }).catch((e) => {
-  //     throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-  //   });
+  async verifySmsCode( verifySmsCodeDto: VerifySmsCodeDto) {
+    const finduser = await UsersEntity.findOne({
+      where: {
+           id : verifySmsCodeDto.userId
+      },
+    }).catch((e) => {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    });
 
-  //   if (!finduser) {
-  //     throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
-  //   }
-  //   return {
-  //     message: 'successfully sing In',
-  //     token: this.sign(finduser.id, finduser.role, finduser.password),
-  //   };
-  // }
+    if (!finduser) {
+      throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
+    }
 
-  // async getSearchControlUsername(username: string) {
-  //   const finduser = await UsersEntity.findOne({
-  //     where: {
-  //       username: username.trim().toLowerCase(),
-  //     },
-  //   }).catch(() => {
-  //     throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-  //   });
+    const differenceSeconds = await secondsSinceGivenTime(finduser.sms_code_updated_at) 
+    console.log(differenceSeconds);
+    
+    if(differenceSeconds > 60){
+      throw new HttpException('Time is over', HttpStatus.BAD_REQUEST);
+    }
 
-  //   if (finduser) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+    if(finduser.sms_code  != +verifySmsCodeDto.smsCode){
+      const updated = await UsersEntity.update(finduser.id, {
+        attempt: finduser.attempt + 1,
+      });
+      throw new HttpException('Code is not correct', HttpStatus.BAD_REQUEST);
+    }
+
+    const updated = await UsersEntity.update(finduser.id, {
+      attempt: 0,
+    });
+    return {
+      message: 'successfully',
+      token: this.sign(finduser.id, finduser.role, finduser.password),
+    };
+  }
+
+  async resendSmsCode( id: string) {
+    const finduser = await UsersEntity.findOne({
+      where: {
+           id 
+      },
+    }).catch((e) => {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }); 
+
+    if (!finduser) {
+      throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
+    } 
+
+    if(finduser.attempt > 3){
+      throw new HttpException('attempt is over', HttpStatus.BAD_REQUEST);
+    }
+    const smsCode = await generateRandomNumber();
+    const updated = await UsersEntity.update(finduser.id, {
+      sms_code : smsCode, 
+      attempt: finduser.attempt + 1,
+        sms_code_updated_at: new Date(),
+    }).catch((e) => {
+      throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
+    });
+
+    if(updated){
+      console.log({
+        message: 'Resend code successfully',
+        userId: finduser.id,
+        smsCode 
+      });
+      return {
+        message: 'Resend code successfully',
+        userId: finduser.id,
+        smsCode 
+      };
+    }
+    
+ 
+  }
+
+  async updateNumber(user: UserType,UpdateNumberDto: UpdateNumberDto) {
+    const finduser = await UsersEntity.findOne({
+      where: {
+           id :user.userId
+      },
+    }).catch((e) => {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }); 
+console.log('okk');
+
+    if (!finduser) {
+      throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
+    } 
+    const smsCode = await generateRandomNumber();
+
+    const updated = await UsersEntity.update(finduser.id, {
+      // phone: UpdateNumberDto.number,
+      sms_code : smsCode, 
+      attempt: finduser.attempt + 1,
+      sms_code_updated_at: new Date(),
+    }).catch((e) => {
+      throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
+    });
+
+    if(updated){
+      console.log({
+        message: 'Resend code successfully',
+        userId: finduser.id,
+        smsCode 
+      });
+      return {
+        message: 'Resend code successfully',
+        userId: finduser.id,
+        smsCode 
+      };
+    }
+
+    return{ 
+      message: 'resend code successfully',
+      smsCode,
+      userId: finduser.id,
+    }
+  }
+  async verifySmsCodeUpdateNumber(user :UserType, UpdateNumberVerifySmsCodeDto: UpdateNumberVerifySmsCodeDto) {
+    const finduser = await UsersEntity.findOne({
+      where: {
+           id : user.userId
+      },
+    }).catch((e) => {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    });
+
+    if (!finduser) {
+      throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
+    }
+
+    const differenceSeconds = await secondsSinceGivenTime(finduser.sms_code_updated_at) 
+
+    if(differenceSeconds > 60){
+      throw new HttpException('Time is over', HttpStatus.BAD_REQUEST);
+    }
+
+    if(finduser.sms_code  != +UpdateNumberVerifySmsCodeDto.smsCode){
+      const updated = await UsersEntity.update(finduser.id, {
+        attempt: finduser.attempt + 1,
+      });
+      throw new HttpException('Code is not correct', HttpStatus.BAD_REQUEST);
+    }
+
+    const updated = await UsersEntity.update(finduser.id, {
+      phone : UpdateNumberVerifySmsCodeDto.number,
+      attempt: 0,
+    });
+    if(updated){
+      return {
+        message: 'successfully',
+        token: this.sign(finduser.id, finduser.role, finduser.password),
+      };
+    }
+  }
+
+
 
   async getAllControlUsers(role: string) {
     const findControlUser = await UsersEntity.find({
@@ -118,53 +254,6 @@ export class AuthServise {
     return findControlUser;
   }
 
-  // async createControlUser(body: CreateControlUserDto) {
-  //   const findControlUser = await UsersEntity.findOne({
-  //     where: {
-  //       username: body.username.toLowerCase(),
-  //     },
-  //   }).catch((e) => {
-  //     throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
-  //   });
-
-  //   if (findControlUser) {
-  //     throw new HttpException('username alredy exist', HttpStatus.FOUND);
-  //   }
-
-  //   await UsersEntity.createQueryBuilder()
-  //     .insert()
-  //     .into(UsersEntity)
-  //     .values({
-  //       full_name: body.full_name,
-  //       username: body.username.trim().toLowerCase(),
-  //       password: body.password.trim(),
-  //       role: body.role.toLowerCase(),
-  //     })
-  //     .execute()
-  //     .catch((e) => {
-  //       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-  //     });
-  // }
-
-  // async updateUser(id: string, body: UpdateUserDto) {
-  //   const findControlUser = await UsersEntity.findOne({
-  //     where: { id },
-  //   });
-
-  //   if (!findControlUser) {
-  //     throw new HttpException(' USER not found', HttpStatus.NOT_FOUND);
-  //   }
-
-  //   const updatedVideo = await UsersEntity.update(id, {
-  //     full_name: body.full_name || findControlUser.full_name,
-  //     username: body.username.trim().toLowerCase() || findControlUser.username,
-  //     password: body.password.trim() || findControlUser.password,
-  //     phone: body
-  //     role: body.role || findControlUser.role,
-  //   });
-
-  //   return updatedVideo;
-  // }
 
   async deleteUser(id: string) {
     const findControlUser = await UsersEntity.findOne({
