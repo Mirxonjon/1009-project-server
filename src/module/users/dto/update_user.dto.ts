@@ -13,3 +13,15 @@ export class UpdateUserDto {
   @IsString()
   password: string;
 }
+
+export class UpdateUserOneDto {
+  @IsString()
+  full_name: string;
+  
+  @IsString()
+  password: string;
+
+  @IsString()
+  newpassword: string;
+
+}

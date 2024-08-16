@@ -471,6 +471,7 @@ export class OrganizationServise {
       console.log(e);
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     });
+console.log(updatedOrganization, 'UPDATED ORG');
 
     if (updatedOrganization) {
       let phones: string | TNumbers = body?.phones;

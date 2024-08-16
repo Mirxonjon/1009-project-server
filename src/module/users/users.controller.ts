@@ -117,6 +117,49 @@ export class UsersController {
     );
   }
 
+  @Patch('/update-user/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        full_name: {
+          type: 'string',
+          default: 'Eshmat',
+        },
+        password: {
+          type: 'string',
+          default: 'uuid23422',
+        },
+        newpassword: {
+          type: 'string',
+          default: 'uuid23422',
+        },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Attendance Punch In' })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFiles()
+    file: { image?: Express.Multer.File },
+  ) {
+    await this.#_service.updateUser(
+      id,
+      updateUserDto,
+      file?.image ? file?.image[0] : null,
+    );
+  }
+
   // // @UseGuards(jwtGuard)
   // @Delete('/delete/:id')
   // @HttpCode(HttpStatus.NO_CONTENT)

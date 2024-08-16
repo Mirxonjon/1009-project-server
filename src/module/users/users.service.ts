@@ -108,6 +108,54 @@ export class UsersServise {
     }
   }
 
+  
+  async updateUser(id: string, body: UpdateUserDto, image: Express.Multer.File) {
+    const findUser = await UsersEntity.findOne({
+      where: { id },
+    });
+
+    if (!findUser) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    if(findUser.password === body.password){
+      throw new HttpException('Password not change', HttpStatus.BAD_REQUEST);
+    }
+
+    let formatImage: string = 'Not image';
+
+    if (image) {
+      formatImage = extname(image.originalname).toLowerCase();
+    }
+
+    if (
+      allowedImageFormats.includes(formatImage) ||
+      formatImage === 'Not image'
+    ) {
+      let image_link: string = findUser.image_link;
+
+      if (formatImage !== 'Not image') {
+        if (image_link) {
+          await deleteFileCloud(image_link);
+        }
+        image_link = googleCloud(image);
+      }
+
+      const updatedUser = await UsersEntity.update(id, {
+        full_name: body.full_name || findUser.full_name,
+        password: body.password || findUser.password,
+        image_link: image_link,
+      });
+
+      return updatedUser;
+    } else {
+      throw new HttpException(
+        'Image should be in the format jpg, png, jpeg, pnmj, svg',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   // async remove(id: string) {
   //   const findUser = await UsersEntity.findOneBy({ id }).catch(() => {
   //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
