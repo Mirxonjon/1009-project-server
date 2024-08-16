@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Phone_Organization_Versions_Entity } from './phone_organizations_versions.entity';
-import { Picture_Organization_Versions_Entity } from './picture_organization_versions.entity';
+import { PictureOrganizationVersionsEntity } from './picture_organization_versions.entity';
 import { OrganizationEntity } from './organization.entity';
 
 @Entity()
@@ -161,11 +161,11 @@ export class OrganizationVersionsEntity extends BaseEntity {
   phones: Phone_Organization_Versions_Entity[];
 
   @OneToMany(
-    () => Picture_Organization_Versions_Entity,
+    () => PictureOrganizationVersionsEntity,
     (picture) => picture.organization_id,
     { onDelete: 'CASCADE' }
   )
-  pictures: Picture_Organization_Versions_Entity[];
+  pictures: PictureOrganizationVersionsEntity[];
 
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;

@@ -23,7 +23,7 @@ import {
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { OrganizationVersionsEntity } from 'src/entities/organization_versions.entity';
 import { CheckOrganizationDto } from './dto/check_organization.dto';
-import { Picture_Organization_Versions_Entity } from 'src/entities/picture_organization_versions.entity';
+import { PictureOrganizationVersionsEntity } from 'src/entities/picture_organization_versions.entity';
 import { Phone_Organization_Versions_Entity } from 'src/entities/phone_organizations_versions.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
@@ -351,6 +351,8 @@ export class OrganizationServise {
         throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
       });
 
+
+
     console.log(createdOrg, 'CREATE ORG OUT');
     if (createdOrg) {
       console.log(createdOrg, 'CREATE ORG IN');
@@ -402,7 +404,182 @@ export class OrganizationServise {
         }
       });
 
+      await this.createOrgVersion(createdOrg.identifiers[0].id)
+
       console.log(pictures, 'AFTER INSERT FILES');
+    }
+  }
+
+  async createOrgVersion(organizationId: string): Promise<string> {
+    const methodName = this.check.name;
+    const date = new Date();
+    const formattedDate = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+
+    try {
+      // find organization
+      const findOrganizationResult: OrganizationEntity | undefined =
+        await OrganizationEntity.findOne({
+          where: [
+            {
+              id: organizationId,
+            },
+          ],
+        });
+
+      if (findOrganizationResult) {
+        this.logger.debug(
+          `Method: ${methodName} - Organization Not Found: `,
+          findOrganizationResult
+        );
+        throw new HttpException('Organization Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      const organizationVersionResult: InsertResult =
+        await OrganizationVersionsEntity.createQueryBuilder()
+          .insert()
+          .into(OrganizationVersionsEntity)
+          .values({
+            organization_id: findOrganizationResult.id,
+            organization_name: findOrganizationResult.organization_name,
+            main_organization: findOrganizationResult.main_organization,
+            manager: findOrganizationResult.manager,
+            email: findOrganizationResult.email,
+            address: findOrganizationResult.address,
+            scheduler: findOrganizationResult.scheduler,
+            payment_types: findOrganizationResult.payment_types,
+            transport: findOrganizationResult.transport,
+            comment: findOrganizationResult.comment,
+            location: findOrganizationResult.location,
+            segment: findOrganizationResult.segment,
+            account: findOrganizationResult.account,
+            added_by: findOrganizationResult.added_by,
+            inn: findOrganizationResult.inn,
+            bank_account: findOrganizationResult.bank_account,
+            common_rate: findOrganizationResult.common_rate,
+            number_of_raters: findOrganizationResult.number_of_raters,
+            status: findOrganizationResult.status,
+            sub_category_org: findOrganizationResult.sub_category_org.toString(),
+            sectionId: findOrganizationResult.sectionId.toString(),
+            userId: findOrganizationResult.userId.toString(),
+          })
+          .execute();
+
+      this.logger.debug(
+        `Method: ${methodName} - organizationVersionResult:`,
+        organizationVersionResult
+      );
+
+      if (!organizationVersionResult.identifiers[0].id) {
+        this.logger.debug(
+          `Method: ${methodName} - organizationVersion insert error:`,
+          organizationVersionResult
+        );
+        throw new HttpException(
+          `Error in inserting to organization version`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      // find phone by organization id
+      const findPhonesResult = await PhoneOrganizationEntity.find({
+        where: [
+          {
+            organization: { id: findOrganizationResult.id },
+          },
+        ],
+      });
+
+      if (!findPhonesResult) {
+        this.logger.debug(
+          `Method: ${methodName} - Phones Not Found: `,
+          findPhonesResult
+        );
+        throw new HttpException('Phones Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      // inserting phones to version
+      for (let i = 0; i < findPhonesResult.length; i++) {
+        const insertPhoneVersionResult =
+          await Phone_Organization_Versions_Entity.createQueryBuilder()
+            .insert()
+            .into(Phone_Organization_Versions_Entity)
+            .values({
+              number: findPhonesResult[i].number,
+              type_number: findPhonesResult[i].type_number,
+              organization: organizationVersionResult.identifiers[0].id,
+            })
+            .execute();
+
+        this.logger.debug(
+          `Method: ${methodName} - insertPhoneVersionResult:`,
+          insertPhoneVersionResult
+        );
+
+        if (!insertPhoneVersionResult.identifiers[0].id) {
+          this.logger.debug(
+            `Method: ${methodName} - insertPhoneVersionResult Insert Error:`,
+            insertPhoneVersionResult
+          );
+          throw new HttpException(
+            `Error in inserting to Phone Version`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+
+      // find picture by organization id
+      const findPicturesResult = await PictureOrganizationEntity.find({
+        where: [
+          {
+            id: findOrganizationResult.id,
+          },
+        ],
+      });
+
+      if (!findPicturesResult) {
+        this.logger.debug(
+          `Method: ${methodName} - Pictures Not Found: `,
+          findPicturesResult
+        );
+        throw new HttpException('Pictures Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      // insert picture to version
+      for (let i = 0; i < findPicturesResult.length; i++) {
+        const insertPictureVersionResult =
+          await PictureOrganizationVersionsEntity.createQueryBuilder()
+            .insert()
+            .into(PictureOrganizationVersionsEntity)
+            .values({
+              image_link: findPicturesResult[i].image_link,
+              organization_id: organizationVersionResult.identifiers[0].id,
+            })
+            .execute();
+
+        this.logger.debug(
+          `Method: ${methodName} - insertPictureVersionResult:`,
+          insertPictureVersionResult
+        );
+
+        if (!insertPictureVersionResult.identifiers[0].id) {
+          this.logger.debug(
+            `Method: ${methodName} - insertPictureVersionResult Insert Error:`,
+            insertPictureVersionResult
+          );
+          throw new HttpException(
+            `Error in inserting to Picture Version`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+
+      return organizationVersionResult.identifiers[0].id;
+    } catch (error) {
+      this.logger.debug(`Method: ${methodName} - Error trace: `, error.trace);
+      throw new HttpException(
+        error.toString(),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
@@ -629,6 +806,111 @@ export class OrganizationServise {
     const formattedDate = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
 
     try {
+      const organizationVersion = await OrganizationVersionsEntity.findOne({
+        where: [
+          { organization_id: organizationId }
+        ]
+      })
+
+      const organization = await OrganizationEntity.findOne({
+        where: [
+          { id: organizationId }
+        ]
+      })
+
+      const phones = await PhoneOrganizationEntity.findOne({
+        where: [
+          { organization: { id: organization.id }, }
+        ]
+      })
+
+      const phonesVersion = await Phone_Organization_Versions_Entity.findOne({
+        where: [
+          { organization: { id: organization.id }, }
+        ]
+      })
+
+      const pictures = await PictureOrganizationEntity.findOne({
+        where: [
+          { organization_id: { id: organization.id }, }
+        ]
+      })
+
+      const picturesVersion = await PictureOrganizationVersionsEntity.findOne({
+        where: [
+          { organization_id: { id: organization.id }, }
+        ]
+      })
+
+      const subCategoryOrg = await SubCategoryOrgEntity.findOne({
+        where: [
+          { id: organizationVersion.sub_category_org }
+        ]
+      })
+
+      const section = await SectionEntity.findOne({
+        where: [
+          { id: organizationVersion.sectionId }
+        ]
+      })
+
+      const user = await UsersEntity.findOne({
+        where: [
+          { id: organizationVersion.userId }
+        ]
+      })
+
+      if (CheckOrganizationStatus.Accept) {
+        organization.status = OrganizationStatus.Accepted
+        organizationVersion.status = OrganizationStatus.Accepted
+
+        organization.organization_name = organizationVersion.organization_name
+        organization.main_organization = organizationVersion.main_organization
+        organization.manager = organizationVersion.manager
+        organization.email = organizationVersion.email
+        organization.address = organizationVersion.address
+        organization.scheduler = organizationVersion.scheduler
+        organization.payment_types = organizationVersion.payment_types
+        organization.transport = organizationVersion.transport
+        organization.comment = organizationVersion.comment
+        organization.location = organizationVersion.location
+        organization.segment = organizationVersion.segment
+        organization.account = organizationVersion.account
+        organization.added_by = organizationVersion.added_by
+        organization.inn = organizationVersion.inn
+        organization.bank_account = organizationVersion.bank_account
+        organization.common_rate = organizationVersion.common_rate
+        organization.number_of_raters = organizationVersion.number_of_raters
+        organization.status = organizationVersion.status
+        organization.sub_category_org = subCategoryOrg
+        organization.sectionId = section
+        organization.userId = user
+
+        phones.number = phonesVersion.number
+        phones.type_number = phonesVersion.type_number
+
+        pictures.image_link = picturesVersion.image_link
+
+        OrganizationEntity.save(organization)
+        OrganizationVersionsEntity.save(organizationVersion)
+        PhoneOrganizationEntity.save(phones)
+        PictureOrganizationEntity.save(pictures)
+      }
+
+      if (CheckOrganizationStatus.Reject) {
+        organizationVersion.status = OrganizationStatus.Rejected
+
+        if (organization.status == OrganizationStatus.Check) {
+          organization.status = OrganizationStatus.Rejected
+        }
+      }
+
+      return;
+      /****************************************************************
+
+      // find organization
+
+
       // find organization
       const findOrganizationResult: OrganizationEntity | undefined =
         await OrganizationEntity.findOne({
@@ -731,9 +1013,9 @@ export class OrganizationServise {
       // insert picture to version
       for (let i = 0; i < findPicturesResult.length; i++) {
         const insertPictureVersionResult =
-          await Picture_Organization_Versions_Entity.createQueryBuilder()
+          await PictureOrganizationVersionsEntity.createQueryBuilder()
             .insert()
-            .into(Picture_Organization_Versions_Entity)
+            .into(PictureOrganizationVersionsEntity)
             .values({
               image_link: findPicturesResult[i].image_link,
               organization_id: organizationVersionResult.identifiers[0].id,
@@ -818,6 +1100,7 @@ export class OrganizationServise {
       );
 
       return updateOrganizationStatusResult;
+      */
     } catch (error) {
       this.logger.debug(`Method: ${methodName} - Error trace: `, error.trace);
       throw new HttpException(

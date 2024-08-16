@@ -10,7 +10,7 @@ import {
 import { OrganizationVersionsEntity } from './organization_versions.entity';
 
 @Entity()
-export class Picture_Organization_Versions_Entity extends BaseEntity {
+export class PictureOrganizationVersionsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
