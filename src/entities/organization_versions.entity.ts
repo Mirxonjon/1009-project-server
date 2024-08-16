@@ -5,33 +5,27 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { SubCategoryOrgEntity } from './sub_category_org.entity';
-import { PhoneOrganizationEntity } from './phone_organization.entity';
-import { CommentAndRateEntity } from './comment_and_rate';
-import { PictureOrganizationEntity } from './picture_organization.entity';
-import { SavedOrganizationEntity } from './saved_org.entity';
-import { UsersEntity } from './users.entity';
-import { SectionEntity } from './section.entity';
+import { Phone_Organization_Versions_Entity } from './phone_organizations_versions.entity';
+import { PictureOrganizationVersionsEntity } from './picture_organization_versions.entity';
+import { OrganizationEntity } from './organization.entity';
 
 @Entity()
-export class OrganizationEntity extends BaseEntity {
+export class OrganizationVersionsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToOne(() => OrganizationEntity, (organisation) => organisation.id)
+  organization_id: string;
 
   @Column({
     type: 'character varying',
     nullable: true,
   })
   organization_name: string;
-
-  // @Column({
-  //   type: 'character varying',
-  //   nullable: true,
-  // })
-  // section: string;
 
   @Column({
     type: 'character varying',
@@ -113,7 +107,7 @@ export class OrganizationEntity extends BaseEntity {
   inn: string;
 
   @Column({
-    type: 'character varying',
+    type: 'uuid',
     nullable: true,
   })
   bank_account: string;
@@ -139,49 +133,39 @@ export class OrganizationEntity extends BaseEntity {
   })
   status: string;
 
-  @ManyToOne(
-    () => SubCategoryOrgEntity,
-    (sub_category_org) => sub_category_org.organizations,
-    { nullable: true }
-  )
-  sub_category_org: SubCategoryOrgEntity;
-
-  @ManyToOne(() => SectionEntity, (section) => section.organizations, {
+  @Column({
+    type: 'character varying',
     nullable: true,
   })
-  sectionId: SectionEntity;
-
-  @ManyToOne(() => UsersEntity, (user) => user.my_organization, {
-    nullable: true,
-  })
-  userId: UsersEntity;
-
-  @OneToMany(() => PhoneOrganizationEntity, (phone) => phone.organization, {
-    onDelete: 'CASCADE',
-  })
-  phones: PhoneOrganizationEntity[];
-
-  @OneToMany(
-    () => PictureOrganizationEntity,
-    (picture) => picture.organization_id,
-    { onDelete: 'CASCADE' },
-  )
-  pictures: PictureOrganizationEntity[];
-
-  @OneToMany(() => CommentAndRateEntity, (comment) => comment.organization_id)
-  comments: CommentAndRateEntity[];
-
-  @OneToMany(
-    () => SavedOrganizationEntity,
-    (saved_org) => saved_org.organization_id,
-  )
-  saved_organization: SavedOrganizationEntity[];
+  sub_category_org: string;
 
   @Column({
-    type: 'boolean',
-    default: false,
+    type: 'character varying',
+    nullable: true,
   })
-  is_versioned: boolean;
+  sectionId: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  userId: string;
+
+  @OneToMany(
+    () => Phone_Organization_Versions_Entity,
+    (phone) => phone.organization,
+    {
+      onDelete: 'CASCADE',
+    }
+  )
+  phones: Phone_Organization_Versions_Entity[];
+
+  @OneToMany(
+    () => PictureOrganizationVersionsEntity,
+    (picture) => picture.organization_id,
+    { onDelete: 'CASCADE' }
+  )
+  pictures: PictureOrganizationVersionsEntity[];
 
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;

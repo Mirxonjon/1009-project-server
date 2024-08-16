@@ -17,11 +17,11 @@ export class SavedOrganizationServise {
   constructor(auth: AuthServise) {
     this.#_auth = auth;
   }
-  async findAll(user: UserType, page: string , pageSize : string) {
-    if(pageSize == 'all') {
+  async findAll(user: UserType, page: string, pageSize: string) {
+    if (pageSize == 'all') {
       const [result, total] = await OrganizationEntity.findAndCount({
         where: {
-          saved_organization : {
+          saved_organization: {
             user_id: {
               id: user.userId,
             }
@@ -43,21 +43,21 @@ export class SavedOrganizationServise {
         // this.logger.error(`Error in find All Org`);
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
-    return {
-      result  ,
-      pagination: {
-        currentPage: page,
-        totalPages : 1,
-        pageSize,
-        totalItems: total,
-      },
-    };
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages: 1,
+          pageSize,
+          totalItems: total,
+        },
+      };
     } else {
       const offset = (+page - 1) * +pageSize;
 
       const [result, total] = await OrganizationEntity.findAndCount({
         where: {
-          saved_organization : {
+          saved_organization: {
             user_id: {
               id: user.userId,
             }
@@ -75,24 +75,24 @@ export class SavedOrganizationServise {
         order: {
           create_data: 'asc',
         },
-        
-      skip: offset,
-      take: +pageSize,
+
+        skip: offset,
+        take: +pageSize,
       }).catch((e) => {
         // this.logger.error(`Error in find All Org`);
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
 
       const totalPages = Math.ceil(total / +pageSize);
-    return {
-      result  ,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        pageSize,
-        totalItems: total,
-      },
-    };
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
 
     }
 
@@ -202,7 +202,7 @@ export class SavedOrganizationServise {
     if (!findSavedOrganization) {
       throw new HttpException(
         'Saved Organization not found',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 

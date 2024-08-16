@@ -44,7 +44,7 @@ export class AuthServise {
       token: this.sign(
         addedUser.raw.at(-1).id,
         addedUser.raw.at(-1).role,
-        addedUser.raw.at(-1).password,
+        addedUser.raw.at(-1).password
       ),
     };
   }

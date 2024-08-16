@@ -34,7 +34,21 @@ export type TNumbers = {
 };
 
 export enum OrganizationStatus {
-  Unaccepted = '0',
+  Check = '0',
   Accepted = '1',
   Rejected = '2',
 }
+
+export type OrganizationStatusType =
+  | OrganizationStatus.Check
+  | OrganizationStatus.Accepted
+  | OrganizationStatus.Rejected
+
+export enum CheckOrganizationStatus {
+  Accept = 'accept',
+  Reject = 'reject',
+}
+
+export type checkOrganizationType =
+  | CheckOrganizationStatus.Accept
+  | CheckOrganizationStatus.Reject;

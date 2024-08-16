@@ -72,7 +72,7 @@ export class EntertainmentsEntity extends BaseEntity {
     (categories) => categories.entertainments,
     {
       onDelete: 'CASCADE',
-    },
+    }
   )
   @JoinColumn({ name: 'category_id' })
   category_id: EntertainmentCategoriesEntity;

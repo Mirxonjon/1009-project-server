@@ -108,12 +108,12 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @UploadedFiles()
-    file: { image?: Express.Multer.File },
+    file: { image?: Express.Multer.File }
   ) {
     await this.#_service.update(
       id,
       updateUserDto,
-      file?.image ? file?.image[0] : null,
+      file?.image ? file?.image[0] : null
     );
   }
 

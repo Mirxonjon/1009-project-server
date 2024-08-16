@@ -14,6 +14,9 @@ import { PhoneOrganizationEntity } from 'src/entities/phone_organization.entity'
 import { CommentAndRateEntity } from 'src/entities/comment_and_rate';
 import { PictureOrganizationEntity } from 'src/entities/picture_organization.entity';
 import { ImportedFilesTitleEntity } from 'src/entities/imported_files_title.entity';
+import { OrganizationVersionsEntity } from 'src/entities/organization_versions.entity';
+import { Picture_Organization_Versions_Entity } from 'src/entities/picture_organization_versions.entity';
+import { Phone_Organization_Versions_Entity } from 'src/entities/phone_organizations_versions.entity';
 import { SectionEntity } from 'src/entities/section.entity';
 import { SavedOrganizationEntity } from 'src/entities/saved_org.entity';
 
@@ -44,6 +47,9 @@ export const connectDb: TypeOrmModuleOptions = {
     CommentAndRateEntity,
     PictureOrganizationEntity,
     ImportedFilesTitleEntity,
+    OrganizationVersionsEntity,
+    Picture_Organization_Versions_Entity,
+    Phone_Organization_Versions_Entity
   ],
   autoLoadEntities: true,
   synchronize: true,

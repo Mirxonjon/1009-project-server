@@ -66,7 +66,7 @@ export class ImportedFilesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async updateDate(
-    @Body() updateOrganizationDataDto: UpdateOrganizationDataDto,
+    @Body() updateOrganizationDataDto: UpdateOrganizationDataDto
   ) {
     await this.#_service.updateData(updateOrganizationDataDto);
   }

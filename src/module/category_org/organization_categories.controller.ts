@@ -76,7 +76,7 @@ export class OrganizationCategoriesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Body() createOrganizationCategoryDto: CreateOrganizationCategoryDto,
+    @Body() createOrganizationCategoryDto: CreateOrganizationCategoryDto
   ) {
     return await this.#_service.create(createOrganizationCategoryDto);
   }
@@ -99,7 +99,7 @@ export class OrganizationCategoriesController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateOrganizationCategoryDto: UpdateOrganizationCategoryDto,
+    @Body() updateOrganizationCategoryDto: UpdateOrganizationCategoryDto
   ) {
     return await this.#_service.update(id, updateOrganizationCategoryDto);
   }

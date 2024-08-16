@@ -7,10 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OrganizationEntity } from './organization.entity';
+import { OrganizationVersionsEntity } from './organization_versions.entity';
 
 @Entity()
-export class PictureOrganizationEntity extends BaseEntity {
+export class PictureOrganizationVersionsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -19,13 +19,13 @@ export class PictureOrganizationEntity extends BaseEntity {
   })
   image_link: string;
 
-  @ManyToOne(() => OrganizationEntity, (org) => org.pictures, {
+  @ManyToOne(() => OrganizationVersionsEntity, (org) => org.pictures, {
     onDelete: 'CASCADE',
   })
-  organization_id: OrganizationEntity;
+  organization_id: OrganizationVersionsEntity;
 
-  @ManyToOne(() => OrganizationEntity, (org) => org.pictures)
-  organization_version_id?: OrganizationEntity;
+  // @ManyToOne(() => OrganizationVersionsEntity, (org) => org.pictures)
+  // organization_version_id?: OrganizationVersionsEntity;
 
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;

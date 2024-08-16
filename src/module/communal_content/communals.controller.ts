@@ -153,7 +153,7 @@ export class CommunalController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateCommunalDto: UpdateCommunalDto,
+    @Body() updateCommunalDto: UpdateCommunalDto
   ) {
     await this.#_service.update(id, updateCommunalDto);
   }

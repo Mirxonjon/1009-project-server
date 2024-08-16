@@ -150,7 +150,7 @@ export class KnowDataController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateKnowDataDto: UpdateKnowDataDto,
+    @Body() updateKnowDataDto: UpdateKnowDataDto
   ) {
     await this.#_service.update(id, updateKnowDataDto);
   }

@@ -103,7 +103,7 @@ export class UsersServise {
     } else {
       throw new HttpException(
         'Image should be in the format jpg, png, jpeg, pnmj, svg',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
   }

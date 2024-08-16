@@ -41,7 +41,7 @@ export class EntertainmentCategoriesService {
     if (findCategory) {
       throw new HttpException(
         'Already created this category',
-        HttpStatus.FOUND,
+        HttpStatus.FOUND
       );
     }
     await EntertainmentCategoriesEntity.createQueryBuilder()

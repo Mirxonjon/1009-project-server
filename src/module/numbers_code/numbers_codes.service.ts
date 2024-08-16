@@ -24,7 +24,7 @@ export class NumbersCodesServise {
     if (!body.text && !body.table_arr) {
       throw new HttpException(
         'text or table_arr should not be empty',
-        HttpStatus.NO_CONTENT,
+        HttpStatus.NO_CONTENT
       );
     }
 
@@ -53,7 +53,7 @@ export class NumbersCodesServise {
     if (!findNumbersCodes) {
       throw new HttpException(
         'Information Tashkent data not found',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 
@@ -74,7 +74,7 @@ export class NumbersCodesServise {
     const findNumbersCodes = await NumbersCodesEntity.findOneBy({ id }).catch(
       () => {
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-      },
+      }
     );
 
     if (!findNumbersCodes) {

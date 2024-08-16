@@ -3,38 +3,38 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntertainmentsEntity } from './entertainment.entity';
+import { OrganizationVersionsEntity } from './organization_versions.entity';
 
 @Entity()
-export class EntertainmentCategoriesEntity extends BaseEntity {
+export class Phone_Organization_Versions_Entity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     type: 'character varying',
-    nullable: false,
+    nullable: true,
   })
-  title: string;
+  number: string;
 
   @Column({
     type: 'character varying',
-    nullable: false,
+    nullable: true,
   })
-  title_ru: string;
+  type_number: string;
+
+  @ManyToOne(() => OrganizationVersionsEntity, (org) => org.phones, {
+    onDelete: 'CASCADE',
+  })
+  organization: OrganizationVersionsEntity;
 
   @UpdateDateColumn({ name: 'updated_at' })
   update_date: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
-
-  @OneToMany(
-    () => EntertainmentsEntity,
-    (entertainment) => entertainment.category_id
-  )
-  entertainments: EntertainmentsEntity[];
 }

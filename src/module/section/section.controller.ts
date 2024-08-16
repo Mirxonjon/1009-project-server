@@ -91,7 +91,7 @@ export class SectionController {
   @ApiNotFoundResponse()
   async update(
     @Param('id') id: string,
-    @Body() updateOrganizationCategoryDto: UpdateSectionDto,
+    @Body() updateOrganizationCategoryDto: UpdateSectionDto
   ) {
     return await this.#_service.update(id, updateOrganizationCategoryDto);
   }
