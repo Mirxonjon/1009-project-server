@@ -25,7 +25,10 @@ import {
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
 import { VerifySmsCodeDto } from './dto/verify_sms_code.dto';
-import { UpdateNumberDto, UpdateNumberVerifySmsCodeDto } from './dto/update_number.dto';
+import {
+  UpdateNumberDto,
+  UpdateNumberVerifySmsCodeDto,
+} from './dto/update_number.dto';
 import { RequiredRoles } from './guards/roles.decorator';
 import { CustomRequest, RolesEnum } from 'src/types';
 // import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
@@ -119,20 +122,16 @@ export class AuthController {
   @ApiBody({
     schema: {
       type: 'object',
-      properties: {
-      
-      },
+      properties: {},
     },
   })
   // @ApiBadRequestResponse()
   // @ApiNotFoundResponse()
-  async resendSmsCode(
-    @Param('id') id: string,
-  ) {
-   return await this.service.resendSmsCode(id);
+  async resendSmsCode(@Param('id') id: string) {
+    return await this.service.resendSmsCode(id);
   }
 
-  @RequiredRoles(RolesEnum.USER,RolesEnum.SUPERADMIN)
+  @RequiredRoles(RolesEnum.USER, RolesEnum.SUPERADMIN)
   @Patch('/update-number')
   @ApiBody({
     schema: {
@@ -147,19 +146,13 @@ export class AuthController {
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  async updateNumber(
-    @Req() req: CustomRequest,
-    @Body() body: UpdateNumberDto
-  ) {
-console.log('okk');
+  async updateNumber(@Req() req: CustomRequest, @Body() body: UpdateNumberDto) {
+    console.log('okk');
 
-   return await this.service.updateNumber(req.user,body);
+    return await this.service.updateNumber(req.user, body);
   }
 
-
-
-  
-  @RequiredRoles(RolesEnum.USER,RolesEnum.SUPERADMIN)
+  @RequiredRoles(RolesEnum.USER, RolesEnum.SUPERADMIN)
   @Patch('/update-number/verify-sms-code')
   // @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -183,7 +176,7 @@ console.log('okk');
     @Req() req: CustomRequest,
     @Body() body: UpdateNumberVerifySmsCodeDto
   ) {
-  return  await this.service.verifySmsCodeUpdateNumber(req.user,body);
+    return await this.service.verifySmsCodeUpdateNumber(req.user, body);
   }
 
   @Delete('user/delete/:id')

@@ -42,7 +42,7 @@ export enum OrganizationStatus {
 export type OrganizationStatusType =
   | OrganizationStatus.Check
   | OrganizationStatus.Accepted
-  | OrganizationStatus.Rejected
+  | OrganizationStatus.Rejected;
 
 export enum CheckOrganizationStatus {
   Accept = 'accept',

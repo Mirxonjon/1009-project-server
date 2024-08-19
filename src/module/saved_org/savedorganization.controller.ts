@@ -44,9 +44,11 @@ export class SavedOrganizationController {
   @ApiOkResponse()
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'pageSize', required: false })
-  async findall(@Req() req: CustomRequest,
+  async findall(
+    @Req() req: CustomRequest,
     @Query('page') page: string = '1',
-    @Query('pageSize') pageSize: string = '10',) {
+    @Query('pageSize') pageSize: string = '10'
+  ) {
     return await this.#_service.findAll(req.user, page, pageSize);
   }
 
@@ -81,11 +83,11 @@ export class SavedOrganizationController {
   @ApiNotFoundResponse()
   async create(
     @Req() req: CustomRequest,
-    @Body() createSubCategoryOrganizationDto: CreateSavedOrganizationDto,
+    @Body() createSubCategoryOrganizationDto: CreateSavedOrganizationDto
   ) {
     return await this.#_service.create(
       req.user,
-      createSubCategoryOrganizationDto,
+      createSubCategoryOrganizationDto
     );
   }
 

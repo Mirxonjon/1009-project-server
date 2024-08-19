@@ -164,7 +164,7 @@ export class OrganizationEntity extends BaseEntity {
   @OneToMany(
     () => PictureOrganizationEntity,
     (picture) => picture.organization_id,
-    { onDelete: 'CASCADE' },
+    { onDelete: 'CASCADE' }
   )
   pictures: PictureOrganizationEntity[];
 
@@ -173,7 +173,7 @@ export class OrganizationEntity extends BaseEntity {
 
   @OneToMany(
     () => SavedOrganizationEntity,
-    (saved_org) => saved_org.organization_id,
+    (saved_org) => saved_org.organization_id
   )
   saved_organization: SavedOrganizationEntity[];
 

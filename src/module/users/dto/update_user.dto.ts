@@ -17,11 +17,10 @@ export class UpdateUserDto {
 export class UpdateUserOneDto {
   @IsString()
   full_name: string;
-  
+
   @IsString()
   password: string;
 
   @IsString()
   newpassword: string;
-
 }

@@ -72,8 +72,8 @@ export class UsersEntity extends BaseEntity {
     type: 'timestamp',
     nullable: true,
   })
-  sms_code_updated_at: Date;
-  
+  otp_duration: Date;
+
   @Column({
     type: 'int',
     nullable: true,
@@ -86,8 +86,6 @@ export class UsersEntity extends BaseEntity {
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
-  
-
 
   @OneToMany(() => CommentAndRateEntity, (comment) => comment.user_id)
   my_comments: CommentAndRateEntity[];

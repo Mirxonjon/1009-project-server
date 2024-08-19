@@ -24,8 +24,8 @@ export class SavedOrganizationServise {
           saved_organization: {
             user_id: {
               id: user.userId,
-            }
-          }
+            },
+          },
         },
         relations: {
           phones: true,
@@ -60,8 +60,8 @@ export class SavedOrganizationServise {
           saved_organization: {
             user_id: {
               id: user.userId,
-            }
-          }
+            },
+          },
         },
         relations: {
           phones: true,
@@ -93,9 +93,7 @@ export class SavedOrganizationServise {
           totalItems: total,
         },
       };
-
     }
-
   }
 
   async findOne(id: string) {
@@ -144,7 +142,7 @@ export class SavedOrganizationServise {
     if (findSavedOrg) {
       throw new HttpException(
         'Already saved organization',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND
       );
     }
 

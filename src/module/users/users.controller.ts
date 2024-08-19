@@ -152,12 +152,12 @@ export class UsersController {
     @Req() req: CustomRequest,
     @Body() UpdateUserOneDto: UpdateUserOneDto,
     @UploadedFiles()
-    file: { image?: Express.Multer.File },
+    file: { image?: Express.Multer.File }
   ) {
     await this.#_service.updateUser(
       req.user,
       UpdateUserOneDto,
-      file?.image ? file?.image[0] : null,
+      file?.image ? file?.image[0] : null
     );
   }
 

@@ -3,9 +3,15 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create_user.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { SingInUserDto } from './dto/sign_in-user.dto';
-import { generateRandomNumber, secondsSinceGivenTime } from 'src/utils/generateNumber';
+import {
+  generateRandomNumber,
+  secondsSinceGivenTime,
+} from 'src/utils/generateNumber';
 import { VerifySmsCodeDto } from './dto/verify_sms_code.dto';
-import { UpdateNumberDto, UpdateNumberVerifySmsCodeDto } from './dto/update_number.dto';
+import {
+  UpdateNumberDto,
+  UpdateNumberVerifySmsCodeDto,
+} from './dto/update_number.dto';
 import { UserType } from 'src/types';
 // import { ControlUsersEntity } from 'src/entities/control_users.entity';
 
@@ -28,7 +34,7 @@ export class AuthServise {
     }
     console.log(createUser);
 
-    const  smsCode = await generateRandomNumber();
+    const smsCode = await generateRandomNumber();
 
     const addedUser = await UsersEntity.createQueryBuilder()
       .insert()
@@ -38,9 +44,9 @@ export class AuthServise {
         phone: createUser.number,
         password: createUser.password,
         role: createUser.role,
-        sms_code : smsCode,
+        sms_code: smsCode,
         attempt: 1,
-        sms_code_updated_at: new Date(),
+        otp_duration: new Date(),
       })
       .returning(['id', 'role', 'password'])
       .execute()
@@ -51,8 +57,8 @@ export class AuthServise {
     return {
       message: 'You have successfully registered',
 
-      smsCode : smsCode,
-      userId : addedUser.raw.at(-1).id
+      smsCode: smsCode,
+      userId: addedUser.raw.at(-1).id,
       // token: this.sign(
       //   addedUser.raw.at(-1).id,
       //   addedUser.raw.at(-1).role,
@@ -80,10 +86,10 @@ export class AuthServise {
     };
   }
 
-  async verifySmsCode( verifySmsCodeDto: VerifySmsCodeDto) {
+  async verifySmsCode(verifySmsCodeDto: VerifySmsCodeDto) {
     const finduser = await UsersEntity.findOne({
       where: {
-           id : verifySmsCodeDto.userId
+        id: verifySmsCodeDto.userId,
       },
     }).catch((e) => {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
@@ -93,14 +99,16 @@ export class AuthServise {
       throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
     }
 
-    const differenceSeconds = await secondsSinceGivenTime(finduser.sms_code_updated_at) 
+    const differenceSeconds = await secondsSinceGivenTime(
+      finduser.otp_duration
+    );
     console.log(differenceSeconds);
-    
-    if(differenceSeconds > 60){
+
+    if (differenceSeconds > 60) {
       throw new HttpException('Time is over', HttpStatus.BAD_REQUEST);
     }
 
-    if(finduser.sms_code  != +verifySmsCodeDto.smsCode){
+    if (finduser.sms_code != +verifySmsCodeDto.smsCode) {
       const updated = await UsersEntity.update(finduser.id, {
         attempt: finduser.attempt + 1,
       });
@@ -116,94 +124,95 @@ export class AuthServise {
     };
   }
 
-  async resendSmsCode( id: string) {
+  async resendSmsCode(id: string) {
     const finduser = await UsersEntity.findOne({
       where: {
-           id 
+        id,
       },
     }).catch((e) => {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-    }); 
+    });
 
     if (!finduser) {
       throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
-    } 
+    }
 
-    if(finduser.attempt > 3){
+    if (finduser.attempt > 3) {
       throw new HttpException('attempt is over', HttpStatus.BAD_REQUEST);
     }
     const smsCode = await generateRandomNumber();
     const updated = await UsersEntity.update(finduser.id, {
-      sms_code : smsCode, 
+      sms_code: smsCode,
       attempt: finduser.attempt + 1,
-        sms_code_updated_at: new Date(),
+      otp_duration: new Date(),
     }).catch((e) => {
       throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
     });
 
-    if(updated){
+    if (updated) {
       console.log({
         message: 'Resend code successfully',
         userId: finduser.id,
-        smsCode 
+        smsCode,
       });
       return {
         message: 'Resend code successfully',
         userId: finduser.id,
-        smsCode 
+        smsCode,
       };
     }
-    
- 
   }
 
-  async updateNumber(user: UserType,UpdateNumberDto: UpdateNumberDto) {
+  async updateNumber(user: UserType, UpdateNumberDto: UpdateNumberDto) {
     const finduser = await UsersEntity.findOne({
       where: {
-           id :user.userId
+        id: user.userId,
       },
     }).catch((e) => {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-    }); 
-console.log('okk');
+    });
+    console.log('okk');
 
     if (!finduser) {
       throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
-    } 
+    }
     const smsCode = await generateRandomNumber();
 
     const updated = await UsersEntity.update(finduser.id, {
       // phone: UpdateNumberDto.number,
-      sms_code : smsCode, 
+      sms_code: smsCode,
       attempt: finduser.attempt + 1,
-      sms_code_updated_at: new Date(),
+      otp_duration: new Date(),
     }).catch((e) => {
       throw new HttpException(`${e.message}`, HttpStatus.BAD_REQUEST);
     });
 
-    if(updated){
+    if (updated) {
       console.log({
         message: 'Resend code successfully',
         userId: finduser.id,
-        smsCode 
+        smsCode,
       });
       return {
         message: 'Resend code successfully',
         userId: finduser.id,
-        smsCode 
+        smsCode,
       };
     }
 
-    return{ 
+    return {
       message: 'resend code successfully',
       smsCode,
       userId: finduser.id,
-    }
+    };
   }
-  async verifySmsCodeUpdateNumber(user :UserType, UpdateNumberVerifySmsCodeDto: UpdateNumberVerifySmsCodeDto) {
+  async verifySmsCodeUpdateNumber(
+    user: UserType,
+    UpdateNumberVerifySmsCodeDto: UpdateNumberVerifySmsCodeDto
+  ) {
     const finduser = await UsersEntity.findOne({
       where: {
-           id : user.userId
+        id: user.userId,
       },
     }).catch((e) => {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
@@ -213,13 +222,15 @@ console.log('okk');
       throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
     }
 
-    const differenceSeconds = await secondsSinceGivenTime(finduser.sms_code_updated_at) 
+    const differenceSeconds = await secondsSinceGivenTime(
+      finduser.otp_duration
+    );
 
-    if(differenceSeconds > 60){
+    if (differenceSeconds > 60) {
       throw new HttpException('Time is over', HttpStatus.BAD_REQUEST);
     }
 
-    if(finduser.sms_code  != +UpdateNumberVerifySmsCodeDto.smsCode){
+    if (finduser.sms_code != +UpdateNumberVerifySmsCodeDto.smsCode) {
       const updated = await UsersEntity.update(finduser.id, {
         attempt: finduser.attempt + 1,
       });
@@ -227,18 +238,16 @@ console.log('okk');
     }
 
     const updated = await UsersEntity.update(finduser.id, {
-      phone : UpdateNumberVerifySmsCodeDto.number,
+      phone: UpdateNumberVerifySmsCodeDto.number,
       attempt: 0,
     });
-    if(updated){
+    if (updated) {
       return {
         message: 'successfully',
         token: this.sign(finduser.id, finduser.role, finduser.password),
       };
     }
   }
-
-
 
   async getAllControlUsers(role: string) {
     const findControlUser = await UsersEntity.find({
@@ -254,7 +263,6 @@ console.log('okk');
 
     return findControlUser;
   }
-
 
   async deleteUser(id: string) {
     const findControlUser = await UsersEntity.findOne({

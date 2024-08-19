@@ -34,7 +34,7 @@ export class CategoryOrganizationEntity extends BaseEntity {
 
   @OneToMany(
     () => SubCategoryOrgEntity,
-    (sub_category_org) => sub_category_org.category_org,
+    (sub_category_org) => sub_category_org.category_org
   )
   sub_category_orgs: SubCategoryOrgEntity[];
 

@@ -85,11 +85,11 @@ export class CommentAndRateController {
   @ApiNotFoundResponse()
   async create(
     @Req() request: CustomRequest,
-    @Body() createSubCategoryOrganizationDto: CreateCommentAndRateDto,
+    @Body() createSubCategoryOrganizationDto: CreateCommentAndRateDto
   ) {
     return await this.#_service.create(
       request.user,
-      createSubCategoryOrganizationDto,
+      createSubCategoryOrganizationDto
     );
   }
 

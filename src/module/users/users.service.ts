@@ -108,8 +108,11 @@ export class UsersServise {
     }
   }
 
-  
-  async updateUser(user: UserType, body: UpdateUserOneDto, image: Express.Multer.File) {
+  async updateUser(
+    user: UserType,
+    body: UpdateUserOneDto,
+    image: Express.Multer.File
+  ) {
     const findUser = await UsersEntity.findOne({
       where: { id: user.userId },
     });
@@ -118,8 +121,11 @@ export class UsersServise {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    if(findUser.password != body.password){
-      throw new HttpException('Your previous password is incorrect', HttpStatus.BAD_REQUEST);
+    if (findUser.password != body.password) {
+      throw new HttpException(
+        'Your previous password is incorrect',
+        HttpStatus.BAD_REQUEST
+      );
     }
 
     let formatImage: string = 'Not image';
@@ -151,7 +157,7 @@ export class UsersServise {
     } else {
       throw new HttpException(
         'Image should be in the format jpg, png, jpeg, pnmj, svg',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
   }

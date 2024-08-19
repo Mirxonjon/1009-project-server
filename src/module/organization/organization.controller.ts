@@ -51,7 +51,7 @@ export class OrganizationController {
   @ApiQuery({ name: 'pageSize', required: false })
   async findall(
     @Query('page') page: string = '1',
-    @Query('pageSize') pageSize: string = '10',
+    @Query('pageSize') pageSize: string = '10'
   ) {
     return await this.#_service.findAll(page, pageSize);
   }
@@ -60,9 +60,7 @@ export class OrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-
-  async findOne(@Param('id') id: string,
-  ) {
+  async findOne(@Param('id') id: string) {
     return await this.#_service.findOne(id);
   }
 
@@ -73,9 +71,11 @@ export class OrganizationController {
   @ApiOkResponse()
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'pageSize', required: false })
-  async findMyOrganization(@Req() req: CustomRequest,
+  async findMyOrganization(
+    @Req() req: CustomRequest,
     @Query('page') page: string = '1',
-    @Query('pageSize') pageSize: string = '10',) {
+    @Query('pageSize') pageSize: string = '10'
+  ) {
     return await this.#_service.findMyOrganization(req.user, page, pageSize);
   }
 
