@@ -31,7 +31,7 @@ import { UsersServise } from './users.service';
 import { CustomRequest, RolesEnum } from 'src/types';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { UpdateUserDto } from './dto/update_user.dto';
+import { UpdateUserDto, UpdateUserOneDto } from './dto/update_user.dto';
 @Controller('Users')
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
@@ -114,6 +114,50 @@ export class UsersController {
       id,
       updateUserDto,
       file?.image ? file?.image[0] : null
+    );
+  }
+
+  @RequiredRoles(RolesEnum.USER)
+  @Patch('/update-user/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        full_name: {
+          type: 'string',
+          default: 'Eshmat',
+        },
+        password: {
+          type: 'string',
+          default: 'uuid23422',
+        },
+        newpassword: {
+          type: 'string',
+          default: 'uuid23422',
+        },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Attendance Punch In' })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
+  async updateUser(
+    @Req() req: CustomRequest,
+    @Body() UpdateUserOneDto: UpdateUserOneDto,
+    @UploadedFiles()
+    file: { image?: Express.Multer.File },
+  ) {
+    await this.#_service.updateUser(
+      req.user,
+      UpdateUserOneDto,
+      file?.image ? file?.image[0] : null,
     );
   }
 

@@ -8,12 +8,14 @@ import {
   Get,
   Query,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { AuthServise } from './auth.service';
 import { Controller } from '@nestjs/common';
 import { CreateUserDto } from './dto/create_user.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -22,6 +24,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
+import { VerifySmsCodeDto } from './dto/verify_sms_code.dto';
+import { UpdateNumberDto, UpdateNumberVerifySmsCodeDto } from './dto/update_number.dto';
+import { RequiredRoles } from './guards/roles.decorator';
+import { CustomRequest, RolesEnum } from 'src/types';
 // import { UpdateControlUserDto } from './dto/update-conrolUser.dto';
 // import {
 //   ControlUserDto,
@@ -30,6 +36,7 @@ import { SingInUserDto } from './dto/sign_in-user.dto';
 
 @Controller('Auth')
 @ApiTags('Auth')
+@ApiBearerAuth('JWT-auth')
 export class AuthController {
   constructor(private readonly service: AuthServise) {}
 
@@ -85,111 +92,99 @@ export class AuthController {
     return this.service.signIn(body);
   }
 
-  // @Get('')
-  // @ApiBadRequestResponse()
-  // @ApiNotFoundResponse()
-  // @ApiOkResponse()
-  // @ApiOperation({ summary: 'write role or null' })
-  // async findall(@Query('role') role: string) {
-  //   return await this.service.getAllControlUsers(role);
-  // }
+  @Post('user/verify-sms-code')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['userId', 'password'],
+      properties: {
+        userId: {
+          type: 'string',
+          default: 'fdsgsad54asdfas34f43asf234as5',
+        },
+        smsCode: {
+          type: 'string',
+          default: '1235',
+        },
+      },
+    },
+  })
+  VerifySmsCode(@Body() body: VerifySmsCodeDto) {
+    return this.service.verifySmsCode(body);
+  }
 
-  // @Get('addControlUser/search')
-  // @ApiBadRequestResponse()
-  // @ApiNotFoundResponse()
-  // @ApiOkResponse()
-  // @ApiOperation({ summary: 'api for search username' })
-  // async findusername(@Query('username') username: string) {
-  //   return await this.service.getSearchControlUsername(username);
-  // }
-
-  // @Post('ControlUser/signIn')
-  // @HttpCode(HttpStatus.OK)
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     required: ['username', 'password'],
-  //     properties: {
-  //       username: {
-  //         type: 'string',
-  //         default: 'Moderator',
-  //       },
-  //       password: {
-  //         type: 'string',
-  //         default: '123',
-  //       },
-  //     },
-  //   },
-  // })
-  // @ApiOperation({ summary: 'login for admin , moderator , operator' })
-  // signInControlUser(@Body() body: ControlUserDto) {
-  //   return this.service.signInControlUser(body);
-  // }
-
-  // @Post('/addControlUser')
-  // @HttpCode(HttpStatus.CREATED)
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     required: ['full_name', 'number', 'password'],
-  //     properties: {
-  //       full_name: {
-  //         type: 'string',
-  //         default: `Eshmat Eshmatov Eshmat o'g'li`,
-  //       },
-  //       role: {
-  //         type: 'string',
-  //         default: 'moderator',
-  //       },
-  //       username: {
-  //         type: 'string',
-  //         default: 'Moderator',
-  //       },
-  //       password: {
-  //         type: 'string',
-  //         default: '123',
-  //       },
-  //     },
-  //   },
-  // })
-  // createControlUser(@Body() createControlUserDto: CreateControlUserDto) {
-  //   return this.service.createControlUser(createControlUserDto);
-  // }
-
-  // @Patch('/updateControlUser/:id')
+  @Patch('/resend-sms-code/:id')
   // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       full_name: {
-  //         type: 'string',
-  //         default: `Eshmat Eshmatov Eshmat o'g'li`,
-  //       },
-  //       role: {
-  //         type: 'string',
-  //         default: 'moderator',
-  //       },
-  //       username: {
-  //         type: 'string',
-  //         default: 'Moderator',
-  //       },
-  //       password: {
-  //         type: 'string',
-  //         default: '123',
-  //       },
-  //     },
-  //   },
-  // })
-  // // @ApiOperation({ summary: 'Attendance Punch In' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+      
+      },
+    },
+  })
   // @ApiBadRequestResponse()
   // @ApiNotFoundResponse()
-  // async updateControlUser(
-  //   @Param('id') id: string,
-  //   @Body() updateControlUserDto: UpdateControlUserDto,
-  // ) {
-  //   await this.service.updateControlUser(id, updateControlUserDto);
-  // }
+  async resendSmsCode(
+    @Param('id') id: string,
+  ) {
+   return await this.service.resendSmsCode(id);
+  }
+
+  @RequiredRoles(RolesEnum.USER,RolesEnum.SUPERADMIN)
+  @Patch('/update-number')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        number: {
+          type: 'string',
+          default: '+998933843484',
+        },
+      },
+    },
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  async updateNumber(
+    @Req() req: CustomRequest,
+    @Body() body: UpdateNumberDto
+  ) {
+console.log('okk');
+
+   return await this.service.updateNumber(req.user,body);
+  }
+
+
+
+  
+  @RequiredRoles(RolesEnum.USER,RolesEnum.SUPERADMIN)
+  @Patch('/update-number/verify-sms-code')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        number: {
+          type: 'string',
+          default: '+998933843484',
+        },
+        smsCode: {
+          type: 'string',
+          default: '1234',
+        },
+      },
+    },
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  async verifySmsCodeUpdateNumber(
+    @Req() req: CustomRequest,
+    @Body() body: UpdateNumberVerifySmsCodeDto
+  ) {
+  return  await this.service.verifySmsCodeUpdateNumber(req.user,body);
+  }
 
   @Delete('user/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
