@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,6 +17,7 @@ import { PictureOrganizationEntity } from './picture_organization.entity';
 import { SavedOrganizationEntity } from './saved_org.entity';
 import { UsersEntity } from './users.entity';
 import { SectionEntity } from './section.entity';
+import { OrganizationVersionsEntity } from './organization_versions.entity';
 
 @Entity()
 export class OrganizationEntity extends BaseEntity {
@@ -176,6 +179,13 @@ export class OrganizationEntity extends BaseEntity {
     (saved_org) => saved_org.organization_id
   )
   saved_organization: SavedOrganizationEntity[];
+
+  @OneToOne(() => OrganizationVersionsEntity, (organisation_version) => organisation_version.organization_id,{
+    nullable: true,
+    // cascade: true,
+  })
+  @JoinColumn({ name: 'organization_version_id' })
+  organization_version: OrganizationVersionsEntity;
 
   @Column({
     type: 'boolean',

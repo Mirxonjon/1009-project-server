@@ -14,6 +14,16 @@ export class PictureOrganizationVersionsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // @Column({
+  //   type: 'character varying',
+  // })
+  // picture_id: string;
+
+  @Column({
+    type: 'character varying',
+  })
+  action: string;
+
   @Column({
     type: 'character varying',
   })

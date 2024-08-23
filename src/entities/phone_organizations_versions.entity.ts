@@ -15,6 +15,18 @@ export class Phone_Organization_Versions_Entity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // @Column({
+  //   type: 'character varying',
+  //   // nullable: true,
+  // })
+  // phone_id: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  action: string;
+
   @Column({
     type: 'character varying',
     nullable: true,

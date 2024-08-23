@@ -80,6 +80,21 @@ export class OrganizationController {
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
+  @Get('/my-organization/delete-or-update')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  async findMyOrganizationUpdateOrDelete(
+    @Req() req: CustomRequest,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '10'
+  ) {
+    return await this.#_service.findMyOrganizationUpdateOrDelete(req.user, page, pageSize);
+  }
+
+  @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -208,6 +223,7 @@ export class OrganizationController {
   }
 
   // @UseGuards(jwtGuard)
+  @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -344,11 +360,12 @@ export class OrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async update(
+    @Req() req: CustomRequest,
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
-    await this.#_service.update(id, updateOrganizationDto, files);
+    await this.#_service.updateOrgVersion(req.user ,id, updateOrganizationDto, files);
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN)

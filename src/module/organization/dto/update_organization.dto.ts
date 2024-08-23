@@ -57,6 +57,7 @@ export class UpdateOrganizationDto {
   scheduler: object;
 
   payment_types: object;
+  payment_type: object;
 
   transport: object;
 

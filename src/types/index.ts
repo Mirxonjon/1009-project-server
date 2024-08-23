@@ -16,15 +16,29 @@ export enum RolesEnum {
   SUPERADMIN = 'moderator',
 }
 
-export enum PhoneActionEnum {
+
+export enum OrganizationVersionActionsEnum {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  DONE = 'done',
+}
+export enum ActionEnum {
+  done = 'done',
   create = 'create',
   update = 'update',
   delete = 'delete',
 }
 
+// export enum PhoneActionEnum {
+//   create = 'create',
+//   update = 'update',
+//   delete = 'delete',
+// }
+
 export interface PhoneAction {
   id?: string; // Поле id будет опциональным, так как оно может быть отсутствовать при создании
-  action: PhoneActionEnum;
+  action: ActionEnum;
   number: string;
   type_number: string;
 }

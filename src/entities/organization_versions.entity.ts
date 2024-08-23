@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -18,8 +19,11 @@ export class OrganizationVersionsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => OrganizationEntity, (organisation) => organisation.id)
-  organization_id: string;
+  @OneToOne(() => OrganizationEntity, (organisation) => organisation.organization_version,{
+  nullable: true,
+  cascade: true,})
+  @JoinColumn({ name: 'organization_id' })
+  organization_id: OrganizationEntity;
 
   @Column({
     type: 'character varying',
@@ -107,7 +111,7 @@ export class OrganizationVersionsEntity extends BaseEntity {
   inn: string;
 
   @Column({
-    type: 'uuid',
+    type: 'character varying',
     nullable: true,
   })
   bank_account: string;

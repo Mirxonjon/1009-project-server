@@ -11,7 +11,7 @@ import { allowedImageFormats } from 'src/utils/videoAndImageFormat';
 import { deleteFileCloud, googleCloudAsync } from 'src/utils/google_cloud';
 import {
   PhoneAction,
-  PhoneActionEnum,
+  ActionEnum,
   RolesEnum,
   TNumbers,
   UserType,
@@ -19,8 +19,9 @@ import {
   checkOrganizationType,
   CheckOrganizationStatus,
   OrganizationStatusType,
+  OrganizationVersionActionsEnum,
 } from 'src/types';
-import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, In, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { OrganizationVersionsEntity } from 'src/entities/organization_versions.entity';
 import { CheckOrganizationDto } from './dto/check_organization.dto';
 import { PictureOrganizationVersionsEntity } from 'src/entities/picture_organization_versions.entity';
@@ -248,6 +249,95 @@ export class OrganizationServise {
     }
   }
 
+  async findMyOrganizationUpdateOrDelete(user: UserType , page: string, pageSize: string) {
+    if (pageSize == 'all') {
+      const [result, total] = await OrganizationVersionsEntity.findAndCount({
+        where: {
+          organization_id:{
+            userId: {
+              id: user.userId,
+            },
+          },
+          method: In([ OrganizationVersionActionsEnum.CREATE ,OrganizationVersionActionsEnum.UPDATE, OrganizationVersionActionsEnum.DELETE,])
+          
+        },
+        relations: {
+          phones: true,
+          pictures: true,
+          organization_id:{
+            sub_category_org: {
+              category_org: true,
+            },
+          }
+          
+          // saved_organization: true,
+          // comments: true,/
+        },
+        order: {
+          create_data: 'asc',
+        },
+      }).catch((e) => {
+        this.logger.error(`Error in find All Org`);
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages: 1,
+          pageSize,
+          totalItems: total,
+        },
+      };
+    } else {
+      const offset = (+page - 1) * +pageSize;
+
+      const [result, total] = await OrganizationVersionsEntity.findAndCount({
+        where: {
+          organization_id:{
+            userId: {
+              id: user.userId,
+            },
+          },
+          method: In([ OrganizationVersionActionsEnum.CREATE ,OrganizationVersionActionsEnum.UPDATE, OrganizationVersionActionsEnum.DELETE])
+          
+        },
+        relations: {
+          phones: true,
+          pictures: true,
+          organization_id:{
+            sub_category_org: {
+              category_org: true,
+            },
+          }
+          
+          // saved_organization: true,
+          // comments: true,/
+        },
+        order: {
+          create_data: 'asc',
+        },
+
+        skip: offset,
+        take: +pageSize,
+      }).catch((e) => {
+        this.logger.error(`Error in find All Org`);
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+
+      const totalPages = Math.ceil(total / +pageSize);
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
+  }
+}
+
   async create(
     user: UserType,
     body: CreateOrganizationDto,
@@ -352,6 +442,25 @@ export class OrganizationServise {
       let phones = JSON.parse(body.phones as any);
 
       console.log(phones, 'PHONES in IF');
+      // for (let i = 0; i < phones?.length; i++) {
+      //   await PhoneOrganizationEntity.createQueryBuilder()
+      //   .insert()
+      //   .into(PhoneOrganizationEntity)
+      //   .values({
+      //     number: phones[i].number,
+      //     type_number: phones[i].type_number,
+      //     organization: {
+      //       id: createdOrg.raw[0].id,
+      //     },
+      //   })
+      //   .execute()
+      //   .catch((e) => {
+      //     console.log(e, ': PHONE CREATE');
+      //     throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      //   });
+
+      // }
+
 
       phones?.numbers?.forEach(
         async (e: { number: string; type_number: string }) => {
@@ -375,35 +484,41 @@ export class OrganizationServise {
 
       console.log(phones, 'AFTER INSERT PHONES');
       console.log(pictures, ' INSERT picture');
-      pictures?.forEach(async (e: Express.Multer.File) => {
-        const formatImage = extname(e?.originalname).toLowerCase();
+
+      for (let i = 0; i < pictures?.length; i++) {
+        const formatImage = extname(pictures[i]?.originalname).toLowerCase();
         if (allowedImageFormats.includes(formatImage)) {
-          const linkImage: string = await googleCloudAsync(e);
+          
+          const linkImage: string = await googleCloudAsync(pictures[i]);
+          console.log('ookkk');
 
           await PictureOrganizationEntity.createQueryBuilder()
             .insert()
             .into(PictureOrganizationEntity)
             .values({
               image_link: linkImage,
+              // action: ActionEnum.create,
               organization_id: {
                 id: createdOrg.raw[0].id,
               },
             })
             .execute()
             .catch((e) => {
-              console.log(e, 'create picture');
-              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+              console.log(e);
+              throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
         }
-      });
+      } 
+      console.log(createdOrg.identifiers[0].id , 'CREATED ORG ID');
+      
 
-      await this.createOrgVersion(createdOrg.identifiers[0].id);
+      await this.createOrgVersion(createdOrg.identifiers[0].id, user);
 
       console.log(pictures, 'AFTER INSERT FILES');
     }
   }
 
-  async createOrgVersion(organizationId: string): Promise<string> {
+  async createOrgVersion(organizationId: string, user: UserType): Promise<string> {
     const methodName = this.check.name;
     const date = new Date();
     const formattedDate = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
@@ -419,7 +534,7 @@ export class OrganizationServise {
           ],
         });
 
-      if (findOrganizationResult) {
+      if (!findOrganizationResult) {
         this.logger.debug(
           `Method: ${methodName} - Organization Not Found: `,
           findOrganizationResult
@@ -432,7 +547,9 @@ export class OrganizationServise {
           .insert()
           .into(OrganizationVersionsEntity)
           .values({
-            organization_id: findOrganizationResult.id,
+            organization_id: {
+              id :findOrganizationResult.id
+            },
             organization_name: findOrganizationResult.organization_name,
             main_organization: findOrganizationResult.main_organization,
             manager: findOrganizationResult.manager,
@@ -451,10 +568,13 @@ export class OrganizationServise {
             common_rate: findOrganizationResult.common_rate,
             number_of_raters: findOrganizationResult.number_of_raters,
             status: findOrganizationResult.status,
+            method: user.role == RolesEnum.SUPERADMIN
+            ? OrganizationVersionActionsEnum.DONE
+            : OrganizationVersionActionsEnum.CREATE ,
             sub_category_org:
-              findOrganizationResult.sub_category_org.toString(),
-            sectionId: findOrganizationResult.sectionId.toString(),
-            userId: findOrganizationResult.userId.toString(),
+              findOrganizationResult.sub_category_org?.toString(),
+            sectionId: findOrganizationResult.sectionId?.toString(),
+            userId: findOrganizationResult.userId?.toString(),
           })
           .execute();
 
@@ -498,8 +618,11 @@ export class OrganizationServise {
             .insert()
             .into(Phone_Organization_Versions_Entity)
             .values({
+              id: findPhonesResult[i].id,
+              // phone_id: findPhonesResult[i].id,
               number: findPhonesResult[i].number,
               type_number: findPhonesResult[i].type_number,
+              action: ActionEnum.done,
               organization: organizationVersionResult.identifiers[0].id,
             })
             .execute();
@@ -545,6 +668,10 @@ export class OrganizationServise {
             .insert()
             .into(PictureOrganizationVersionsEntity)
             .values({
+              id: findPicturesResult[i].id,
+              // picture_id: findPicturesResult[i].id,
+
+              action: ActionEnum.done,
               image_link: findPicturesResult[i].image_link,
               organization_id: organizationVersionResult.identifiers[0].id,
             })
@@ -664,7 +791,7 @@ export class OrganizationServise {
       let allPhones = phones?.numbers;
 
       for (let i = 0; i < allPhones.length; i++) {
-        if (allPhones[i].action == PhoneActionEnum.create) {
+        if (allPhones[i].action == ActionEnum.create) {
           await PhoneOrganizationEntity.createQueryBuilder()
             .insert()
             .into(PhoneOrganizationEntity)
@@ -680,7 +807,7 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-        } else if (allPhones[i].action == PhoneActionEnum.update) {
+        } else if (allPhones[i].action == ActionEnum.update) {
           const findPhone = await PhoneOrganizationEntity.findOne({
             where: {
               id: allPhones[i].id,
@@ -696,7 +823,7 @@ export class OrganizationServise {
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
           }
-        } else if (allPhones[i].action == PhoneActionEnum.create) {
+        } else if (allPhones[i].action == ActionEnum.create) {
           const findPhone = await PhoneOrganizationEntity.findOne({
             where: {
               id: allPhones[i].id,
@@ -795,6 +922,340 @@ export class OrganizationServise {
     // }
   }
 
+  async updateOrg(organizationVersionId: string) {
+    const methodName = this.updateOrgVersion.name;
+
+    try {
+      const findOrganizationVersionResult:
+        | OrganizationVersionsEntity
+        | undefined = await OrganizationVersionsEntity.findOne({
+        where: [
+          {
+            id: organizationVersionId ,
+          },
+        ],
+        relations :{
+          organization_id : true
+        }
+      });
+
+      const updateOrganizationEntityResult: UpdateResult =
+        await OrganizationEntity.createQueryBuilder()
+          .update(OrganizationEntity)
+          .set({
+            organization_name: findOrganizationVersionResult.organization_name,
+            main_organization: findOrganizationVersionResult.main_organization,
+            manager: findOrganizationVersionResult.manager,
+            email: findOrganizationVersionResult.email,
+            address: findOrganizationVersionResult.address,
+            scheduler: findOrganizationVersionResult.scheduler,
+            payment_types: findOrganizationVersionResult.payment_types,
+            transport: findOrganizationVersionResult.transport,
+            comment: findOrganizationVersionResult.comment,
+            location: findOrganizationVersionResult.location,
+            segment: findOrganizationVersionResult.segment,
+            account: findOrganizationVersionResult.account,
+            added_by: findOrganizationVersionResult.added_by,
+            inn: findOrganizationVersionResult.inn,
+            bank_account: findOrganizationVersionResult.bank_account,
+            common_rate: findOrganizationVersionResult.common_rate,
+            number_of_raters: findOrganizationVersionResult.number_of_raters,
+            status: OrganizationStatus.Accepted,
+            sub_category_org: {
+              id: findOrganizationVersionResult.sub_category_org,
+            },
+            sectionId: {
+              id: findOrganizationVersionResult.sectionId,
+            },
+          })
+          .where('id = :id', {
+            id: findOrganizationVersionResult.organization_id.id,
+          })
+          .execute();
+
+      this.logger.debug(
+        `Method: ${methodName} - organizationVersionResult:`,
+        updateOrganizationEntityResult
+      );
+      console.log(updateOrganizationEntityResult  , 'Update OrganizationEntityResult');
+      
+
+
+      if (!updateOrganizationEntityResult.affected) {
+        this.logger.debug(
+          `Method: ${methodName} - organizationVersion update error:`,
+          updateOrganizationEntityResult
+        );
+        throw new HttpException(
+          `Error in update to organization version`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const findPhonesOrganizationVersion =
+        await Phone_Organization_Versions_Entity.find({
+          where: { organization: { id: findOrganizationVersionResult.id } },
+          relations :{
+            organization : {
+              organization_id :true 
+            }
+          }
+        });
+        console.log(findPhonesOrganizationVersion , 'findPhones Organization Version');
+        
+
+      for (let i = 0; i < findPhonesOrganizationVersion.length; i++) {
+        if (findPhonesOrganizationVersion[i].action == ActionEnum.create) {
+          const createPhoneResult: InsertResult =
+            await PhoneOrganizationEntity.createQueryBuilder()
+              .insert()
+              .into(PhoneOrganizationEntity)
+              .values({
+                number: findPhonesOrganizationVersion[i].number,
+                type_number: findPhonesOrganizationVersion[i].type_number,
+                // action: ActionEnum.create,
+                organization: {
+                  id: findOrganizationVersionResult.organization_id.id,
+                },
+              })
+              .execute()
+              .catch((e) => {
+                console.log(e);
+                throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+              });
+
+          if (!createPhoneResult.identifiers[0].id) {
+            this.logger.debug(
+              `Method: ${methodName} - phone insert error:`,
+              createPhoneResult
+            );
+            throw new HttpException('phone insert error', HttpStatus.NOT_FOUND);
+          }
+
+          const updatePhoneVersionResult: UpdateResult =
+            await Phone_Organization_Versions_Entity.update(
+              findPhonesOrganizationVersion[i].id,
+              {
+                action: ActionEnum.done,
+              }
+            );
+
+          if (!updatePhoneVersionResult.affected) {
+            this.logger.debug(
+              `Method: ${methodName} - Phone Version Update In Org Version To Org Error:`,
+              updatePhoneVersionResult
+            );
+            throw new HttpException(
+              'Phone Update Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        } else if (
+          findPhonesOrganizationVersion[i].action == ActionEnum.update
+        ) {
+          const PhoneResult = await PhoneOrganizationEntity.findOne({
+            where: {
+              id: findPhonesOrganizationVersion[i].id,
+            },
+          });
+
+          if (!PhoneResult) {
+            this.logger.debug(
+              `Method: ${methodName} - Not Found Number:`,
+              PhoneResult
+            );
+            throw new HttpException('Not Found Number', HttpStatus.NOT_FOUND);
+          }
+
+          const updatePhoneResult : UpdateResult = await PhoneOrganizationEntity.update(
+            findPhonesOrganizationVersion[i].id,
+            {
+              number: findPhonesOrganizationVersion[i].number,
+              type_number: findPhonesOrganizationVersion[i].type_number,
+            }
+          );
+
+          if (!updatePhoneResult.affected) {
+            this.logger.debug(
+              `Method: ${methodName} - Phone Update Error:`,
+              updatePhoneResult
+            );
+            throw new HttpException(
+              'Phone Update Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const updatePhoneVersionResult: UpdateResult =
+            await Phone_Organization_Versions_Entity.update(
+              findPhonesOrganizationVersion[i].id,
+              {
+                action: ActionEnum.done,
+              }
+            );
+
+          if (!updatePhoneVersionResult.affected) {
+            this.logger.debug(
+              `Method: ${methodName} - Phone Version Update Error:`,
+              updatePhoneVersionResult
+            );
+            throw new HttpException(
+              'Phone Update Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        } else if (
+          findPhonesOrganizationVersion[i].action == ActionEnum.delete
+        ) {
+          const PhoneResult = await PhoneOrganizationEntity.findOne({
+            where: {
+              id: findPhonesOrganizationVersion[i].id,
+            },
+          });
+
+          if (!PhoneResult) {
+            this.logger.debug(
+              `Method: ${methodName} - Not Found Number In Version:`,
+              PhoneResult
+            );
+            throw new HttpException(
+              'Not Found Number In Version',
+              HttpStatus.NOT_FOUND
+            );
+          }
+
+          const deletePhoneResult: DeleteResult =
+            await PhoneOrganizationEntity.delete({
+              id: findOrganizationVersionResult[i].id,
+            });
+
+          if (deletePhoneResult.affected == 0) {
+            this.logger.debug(
+              `Method: ${methodName} - Phone  Delete Error:`,
+              deletePhoneResult
+            );
+            throw new HttpException(
+              'Phone Delete Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const deletePhoneVersionResult: DeleteResult =
+            await Phone_Organization_Versions_Entity.delete({
+              id: findOrganizationVersionResult[i].id,
+            });
+
+          if (deletePhoneVersionResult.affected == 0) {
+            this.logger.debug(
+              `Method: ${methodName} - Phone Version Delete Error:`,
+              deletePhoneVersionResult
+            );
+            throw new HttpException(
+              'Phone Delete Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        }
+      }
+
+      const findPictureOrganizationVersion =
+        await PictureOrganizationVersionsEntity.find({
+          where: { organization_id: { id: findOrganizationVersionResult.id } },
+          relations : {
+            organization_id : {
+              organization_id:true
+            }
+          }
+        });
+
+      for (let i = 0; i < findPictureOrganizationVersion?.length; i++) {
+        if (findPictureOrganizationVersion[i].action == ActionEnum.create) {
+          // const linkImage: string = await googleCloudAsync(findPictureOrganizationVersion[i]);
+
+          const createPicture: InsertResult =
+            await PictureOrganizationEntity.createQueryBuilder()
+              .insert()
+              .into(PictureOrganizationEntity)
+              .values({
+                image_link: findPictureOrganizationVersion[i].image_link,
+                organization_id: {
+                  id: findOrganizationVersionResult.organization_id.id,
+                },
+              })
+              .execute()
+              .catch((e) => {
+                console.log(e);
+                throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+              });
+          if (createPicture.identifiers[0].id) {
+            this.logger.debug(
+              `Method: ${methodName} - phone insert error:`,
+              createPicture
+            );
+            throw new HttpException('phone insert error', HttpStatus.NOT_FOUND);
+          }
+        } else if (
+          findPictureOrganizationVersion[i].action == ActionEnum.delete
+        ) {
+          const pictureResult = await PictureOrganizationEntity.findOne({
+            where: {
+              id: findPictureOrganizationVersion[i].id,
+            },
+          });
+
+          if (!pictureResult) {
+            this.logger.debug(
+              `Method: ${methodName} - Not Found Picture :`,
+              pictureResult
+            );
+            throw new HttpException('Not Found Picture ', HttpStatus.NOT_FOUND);
+          }
+
+          await deleteFileCloud(pictureResult.image_link);
+
+          const deletePictureResult: DeleteResult =
+            await PictureOrganizationEntity.delete({
+              id: findPictureOrganizationVersion[i].id,
+            });
+
+          if (deletePictureResult.affected == 0) {
+            this.logger.debug(
+              `Method: ${methodName} - Picture  Delete Error:`,
+              deletePictureResult
+            );
+            throw new HttpException(
+              'Phone Delete Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const deletePictureVersionResult: DeleteResult =
+            await PictureOrganizationVersionsEntity.delete({
+              id: findPictureOrganizationVersion[i].id,
+            });
+
+          if (deletePictureVersionResult.affected == 0) {
+            this.logger.debug(
+              `Method: ${methodName} - Picture Version Delete Error:`,
+              deletePictureVersionResult
+            );
+            throw new HttpException(
+              'Phone Delete Error',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        }
+      }
+      console.log('FINAL');
+      
+    } catch (error) {
+      this.logger.debug(`Method: ${methodName} - Error trace: `, error);
+      throw new HttpException(
+        error.toString(),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   async updateOrgVersion(
     user: UserType,
     organizationId: string,
@@ -813,26 +1274,36 @@ export class OrganizationServise {
             },
           ],
         });
-
-      if (findOrganizationResult) {
+        
+      if (!findOrganizationResult) {
         this.logger.debug(
           `Method: ${methodName} - Organization Not Found: `,
           findOrganizationResult
         );
         throw new HttpException('Organization Not Found', HttpStatus.NOT_FOUND);
       }
-
+      
+      // console.log(findOrganizationResult, 'findOrganizationResult');
       const findOrganizationVersionResult:
         | OrganizationVersionsEntity
         | undefined = await OrganizationVersionsEntity.findOne({
-        where: [
+        where: 
           {
-            organization_id: findOrganizationResult.id,
+            organization_id:{
+              id: findOrganizationResult.id
+            },
           },
-        ],
+        
+        relations: {
+          organization_id: true,
+        }
+      }) .catch((e) => {
+        console.log(e);
+        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
       });
+// console.log(findOrganizationVersionResult ,'find OrganizationVersion Result');
 
-      if (findOrganizationVersionResult) {
+      if (!findOrganizationVersionResult) {
         this.logger.debug(
           `Method: ${methodName} - Organization Version Not Found: `,
           findOrganizationVersionResult
@@ -843,7 +1314,7 @@ export class OrganizationServise {
         );
       }
 
-      let findSubCategory = findOrganizationResult.sub_category_org;
+      let findSubCategory = findOrganizationResult?.sub_category_org;
 
       if (body.sub_category_id != 'null') {
         findSubCategory = await SubCategoryOrgEntity.findOne({
@@ -852,7 +1323,7 @@ export class OrganizationServise {
           },
         });
 
-        if (findSubCategory) {
+        if (!findSubCategory) {
           this.logger.debug(
             `Method: ${methodName} - Sub Category Not Found: `,
             findSubCategory
@@ -864,7 +1335,7 @@ export class OrganizationServise {
         }
       }
 
-      let findSection = findOrganizationResult.sectionId;
+      let findSection = findOrganizationResult?.sectionId;
 
       if (body.section != 'null') {
         findSection = await SectionEntity.findOne({
@@ -872,7 +1343,7 @@ export class OrganizationServise {
             id: body.section,
           },
         });
-        if (findSection) {
+        if (!findSection) {
           this.logger.debug(
             `Method: ${methodName} - Section Not Found: `,
             findSection
@@ -880,6 +1351,9 @@ export class OrganizationServise {
           throw new HttpException('Section Not Found', HttpStatus.NOT_FOUND);
         }
       }
+
+
+      // update organization version
 
       const updateOrganizationVersionResult: UpdateResult =
         await OrganizationVersionsEntity.createQueryBuilder()
@@ -894,12 +1368,12 @@ export class OrganizationServise {
             manager: body.manager || findOrganizationResult.manager,
             email: body.email || findOrganizationResult.email,
             address: body.address || findOrganizationResult.address,
-            scheduler: body.scheduler || findOrganizationResult.scheduler,
+            scheduler: JSON.parse(body.scheduler as any) || findOrganizationResult.scheduler,
             payment_types:
-              body.payment_types || findOrganizationResult.payment_types,
-            transport: body.transport || findOrganizationResult.transport,
+            JSON.parse(body.payment_type as any)|| findOrganizationResult.payment_types,
+            transport: JSON.parse(body.transport as any) || findOrganizationResult.transport,
             comment: body.comment || findOrganizationResult.comment,
-            location: body.location || findOrganizationResult.location,
+            location: JSON.parse(body.location as any)|| findOrganizationResult.location,
             segment: body.segment || findOrganizationResult.segment,
             account: body.account || findOrganizationResult.account,
             added_by: body.added_by || findOrganizationResult.added_by,
@@ -914,18 +1388,25 @@ export class OrganizationServise {
                 : OrganizationStatus.Check,
             sub_category_org: findSubCategory?.id?.toString(),
             sectionId: findSection?.id?.toString(),
-            method: 'UPDATE',
+            method: user.role == RolesEnum.SUPERADMIN
+            ? OrganizationVersionActionsEnum.DONE
+            : OrganizationVersionActionsEnum.UPDATE ,
             // userId: findOrganizationResult.userId.toString(),
           })
-          .where('organization_id = :id', { id: findOrganizationResult.id })
-          .execute();
+          .where(' id = :id', { id: findOrganizationVersionResult.id })
+          .execute() .catch((e) => {
+            console.log(e);
+            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+          });;
 
-      this.logger.debug(
-        `Method: ${methodName} - organizationVersionResult:`,
-        updateOrganizationVersionResult
-      );
+      // this.logger.debug(
+      //   `Method: ${methodName} - organizationVersionResult:`,
+      //   updateOrganizationVersionResult
+      // );
+      console.log(updateOrganizationVersionResult, 'updateOrganizationVersionResult');
+      
 
-      if (!updateOrganizationVersionResult.raw[0].id) {
+      if (!updateOrganizationVersionResult.affected) {
         this.logger.debug(
           `Method: ${methodName} - organizationVersion update error:`,
           updateOrganizationVersionResult
@@ -936,10 +1417,14 @@ export class OrganizationServise {
         );
       }
 
-      let allPhones = JSON.parse(body.phones as any);
+      let PhonesObject = JSON.parse(body.phones as any);
+      let allPhones = PhonesObject.numbers;
+
 
       for (let i = 0; i < allPhones.length; i++) {
-        if (allPhones[i].action == PhoneActionEnum.create) {
+        console.log(allPhones[i], 'allPhones', allPhones);
+        
+        if (allPhones[i].action == ActionEnum.create) {
           const createPhoneVersionResult: InsertResult =
             await Phone_Organization_Versions_Entity.createQueryBuilder()
               .insert()
@@ -947,6 +1432,7 @@ export class OrganizationServise {
               .values({
                 number: allPhones[i].number,
                 type_number: allPhones[i].type_number,
+                action: ActionEnum.create,
                 organization: {
                   id: findOrganizationVersionResult.id,
                 },
@@ -956,15 +1442,17 @@ export class OrganizationServise {
                 console.log(e);
                 throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
               });
+              console.log(createPhoneVersionResult, 'createPhoneVersionResult');
+              
 
-          if (createPhoneVersionResult.identifiers[0].id) {
+          if (!createPhoneVersionResult.identifiers[0].id) {
             this.logger.debug(
               `Method: ${methodName} - phone insert error:`,
               createPhoneVersionResult
             );
             throw new HttpException('phone insert error', HttpStatus.NOT_FOUND);
           }
-        } else if (allPhones[i].action == PhoneActionEnum.update) {
+        } else if (allPhones[i].action == ActionEnum.update) {
           const PhoneVersionResult =
             await Phone_Organization_Versions_Entity.findOne({
               where: {
@@ -986,9 +1474,10 @@ export class OrganizationServise {
             await Phone_Organization_Versions_Entity.update(allPhones[i].id, {
               number: allPhones[i].number,
               type_number: allPhones[i].type_number,
+              action: ActionEnum.update,
             });
 
-          if (!updatePhoneVersionResult.raw[0].id) {
+          if (!updatePhoneVersionResult.affected) {
             this.logger.debug(
               `Method: ${methodName} - Phone Version Update Error:`,
               updatePhoneVersionResult
@@ -998,7 +1487,7 @@ export class OrganizationServise {
               HttpStatus.BAD_REQUEST
             );
           }
-        } else if (allPhones[i].action == PhoneActionEnum.delete) {
+        } else if (allPhones[i].action == ActionEnum.delete) {
           const PhoneVersionResult =
             await Phone_Organization_Versions_Entity.findOne({
               where: {
@@ -1017,20 +1506,27 @@ export class OrganizationServise {
             );
           }
 
-          const deletePhoneVersionResult: DeleteResult =
-            await Phone_Organization_Versions_Entity.delete({
-              id: allPhones[i].id,
-            }).catch((e) => {
-              console.log(e);
-              throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+          const updatePhoneVersionResult: UpdateResult =
+            await Phone_Organization_Versions_Entity.update(allPhones[i].id, {
+              number: allPhones[i].number,
+              type_number: allPhones[i].type_number,
+              action: ActionEnum.delete,
             });
-          if (deletePhoneVersionResult.affected == 0) {
+          // const updatePhoneVersionResult: UpdateResult =
+          // await Phone_Organization_Versions_Entity.update(allPhones[i].id, {
+          //   number: allPhones[i].number,
+          //   type_number: allPhones[i].type_number,
+          //   action: ActionEnum.update,
+          // });
+
+
+          if (!updatePhoneVersionResult.affected) {
             this.logger.debug(
-              `Method: ${methodName} - Phone Version Delete Error:`,
-              deletePhoneVersionResult
+              `Method: ${methodName} - Phone Version Update action to delete Error:`,
+              updatePhoneVersionResult
             );
             throw new HttpException(
-              'Phone Delete Error',
+              'Phone Update Error',
               HttpStatus.BAD_REQUEST
             );
           }
@@ -1047,7 +1543,7 @@ export class OrganizationServise {
             .into(PictureOrganizationVersionsEntity)
             .values({
               image_link: linkImage,
-
+              action: ActionEnum.create,
               organization_id: {
                 id: findOrganizationVersionResult.id,
               },
@@ -1064,7 +1560,7 @@ export class OrganizationServise {
 
       let AllPictureDelete = pictures_delete.delete;
       for (let i = 0; i < AllPictureDelete.length; i++) {
-        const findPicture = await PictureOrganizationEntity.findOne({
+        const findPicture = await PictureOrganizationVersionsEntity.findOne({
           where: {
             id: AllPictureDelete[i],
           },
@@ -1077,23 +1573,30 @@ export class OrganizationServise {
           );
           throw new HttpException('Not found picture', HttpStatus.NOT_FOUND);
         }
-        await deleteFileCloud(AllPictureDelete[i]);
-        const deletedPicture: DeleteResult =
-          await PictureOrganizationEntity.delete({
-            id: AllPictureDelete[i],
-          }).catch((e) => {
-            console.log(e);
-            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-          });
-        if (deletedPicture.affected == 0) {
+        // await deleteFileCloud(findPicture.image_link);
+
+        const updatePictureVersionResult: UpdateResult =
+          await PictureOrganizationVersionsEntity.update(
+            AllPictureDelete[i].id,
+            {
+              image_link: AllPictureDelete[i].image_link,
+              action: ActionEnum.delete,
+            }
+          );
+
+        if (!updatePictureVersionResult.affected) {
           this.logger.debug(
             `Method: ${methodName} - Picture Delete Error:`,
-            deletedPicture
+            updatePictureVersionResult
           );
         }
       }
+      
+      if (user.role == RolesEnum.SUPERADMIN) {
+        this.updateOrg(findOrganizationVersionResult.id);
+      }
     } catch (error) {
-      this.logger.debug(`Method: ${methodName} - Error trace: `, error.trace);
+      this.logger.debug(`Method: ${methodName} - Error trace: `, error);
       throw new HttpException(
         error.toString(),
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -1108,7 +1611,9 @@ export class OrganizationServise {
 
     try {
       const organizationVersion = await OrganizationVersionsEntity.findOne({
-        where: [{ organization_id: organizationId }],
+        where: [{ organization_id: {
+          id:organizationId
+        } }],
       });
 
       const organization = await OrganizationEntity.findOne({
