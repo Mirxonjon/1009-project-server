@@ -395,7 +395,7 @@ export class OrganizationServise {
     }
 
     console.log(findSection, 'FIND BY CATEGORY');
-    // console.log(body, 'BODY');
+    console.log(user, 'Role');
 
     const createdOrg = await OrganizationEntity.createQueryBuilder()
       .insert()
@@ -648,7 +648,7 @@ export class OrganizationServise {
       const findPicturesResult = await PictureOrganizationEntity.find({
         where: [
           {
-            id: findOrganizationResult.id,
+            organization_id:{id: findOrganizationResult.id,}
           },
         ],
       });
@@ -660,7 +660,8 @@ export class OrganizationServise {
         );
         throw new HttpException('Pictures Not Found', HttpStatus.NOT_FOUND);
       }
-
+      console.log(findPicturesResult ,'Version find Picture');
+      
       // insert picture to version
       for (let i = 0; i < findPicturesResult.length; i++) {
         const insertPictureVersionResult =
@@ -1559,7 +1560,11 @@ export class OrganizationServise {
         }
       }
 
+      
       let pictures_delete = JSON.parse(body.pictures_delete as any);
+      console.log(pictures_delete, 'pictures_delete');
+
+      
 
       let AllPictureDelete = pictures_delete.delete.length ? pictures_delete.delete : 0;
       for (let i = 0; i < AllPictureDelete.length; i++) {
@@ -1582,7 +1587,7 @@ export class OrganizationServise {
           await PictureOrganizationVersionsEntity.update(
             AllPictureDelete[i].id,
             {
-              image_link: AllPictureDelete[i].image_link,
+              image_link: findPicture.image_link,
               action: ActionEnum.delete,
             }
           );
