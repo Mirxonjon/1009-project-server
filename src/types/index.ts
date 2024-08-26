@@ -48,6 +48,7 @@ export type TNumbers = {
 };
 
 export enum OrganizationStatus {
+  Deleted = '-1',
   Check = '0',
   Accepted = '1',
   Rejected = '2',
