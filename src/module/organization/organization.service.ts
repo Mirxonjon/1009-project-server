@@ -1373,7 +1373,7 @@ export class OrganizationServise {
             address: body.address || findOrganizationResult.address,
             scheduler: JSON.parse(body.scheduler as any) || findOrganizationResult.scheduler,
             payment_types:
-              JSON.parse(body.payment_type as any) || findOrganizationResult.payment_types,
+              JSON.parse(body.payment_types as any) || findOrganizationResult.payment_types,
             transport: JSON.parse(body.transport as any) || findOrganizationResult.transport,
             comment: body.comment || findOrganizationResult.comment,
             location: JSON.parse(body.location as any) || findOrganizationResult.location,
@@ -1561,7 +1561,7 @@ export class OrganizationServise {
 
       let pictures_delete = JSON.parse(body.pictures_delete as any);
 
-      let AllPictureDelete = pictures_delete.delete;
+      let AllPictureDelete = pictures_delete.delete.length ? pictures_delete.delete : 0;
       for (let i = 0; i < AllPictureDelete.length; i++) {
         const findPicture = await PictureOrganizationVersionsEntity.findOne({
           where: {

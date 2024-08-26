@@ -286,7 +286,7 @@ export class OrganizationController {
           type: 'string',
           default: 'bank_account',
         },
-        payment_type: {
+        payment_types: {
           type: 'object',
           default: {
             cash: true,
@@ -365,7 +365,7 @@ export class OrganizationController {
     @Body() updateOrganizationDto: UpdateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
-    await this.#_service.updateOrgVersion(req.user ,id, updateOrganizationDto, files);
+    await this.#_service.updateOrgVersion(req.user, id, updateOrganizationDto, files);
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN)
