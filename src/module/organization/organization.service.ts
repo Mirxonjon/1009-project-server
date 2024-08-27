@@ -486,12 +486,12 @@ export class OrganizationServise {
       console.log(pictures, ' INSERT picture');
 
       for (let i = 0; i < pictures?.length; i++) {
-        console.log('PICTURES LOG')
+
         const formatImage = extname(pictures[i]?.originalname).toLowerCase();
         if (allowedImageFormats.includes(formatImage)) {
-
+          console.log('PICTURES LOG')
           const linkImage: string = await googleCloudAsync(pictures[i]);
-          console.log('ookkk');
+          console.log(linkImage, 'LINK IMAGE');
 
           await PictureOrganizationEntity.createQueryBuilder()
             .insert()
@@ -505,7 +505,7 @@ export class OrganizationServise {
             })
             .execute()
             .catch((e) => {
-              console.log(e);
+              console.log(e, 'ERROR IN INSERTING PICTURE');
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
         }
@@ -516,6 +516,7 @@ export class OrganizationServise {
       await this.createOrgVersion(createdOrg.identifiers[0].id, user);
 
       console.log(pictures, 'AFTER INSERT FILES');
+      return
     }
   }
 
@@ -649,7 +650,7 @@ export class OrganizationServise {
       const findPicturesResult = await PictureOrganizationEntity.find({
         where: [
           {
-            organization_id:{id: findOrganizationResult.id,}
+            organization_id: { id: findOrganizationResult.id, }
           },
         ],
       });
@@ -661,8 +662,8 @@ export class OrganizationServise {
         );
         throw new HttpException('Pictures Not Found', HttpStatus.NOT_FOUND);
       }
-      console.log(findPicturesResult ,'Version find Picture');
-      
+      console.log(findPicturesResult, 'Version find Picture');
+
       // insert picture to version
       for (let i = 0; i < findPicturesResult.length; i++) {
         const insertPictureVersionResult =
@@ -1561,11 +1562,11 @@ export class OrganizationServise {
         }
       }
 
-      
+
       let pictures_delete = JSON.parse(body.pictures_delete as any);
       console.log(pictures_delete, 'pictures_delete');
 
-      
+
 
       let AllPictureDelete = pictures_delete.delete.length ? pictures_delete.delete : 0;
       for (let i = 0; i < AllPictureDelete.length; i++) {
