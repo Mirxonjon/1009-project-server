@@ -463,25 +463,44 @@ export class OrganizationServise {
 
       console.log(phones, 'PHONES ORG')
 
-      phones?.numbers?.forEach(
-        async (e: { number: string; type_number: string }) => {
-          await PhoneOrganizationEntity.createQueryBuilder()
-            .insert()
-            .into(PhoneOrganizationEntity)
-            .values({
-              number: e.number,
-              type_number: e.type_number,
-              organization: {
-                id: createdOrg.raw[0].id,
-              },
-            })
-            .execute()
-            .catch((e) => {
-              console.log(e, ': PHONE CREATE');
-              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-            });
-        }
-      );
+      const numbers = phones?.numbers
+      for (let i = 0; i < numbers?.length; i++) {
+        await PhoneOrganizationEntity.createQueryBuilder()
+          .insert()
+          .into(PhoneOrganizationEntity)
+          .values({
+            number: numbers[i].number,
+            type_number: numbers[i].type_number,
+            organization: {
+              id: createdOrg.raw[0].id,
+            },
+          })
+          .execute()
+          .catch((e) => {
+            console.log(e, ': PHONE CREATE');
+            throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+          });
+      }
+
+      // phones?.numbers?.forEach(
+      //   async (e: { number: string; type_number: string }) => {
+      //     await PhoneOrganizationEntity.createQueryBuilder()
+      //       .insert()
+      //       .into(PhoneOrganizationEntity)
+      //       .values({
+      //         number: e.number,
+      //         type_number: e.type_number,
+      //         organization: {
+      //           id: createdOrg.raw[0].id,
+      //         },
+      //       })
+      //       .execute()
+      //       .catch((e) => {
+      //         console.log(e, ': PHONE CREATE');
+      //         throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      //       });
+      //   }
+      // );
 
       console.log(phones, 'AFTER INSERT PHONES');
       console.log(pictures, ' INSERT picture');
