@@ -486,6 +486,7 @@ export class OrganizationServise {
       console.log(pictures, ' INSERT picture');
 
       for (let i = 0; i < pictures?.length; i++) {
+        console.log('PICTURES LOG')
         const formatImage = extname(pictures[i]?.originalname).toLowerCase();
         if (allowedImageFormats.includes(formatImage)) {
 
