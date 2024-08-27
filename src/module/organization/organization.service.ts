@@ -1233,7 +1233,7 @@ export class OrganizationServise {
 
           if (!pictureResult) {
             this.logger.debug(
-              `Method: ${methodName} - Not Found Picture :`,
+              `Method: ${methodName} - Not Found Picture 1 :`,
               pictureResult
             );
             throw new HttpException('Not Found Picture ', HttpStatus.NOT_FOUND);
@@ -1604,7 +1604,7 @@ export class OrganizationServise {
 
         if (!findPicture) {
           this.logger.debug(
-            `Method: ${methodName} - Not found picture:`,
+            `Method: ${methodName} - Not found picture 2 :`,
             findPicture
           );
           throw new HttpException('Not found picture', HttpStatus.NOT_FOUND);
