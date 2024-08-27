@@ -465,6 +465,8 @@ export class OrganizationServise {
 
       const numbers = phones?.numbers
       for (let i = 0; i < numbers?.length; i++) {
+        this.logger.debug('Phones Create before', numbers)
+
         await PhoneOrganizationEntity.createQueryBuilder()
           .insert()
           .into(PhoneOrganizationEntity)
@@ -480,6 +482,8 @@ export class OrganizationServise {
             console.log(e, ': PHONE CREATE');
             throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
           });
+
+        this.logger.debug('Phones Create after', numbers)
       }
 
       // phones?.numbers?.forEach(
