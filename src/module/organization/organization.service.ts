@@ -461,6 +461,7 @@ export class OrganizationServise {
 
       // }
 
+      console.log(phones, 'PHONES ORG')
 
       phones?.numbers?.forEach(
         async (e: { number: string; type_number: string }) => {
@@ -485,6 +486,8 @@ export class OrganizationServise {
       console.log(phones, 'AFTER INSERT PHONES');
       console.log(pictures, ' INSERT picture');
 
+
+      console.log(pictures, 'PICTURES ORG')
       for (let i = 0; i < pictures?.length; i++) {
 
         const formatImage = extname(pictures[i]?.originalname).toLowerCase();
