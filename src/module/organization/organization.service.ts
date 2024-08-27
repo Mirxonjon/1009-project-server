@@ -1594,7 +1594,7 @@ export class OrganizationServise {
 
 
 
-      let AllPictureDelete = pictures_delete.delete.length ? pictures_delete.delete : 0;
+      let AllPictureDelete = pictures_delete.delete.length > 0 ? pictures_delete.delete : 0;
       for (let i = 0; i < AllPictureDelete.length; i++) {
         const findPicture = await PictureOrganizationVersionsEntity.findOne({
           where: {
