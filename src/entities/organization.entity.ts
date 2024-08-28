@@ -180,10 +180,14 @@ export class OrganizationEntity extends BaseEntity {
   )
   saved_organization: SavedOrganizationEntity[];
 
-  @OneToOne(() => OrganizationVersionsEntity, (organisation_version) => organisation_version.organization_id,{
-    nullable: true,
-    // cascade: true,
-  })
+  @OneToOne(
+    () => OrganizationVersionsEntity,
+    (organisation_version) => organisation_version.organization_id,
+    {
+      nullable: true,
+      // cascade: true,
+    }
+  )
   @JoinColumn({ name: 'organization_version_id' })
   organization_version: OrganizationVersionsEntity;
 

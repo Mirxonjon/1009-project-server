@@ -33,6 +33,7 @@ import { UpdateOrganizationDto } from './dto/update_organization.dto';
 import { CustomRequest, RolesEnum } from 'src/types';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
 import { CheckOrganizationDto } from './dto/check_organization.dto';
+import { GetAllOrganizationsDto } from './dto/get_all_organization.dto';
 
 @Controller('organization')
 @ApiTags('Organization')
@@ -47,13 +48,8 @@ export class OrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
-  async findall(
-    @Query('page') page: string = '1',
-    @Query('pageSize') pageSize: string = '10'
-  ) {
-    return await this.#_service.findAll(page, pageSize);
+  async findall(@Query() query: GetAllOrganizationsDto) {
+    return await this.#_service.findAll(query);
   }
 
   @Get('/one/:id')
@@ -91,7 +87,11 @@ export class OrganizationController {
     @Query('page') page: string = '1',
     @Query('pageSize') pageSize: string = '10'
   ) {
-    return await this.#_service.findMyOrganizationUpdateOrDelete(req.user, page, pageSize);
+    return await this.#_service.findMyOrganizationUpdateOrDelete(
+      req.user,
+      page,
+      pageSize
+    );
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
@@ -365,7 +365,12 @@ export class OrganizationController {
     @Body() updateOrganizationDto: UpdateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
-    await this.#_service.updateOrgVersion(req.user, id, updateOrganizationDto, files);
+    await this.#_service.updateOrgVersion(
+      req.user,
+      id,
+      updateOrganizationDto,
+      files
+    );
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN)
