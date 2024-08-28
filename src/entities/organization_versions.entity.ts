@@ -19,9 +19,14 @@ export class OrganizationVersionsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => OrganizationEntity, (organisation) => organisation.organization_version,{
-  nullable: true,
-  cascade: true,})
+  @OneToOne(
+    () => OrganizationEntity,
+    (organisation) => organisation.organization_version,
+    {
+      nullable: true,
+      cascade: true,
+    }
+  )
   @JoinColumn({ name: 'organization_id' })
   organization_id: OrganizationEntity;
 

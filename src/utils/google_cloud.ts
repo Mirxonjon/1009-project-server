@@ -17,7 +17,7 @@ export const googleCloud = (file: any | any[]) => {
   const blob = bucket.file(imageLink);
   const blobStream = blob.createWriteStream();
 
-  blobStream.on('error', (err) => { });
+  blobStream.on('error', (err) => {});
 
   blobStream.end(a[0]?.buffer);
   return imageLink;
@@ -32,7 +32,7 @@ export const googleCloudAsync = async (file: any | any[]): Promise<string> => {
 
   return new Promise((resolve, reject) => {
     blobStream.on('error', (err) => {
-      console.log(err, 'ERROR')
+      console.log(err, 'ERROR');
       reject(err.message);
     });
 

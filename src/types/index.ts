@@ -16,7 +16,6 @@ export enum RolesEnum {
   SUPERADMIN = 'moderator',
 }
 
-
 export enum OrganizationVersionActionsEnum {
   CREATE = 'create',
   UPDATE = 'update',

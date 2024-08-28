@@ -91,7 +91,11 @@ export class OrganizationController {
     @Query('page') page: string = '1',
     @Query('pageSize') pageSize: string = '10'
   ) {
-    return await this.#_service.findMyOrganizationUpdateOrDelete(req.user, page, pageSize);
+    return await this.#_service.findMyOrganizationUpdateOrDelete(
+      req.user,
+      page,
+      pageSize
+    );
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN, RolesEnum.USER)
@@ -365,7 +369,12 @@ export class OrganizationController {
     @Body() updateOrganizationDto: UpdateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
-    await this.#_service.updateOrgVersion(req.user, id, updateOrganizationDto, files);
+    await this.#_service.updateOrgVersion(
+      req.user,
+      id,
+      updateOrganizationDto,
+      files
+    );
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN)
