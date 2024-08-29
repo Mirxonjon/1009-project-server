@@ -36,74 +36,178 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
 import { SectionEntity } from 'src/entities/section.entity';
 import { Not } from 'typeorm';
+import { GetAllOrganizationsDto } from './dto/get_all_organization.dto';
 
 @Injectable()
 export class OrganizationServise {
   private logger = new Logger(OrganizationServise.name);
 
-  async findAll(page: string, pageSize: string) {
-    if (pageSize == 'all') {
-      const [result, total] = await OrganizationEntity.findAndCount({
-        relations: {
-          phones: true,
-          pictures: true,
-          sub_category_org: {
-            category_org: true,
-          },
-          saved_organization: true,
-          comments: true,
-        },
-        order: {
-          create_data: 'asc',
-        },
-      }).catch((e) => {
-        this.logger.error(`Error in find All Org`);
-        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+  constructor(
+    @InjectRepository(OrganizationEntity)
+    private readonly organizationRepository: Repository<OrganizationEntity>
+  ) { }
+
+  async findAll(query: GetAllOrganizationsDto) {
+    const { page, pageSize, search, name, category, subCategory, paymentType } =
+      query;
+
+    const queryBuilder = this.organizationRepository
+      .createQueryBuilder('organization')
+      .leftJoinAndSelect('organization.phones', 'phones')
+      .leftJoinAndSelect('organization.pictures', 'pictures')
+      .leftJoinAndSelect(
+        'organization.saved_organization',
+        'saved_organization'
+      )
+      .leftJoinAndSelect('organization.comments', 'comments')
+      .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
+      .leftJoinAndSelect('subCategory.category_org', 'category');
+
+    console.log(queryBuilder, 'QUERY BUILDER')
+
+    if (search) {
+      queryBuilder.andWhere('organization.organization_name LIKE :search', {
+        search: `%${search}%`,
       });
-      return {
-        result,
-        pagination: {
-          currentPage: page,
-          totalPages: 1,
-          pageSize,
-          totalItems: total,
-        },
-      };
-    } else {
-      const offset = (+page - 1) * +pageSize;
-
-      const [result, total] = await OrganizationEntity.findAndCount({
-        relations: {
-          phones: true,
-          pictures: true,
-          sub_category_org: {
-            category_org: true,
-          },
-          saved_organization: true,
-          comments: true,
-        },
-        order: {
-          create_data: 'asc',
-        },
-
-        skip: offset,
-        take: +pageSize,
-      }).catch((e) => {
-        this.logger.error(`Error in find All Org`);
-        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-      });
-
-      const totalPages = Math.ceil(total / +pageSize);
-      return {
-        result,
-        pagination: {
-          currentPage: page,
-          totalPages,
-          pageSize,
-          totalItems: total,
-        },
-      };
     }
+
+    if (name) {
+      queryBuilder.andWhere('organization.organization_name = :name', { name });
+    }
+
+    if (category) {
+      queryBuilder.andWhere('category.title = :category', { category });
+    }
+
+    if (subCategory) {
+      queryBuilder.andWhere('subCategory.title = :subCategory', {
+        subCategory,
+      });
+    }
+
+    // need to think [JSON]
+    // if (paymentType) {
+    //   queryBuilder.andWhere('organization.title = :subCategory', {
+    //     subCategory,
+    //   });
+    // }
+
+    queryBuilder.andWhere('status = :status', { status: OrganizationStatus.Accepted })
+    queryBuilder.orderBy('organization.create_data', 'DESC');
+
+    const offset = (page - 1) * pageSize;
+    queryBuilder.skip(offset).take(pageSize);
+
+    const [result, totalItems] = await queryBuilder.getManyAndCount();
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    console.log(result, 'RESULT')
+
+    // Create a map to group subcategories by category
+    const categoryMap = new Map();
+
+    result.forEach(async ({ sub_category_org }) => {
+      const categoryName = sub_category_org.category_org.title;
+      const subCategoryName = sub_category_org.title;
+      const subCategoryId = sub_category_org.id;
+
+      if (!categoryMap.has(categoryName)) {
+        categoryMap.set(categoryName, new Map());
+      }
+
+      // const organizationsCount = await this.organizationRepository.createQueryBuilder("organization").where("organization.subCategoryOrgId = :subCatId AND status = '1'", { subCatId: subCategoryId })
+      //   .getCount();
+
+      // console.log(organizationsCount, 'COUNT CC')
+
+      const subCategories = categoryMap.get(categoryName);
+      subCategories.set(subCategoryName, { sub_category_name: subCategoryName, count: "organizationsCount" });
+    });
+
+    // Convert the map to the desired result format
+    const formattedResult = Array.from(categoryMap.entries()).map(([categoryName, subCategories]) => ({
+      category: categoryName,
+      sub_categories: Array.from(subCategories.values())
+    }));
+
+    console.log(JSON.stringify(result, null, 2));
+
+    return {
+      result: {
+        organizations: result,
+        categories: formattedResult
+      },
+      pagination: {
+        currentPage: page,
+        totalPages,
+        pageSize,
+        totalItems,
+      },
+    };
+
+    // if (pageSize == 'all') {
+    //   const [result, total] = await OrganizationEntity.findAndCount({
+    //     relations: {
+    //       phones: true,
+    //       pictures: true,
+    //       sub_category_org: {
+    //         category_org: true,
+    //       },
+    //       saved_organization: true,
+    //       comments: true,
+    //     },
+    //     order: {
+    //       create_data: 'asc',
+    //     },
+    //   }).catch((e) => {
+    //     this.logger.error(`Error in find All Org`);
+    //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    //   });
+    //   return {
+    //     result,
+    //     pagination: {
+    //       currentPage: page,
+    //       totalPages: 1,
+    //       pageSize,
+    //       totalItems: total,
+    //     },
+    //   };
+    // } else {
+    //   const offset = (+page - 1) * +pageSize;
+
+    //   const [result, total] = await OrganizationEntity.findAndCount({
+    //     relations: {
+    //       phones: true,
+    //       pictures: true,
+    //       sub_category_org: {
+    //         category_org: true,
+    //       },
+    //       saved_organization: true,
+    //       comments: true,
+    //     },
+    //     order: {
+    //       create_data: 'asc',
+    //     },
+
+    //     skip: offset,
+    //     take: +pageSize,
+    //   }).catch((e) => {
+    //     this.logger.error(`Error in find All Org`);
+    //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    //   });
+
+    //   const totalPages = Math.ceil(total / +pageSize);
+    //   return {
+    //     result,
+    //     pagination: {
+    //       currentPage: page,
+    //       totalPages,
+    //       pageSize,
+    //       totalItems: total,
+    //     },
+    //   };
+    // }
   }
 
   async findOne(id: string) {
@@ -975,15 +1079,15 @@ export class OrganizationServise {
       const findOrganizationVersionResult:
         | OrganizationVersionsEntity
         | undefined = await OrganizationVersionsEntity.findOne({
-        where: [
-          {
-            id: organizationVersionId,
+          where: [
+            {
+              id: organizationVersionId,
+            },
+          ],
+          relations: {
+            organization_id: true,
           },
-        ],
-        relations: {
-          organization_id: true,
-        },
-      });
+        });
 
       const updateOrganizationEntityResult: UpdateResult =
         await OrganizationEntity.createQueryBuilder()
@@ -1049,13 +1153,8 @@ export class OrganizationServise {
           },
         });
       console.log(
-        findPhonesOrganizationVersion.length,
+        findPhonesOrganizationVersion,
         'findPhones Organization Version'
-      );
-
-      console.log(
-        findOrganizationVersionResult.organization_id?.id,
-        ' Organization'
       );
 
       for (let i = 0; i < findPhonesOrganizationVersion.length; i++) {
@@ -1438,19 +1537,19 @@ export class OrganizationServise {
       const findOrganizationVersionResult:
         | OrganizationVersionsEntity
         | undefined = await OrganizationVersionsEntity.findOne({
-        where: {
-          organization_id: {
-            id: findOrganizationResult.id,
+          where: {
+            organization_id: {
+              id: findOrganizationResult.id,
+            },
           },
-        },
 
-        relations: {
-          organization_id: true,
-        },
-      }).catch((e) => {
-        console.log(e);
-        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-      });
+          relations: {
+            organization_id: true,
+          },
+        }).catch((e) => {
+          console.log(e);
+          throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+        });
       // console.log(findOrganizationVersionResult ,'find OrganizationVersion Result');
 
       if (!findOrganizationVersionResult) {
@@ -1718,8 +1817,6 @@ export class OrganizationServise {
 
       let AllPictureDelete =
         pictures_delete.delete.length > 0 ? pictures_delete.delete : 0;
-      console.log(AllPictureDelete.length, 'length');
-
       for (let i = 0; i < AllPictureDelete.length; i++) {
         const findPicture = await PictureOrganizationVersionsEntity.findOne({
           where: {
