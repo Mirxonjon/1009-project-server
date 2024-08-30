@@ -64,8 +64,6 @@ export class OrganizationServise {
       .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
       .leftJoinAndSelect('subCategory.category_org', 'category');
 
-    // console.log(queryBuilder, 'QUERY BUILDER')
-
     if (search) {
       queryBuilder.andWhere('organization.organization_name LIKE :search', {
         search: `%${search}%`,
@@ -77,29 +75,22 @@ export class OrganizationServise {
     }
 
     if (category) {
-      queryBuilder.andWhere('category.title = :category', { category });
+      queryBuilder.andWhere('category.id = :category', { category });
     }
 
     if (subCategory) {
-      queryBuilder.andWhere('subCategory.title = :subCategory', {
+      queryBuilder.andWhere('subCategory.id = :subCategory', {
         subCategory,
       });
     }
 
     if (section) {
-      queryBuilder.andWhere('section.title = :section', { section });
+      queryBuilder.andWhere('section.id = :section', { section });
     }
 
     if (mainOrganization) {
       queryBuilder.andWhere('organization.main_organization = :mainOrganization', { mainOrganization });
     }
-
-    // need to think [JSON]
-    // if (paymentType) {
-    //   queryBuilder.andWhere('organization.title = :subCategory', {
-    //     subCategory,
-    //   });
-    // }
 
     queryBuilder.andWhere('status = :status', { status: OrganizationStatus.Accepted })
     queryBuilder.orderBy('organization.create_data', 'DESC');
@@ -129,6 +120,7 @@ export class OrganizationServise {
       if (!categoryObj) {
         categoryObj = {
           category: categoryName,
+          category_id: categoryId,
           sub_categories: []
         };
         formattedData.push(categoryObj);
@@ -143,6 +135,14 @@ export class OrganizationServise {
       // Fetch the organization count from the database
       const organizationsCount = await this.organizationRepository
         .createQueryBuilder("organization")
+        .leftJoinAndSelect('organization.phones', 'phones')
+        .leftJoinAndSelect('organization.pictures', 'pictures')
+        .leftJoinAndSelect('organization.sectionId', 'section')
+        .leftJoinAndSelect(
+          'organization.saved_organization',
+          'saved_organization'
+        )
+        .leftJoinAndSelect('organization.comments', 'comments')
         .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
         .leftJoinAndSelect('subCategory.category_org', 'category')
         .where(
@@ -152,14 +152,38 @@ export class OrganizationServise {
             AND organization.status = :status
           `,
           organizationsGetCountValues
-        )
-        .getCount();
+        );
+
+      if (name) {
+        organizationsCount.andWhere('organization.organization_name = :name', { name });
+      }
+
+      if (category) {
+        organizationsCount.andWhere('category.id = :category', { category });
+      }
+
+      if (subCategory) {
+        organizationsCount.andWhere('subCategory.id = :subCategory', {
+          subCategory,
+        });
+      }
+
+      if (section) {
+        organizationsCount.andWhere('section.id = :section', { section });
+      }
+
+      if (mainOrganization) {
+        organizationsCount.andWhere('organization.main_organization = :mainOrganization', { mainOrganization });
+      }
+
+      const getOrgCount = await organizationsCount.getCount();
 
       let subCategoryObj = categoryObj.sub_categories.find(sub => sub.name === subCategoryName);
       if (!subCategoryObj) {
         subCategoryObj = {
           name: subCategoryName,
-          count: organizationsCount
+          id: subCategoryId,
+          count: getOrgCount
         };
         categoryObj.sub_categories.push(subCategoryObj);
       }
