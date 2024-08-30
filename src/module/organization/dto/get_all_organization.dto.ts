@@ -46,7 +46,7 @@ export class GetAllOrganizationsDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  paymentType?: string; // maybe enum
+  section?: string; // maybe enum
 
 
   @ApiProperty({ required: false })
