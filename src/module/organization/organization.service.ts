@@ -48,13 +48,14 @@ export class OrganizationServise {
   ) { }
 
   async findAll(query: GetAllOrganizationsDto) {
-    const { page, pageSize, search, name, category, subCategory, paymentType } =
+    const { page, pageSize, search, name, category, subCategory, section, mainOrganization, segment } =
       query;
 
     const queryBuilder = this.organizationRepository
       .createQueryBuilder('organization')
       .leftJoinAndSelect('organization.phones', 'phones')
       .leftJoinAndSelect('organization.pictures', 'pictures')
+      .leftJoinAndSelect('organization.sectionId', 'section')
       .leftJoinAndSelect(
         'organization.saved_organization',
         'saved_organization'
@@ -63,7 +64,7 @@ export class OrganizationServise {
       .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
       .leftJoinAndSelect('subCategory.category_org', 'category');
 
-    console.log(queryBuilder, 'QUERY BUILDER')
+    // console.log(queryBuilder, 'QUERY BUILDER')
 
     if (search) {
       queryBuilder.andWhere('organization.organization_name LIKE :search', {
@@ -85,6 +86,14 @@ export class OrganizationServise {
       });
     }
 
+    if (section) {
+      queryBuilder.andWhere('section.title = :section', { section });
+    }
+
+    if (mainOrganization) {
+      queryBuilder.andWhere('organization.main_organization = :mainOrganization', { mainOrganization });
+    }
+
     // need to think [JSON]
     // if (paymentType) {
     //   queryBuilder.andWhere('organization.title = :subCategory', {
@@ -102,41 +111,64 @@ export class OrganizationServise {
 
     const totalPages = Math.ceil(totalItems / pageSize);
 
-    console.log(result, 'RESULT')
-
     // Create a map to group subcategories by category
-    const categoryMap = new Map();
+    const formattedData = [];
 
-    result.forEach(async ({ sub_category_org }) => {
-      const categoryName = sub_category_org.category_org.title;
-      const subCategoryName = sub_category_org.title;
-      const subCategoryId = sub_category_org.id;
+    for (const org of result) {
+      const categoryName = org?.sub_category_org?.category_org?.title;
+      const categoryId = org?.sub_category_org?.category_org?.id;
+      const subCategoryName = org?.sub_category_org?.title;
+      const subCategoryId = org?.sub_category_org?.id;
 
-      if (!categoryMap.has(categoryName)) {
-        categoryMap.set(categoryName, new Map());
+      // Skip the iteration if categoryName or subCategoryName is undefined
+      if (!categoryName || !subCategoryName) {
+        continue;
       }
 
-      // const organizationsCount = await this.organizationRepository.createQueryBuilder("organization").where("organization.subCategoryOrgId = :subCatId AND status = '1'", { subCatId: subCategoryId })
-      //   .getCount();
+      let categoryObj = formattedData.find(item => item.category === categoryName);
+      if (!categoryObj) {
+        categoryObj = {
+          category: categoryName,
+          sub_categories: []
+        };
+        formattedData.push(categoryObj);
+      }
 
-      // console.log(organizationsCount, 'COUNT CC')
+      const organizationsGetCountValues = {
+        subCatId: subCategoryId,
+        categoryId: categoryId,
+        status: OrganizationStatus.Accepted
+      }
 
-      const subCategories = categoryMap.get(categoryName);
-      subCategories.set(subCategoryName, { sub_category_name: subCategoryName, count: "organizationsCount" });
-    });
+      // Fetch the organization count from the database
+      const organizationsCount = await this.organizationRepository
+        .createQueryBuilder("organization")
+        .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
+        .leftJoinAndSelect('subCategory.category_org', 'category')
+        .where(
+          `
+            organization.subCategoryOrgId = :subCatId
+            AND category.id = :categoryId
+            AND organization.status = :status
+          `,
+          organizationsGetCountValues
+        )
+        .getCount();
 
-    // Convert the map to the desired result format
-    const formattedResult = Array.from(categoryMap.entries()).map(([categoryName, subCategories]) => ({
-      category: categoryName,
-      sub_categories: Array.from(subCategories.values())
-    }));
-
-    console.log(JSON.stringify(result, null, 2));
+      let subCategoryObj = categoryObj.sub_categories.find(sub => sub.name === subCategoryName);
+      if (!subCategoryObj) {
+        subCategoryObj = {
+          name: subCategoryName,
+          count: organizationsCount
+        };
+        categoryObj.sub_categories.push(subCategoryObj);
+      }
+    }
 
     return {
       result: {
         organizations: result,
-        categories: formattedResult
+        categories: formattedData
       },
       pagination: {
         currentPage: page,
