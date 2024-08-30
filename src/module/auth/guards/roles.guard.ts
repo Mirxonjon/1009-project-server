@@ -14,7 +14,6 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector, private jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    console.log('111');
 
     const requiredRoles = this.reflector.getAllAndOverride<RolesEnum[]>(
       ROLES_KEY,
@@ -27,34 +26,29 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    console.log('111');
 
     const token = request.headers.authorization?.split(' ')[1];
+console.log(token);
 
-    console.log('111', request.headers);
-    const user = this.jwtService.verify(token);
 
-    console.log('111');
-    console.log(user, 'lllll');
+    if(!token) {
+      throw new ForbiddenException('Token not found');
+    }
 
-    // request.user.userId = user.id;
-    // request.user.role = user.role;
-
+    
     try {
       const user = this.jwtService.verify(token);
-      // request.user.userId = user?.id;
-      // request.user.role = user?.role;
+
       request.user = {
         userId: user.id,
         role: user.role,
       };
-      console.log(user, 'sss');
 
       return requiredRoles.some((role) => user.role?.includes(role));
     } catch (error) {
       console.log(error);
 
-      throw new ForbiddenException('Invalid token');
+      throw new ForbiddenException(error.message);
     }
   }
 }

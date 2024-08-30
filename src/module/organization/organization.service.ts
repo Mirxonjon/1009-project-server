@@ -107,7 +107,7 @@ export class OrganizationServise {
     // Create a map to group subcategories by category
     const categoryMap = new Map();
 
-    result.forEach(async ({ sub_category_org }) => {
+    result?.forEach(async ({ sub_category_org }) => {
       const categoryName = sub_category_org.category_org.title;
       const subCategoryName = sub_category_org.title;
       const subCategoryId = sub_category_org.id;
@@ -854,223 +854,7 @@ export class OrganizationServise {
     }
   }
 
-  async update(
-    id: string,
-    body: UpdateOrganizationDto,
-    pictures: Array<Express.Multer.File>
-  ) {
-    let phones = body?.phones as any;
-    console.log(body, typeof phones, phones.numbers, ' : numbersd1');
-    const findOrganization = await OrganizationEntity.findOne({
-      where: {
-        id: id,
-      },
-    }).catch((e) => {
-      console.log(e);
-
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
-
-    let findSubCategory = findOrganization.sub_category_org;
-
-    if (body.sub_category_id != 'null') {
-      findSubCategory = await SubCategoryOrgEntity.findOne({
-        where: {
-          id: body.sub_category_id,
-        },
-      }).catch((e) => {
-        console.log(e);
-        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-      });
-    }
-
-    let findSection = findOrganization.sectionId;
-
-    console.log(body.section, 'BODY SUB CATEG OUT');
-
-    if (body.section != 'null') {
-      console.log(body.section, 'BODY SUB CATEG IN');
-      findSection = await SectionEntity.findOne({
-        where: {
-          id: body.section,
-        },
-      }).catch((e) => {
-        console.log(e, ': SUB CATEGORY');
-
-        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-      });
-    }
-
-    const updatedOrganization = await OrganizationEntity.update(id, {
-      main_organization:
-        body.main_organization || findOrganization.main_organization,
-      organization_name:
-        body.organization_name || findOrganization.organization_name,
-      manager: body.manager || findOrganization.manager,
-      email: body.email || findOrganization.email,
-      address: body.address || findOrganization.address,
-      // scheduler: JSON.stringify(body?.scheduler as any) || findOrganization.scheduler,
-      // payment_types:
-      // JSON.stringify(body?.payment_types as any) || findOrganization.payment_types,
-      // transport: JSON.stringify(body?.transport as any) || findOrganization.transport,
-      // comment: body.comment || findOrganization.comment,
-      // location: JSON.stringify(body?.location as any) || findOrganization.location,
-      segment: body.segment || findOrganization.segment,
-      account: body.account || findOrganization.account,
-      added_by: body.added_by || findOrganization.added_by,
-      inn: body.inn || findOrganization.inn,
-      bank_account: body.bank_account || findOrganization.bank_account,
-      sectionId: findSection,
-      sub_category_org: {
-        id: findSubCategory?.id || null,
-      },
-    }).catch((e) => {
-      console.log(e);
-      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-    });
-    console.log(updatedOrganization, 'UPDATED ORG');
-
-    if (updatedOrganization) {
-      let phones: string | TNumbers = body?.phones;
-
-      if (typeof phones === 'string') {
-        phones = JSON.parse(phones) as { numbers: PhoneAction[] };
-        console.log(phones);
-      }
-
-      let allPhones = phones?.numbers;
-
-      for (let i = 0; i < allPhones.length; i++) {
-        if (allPhones[i].action == ActionEnum.create) {
-          await PhoneOrganizationEntity.createQueryBuilder()
-            .insert()
-            .into(PhoneOrganizationEntity)
-            .values({
-              number: allPhones[i].number,
-              type_number: allPhones[i].type_number,
-              organization: {
-                id: id,
-              },
-            })
-            .execute()
-            .catch((e) => {
-              console.log(e);
-              throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-            });
-        } else if (allPhones[i].action == ActionEnum.update) {
-          const findPhone = await PhoneOrganizationEntity.findOne({
-            where: {
-              id: allPhones[i].id,
-            },
-          });
-
-          if (findPhone) {
-            await PhoneOrganizationEntity.update(allPhones[i].id, {
-              number: allPhones[i].number,
-              type_number: allPhones[i].type_number,
-            }).catch((e) => {
-              console.log(e);
-              throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-            });
-          }
-        } else if (allPhones[i].action == ActionEnum.create) {
-          const findPhone = await PhoneOrganizationEntity.findOne({
-            where: {
-              id: allPhones[i].id,
-            },
-          }).catch((e) => {
-            console.log(e);
-            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-          });
-
-          if (findPhone) {
-            await PhoneOrganizationEntity.delete({ id: allPhones[i].id }).catch(
-              (e) => {
-                console.log(e);
-                throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-              }
-            );
-          } else {
-            throw new HttpException('Not found number', HttpStatus.NOT_FOUND);
-          }
-        }
-      }
-    }
-    console.log('okkk1');
-
-    for (let i = 0; i < pictures?.length; i++) {
-      const formatImage = extname(pictures[i]?.originalname).toLowerCase();
-      if (allowedImageFormats.includes(formatImage)) {
-        const linkImage: string = await googleCloudAsync(pictures[i]);
-
-        await PictureOrganizationEntity.createQueryBuilder()
-          .insert()
-          .into(PictureOrganizationEntity)
-          .values({
-            image_link: linkImage,
-            organization_id: {
-              id: findOrganization.id,
-            },
-          })
-          .execute()
-          .catch((e) => {
-            console.log(e);
-
-            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-          });
-      }
-    }
-
-    let pictures_delete: string | { delete: string[] } = body.pictures_delete;
-
-    if (typeof pictures_delete === 'string') {
-      pictures_delete = JSON.parse(pictures_delete) as { delete: string[] };
-      console.log(pictures_delete);
-    }
-    let AllPictureDelete = pictures_delete.delete;
-    for (let i = 0; i < AllPictureDelete.length; i++) {
-      const findPicture = await PictureOrganizationEntity.findOne({
-        where: {
-          id: AllPictureDelete[i],
-        },
-      });
-
-      if (!findPicture) {
-        throw new HttpException('Not found picture', HttpStatus.NOT_FOUND);
-      }
-      await deleteFileCloud(AllPictureDelete[i]);
-      await PictureOrganizationEntity.delete({ id: AllPictureDelete[i] }).catch(
-        (e) => {
-          console.log(e);
-          throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-        }
-      );
-    }
-    // pictures_delete?.delete?.forEach(async e => {
-    //   const  findPicture = await Picture_Organization_Entity.findOne({
-    //     where:{
-    //       id : e
-    //     }
-    //   })
-
-    //   if(!findPicture) {
-    //     throw new HttpException(
-    //       "Not found picture",
-    //        HttpStatus.NOT_FOUND,
-    //      );
-    //   }
-    //   await deleteFileCloud(e)
-    //   await Picture_Organization_Entity.delete({ id: e }).catch((e) => {
-    //     console.log(e);
-    //     throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-    //   });;
-
-    // })
-    console.log('okkk');
-
-    return;
-    // }
-  }
+ 
 
   async updateOrg(organizationVersionId: string) {
     const methodName = this.updateOrg.name;
@@ -1208,7 +992,7 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-          console.log('update last');
+          console.log('update last',findPhonesOrganizationVersion[i].id );
           if (!updatePhoneVersionResult.affected) {
             this.logger.debug(
               `Method: ${methodName} - Phone Version Update In Org Version To Org Error:`,
@@ -1238,7 +1022,7 @@ export class OrganizationServise {
 
           const updatePhoneResult: UpdateResult =
             await PhoneOrganizationEntity.update(
-              findPhonesOrganizationVersion[i].id,
+              PhoneResult.id,
               {
                 number: findPhonesOrganizationVersion[i].number,
                 type_number: findPhonesOrganizationVersion[i].type_number,
@@ -1279,7 +1063,7 @@ export class OrganizationServise {
           console.log(
             findPhonesOrganizationVersion[i].id,
             i,
-            'findPhone  Organization Version'
+            'findPhone  Organization Version delete'
           );
 
           const PhoneResult = await PhoneOrganizationEntity.findOne({
@@ -1309,10 +1093,12 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-
-          if (deletePhoneResult.affected == 0) {
+            console.log(deletePhoneResult);
+            console.log(findPhonesOrganizationVersion[i]?.id, PhoneResult?.id , 'Find Version');
+            
+          if (!deletePhoneResult.affected) {
             this.logger.debug(
-              `Method: ${methodName} - Picture  Delete Error:`,
+              `Method: ${methodName} - Phone  Delete Error:`,
               deletePhoneResult
             );
             throw new HttpException(
@@ -1323,7 +1109,7 @@ export class OrganizationServise {
 
           const deletePhoneVersionResult: DeleteResult =
             await Phone_Organization_Versions_Entity.delete({
-              id: findOrganizationVersionResult[i].id,
+              id: findPhonesOrganizationVersion[i].id,
             }).catch((e) => {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
