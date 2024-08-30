@@ -105,18 +105,11 @@ export class OrganizationServise {
     // Create a map to group subcategories by category
     const formattedData = [];
 
-
-    result?.forEach(async ({ sub_category_org }) => {
-      const categoryName = sub_category_org.category_org.title;
-      const subCategoryName = sub_category_org.title;
-      const subCategoryId = sub_category_org.id;
-
     for (const org of result) {
       const categoryName = org?.sub_category_org?.category_org?.title;
       const categoryId = org?.sub_category_org?.category_org?.id;
       const subCategoryName = org?.sub_category_org?.title;
       const subCategoryId = org?.sub_category_org?.id;
-
 
       // Skip the iteration if categoryName or subCategoryName is undefined
       if (!categoryName || !subCategoryName) {
@@ -194,7 +187,7 @@ export class OrganizationServise {
         };
         categoryObj.sub_categories.push(subCategoryObj);
       }
-    }})
+    }
 
     return {
       result: {
@@ -210,68 +203,6 @@ export class OrganizationServise {
     };
   }
 
-    // if (pageSize == 'all') {
-    //   const [result, total] = await OrganizationEntity.findAndCount({
-    //     relations: {
-    //       phones: true,
-    //       pictures: true,
-    //       sub_category_org: {
-    //         category_org: true,
-    //       },
-    //       saved_organization: true,
-    //       comments: true,
-    //     },
-    //     order: {
-    //       create_data: 'asc',
-    //     },
-    //   }).catch((e) => {
-    //     this.logger.error(`Error in find All Org`);
-    //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    //   });
-    //   return {
-    //     result,
-    //     pagination: {
-    //       currentPage: page,
-    //       totalPages: 1,
-    //       pageSize,
-    //       totalItems: total,
-    //     },
-    //   };
-    // } else {
-    //   const offset = (+page - 1) * +pageSize;
-
-    //   const [result, total] = await OrganizationEntity.findAndCount({
-    //     relations: {
-    //       phones: true,
-    //       pictures: true,
-    //       sub_category_org: {
-    //         category_org: true,
-    //       },
-    //       saved_organization: true,
-    //       comments: true,
-    //     },
-    //     order: {
-    //       create_data: 'asc',
-    //     },
-
-    //     skip: offset,
-    //     take: +pageSize,
-    //   }).catch((e) => {
-    //     this.logger.error(`Error in find All Org`);
-    //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    //   });
-
-    //   const totalPages = Math.ceil(total / +pageSize);
-    //   return {
-    //     result,
-    //     pagination: {
-    //       currentPage: page,
-    //       totalPages,
-    //       pageSize,
-    //       totalItems: total,
-    //     },
-    //   };
-    // }
   
 
   async findOne(id: string) {
