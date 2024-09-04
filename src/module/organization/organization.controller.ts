@@ -216,7 +216,7 @@ export class OrganizationController {
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
-    console.log(req, 'REQ');
+    console.log('sssss',req, 'REQ');
 
     console.log(files, 'oookkk');
 
