@@ -99,7 +99,7 @@ export class OrganizationServise {
     }
 
     if (name) {
-      queryBuilder.andWhere('organization.organization_name = :name', { name });
+      queryBuilder.andWhere('organization.organization_name LIKE :name', { name });
     }
 
     if (category) {
@@ -232,7 +232,7 @@ export class OrganizationServise {
     };
   }
 
-  
+
 
   async findOne(id: string) {
     const findOne = await OrganizationEntity.find({
@@ -876,7 +876,7 @@ export class OrganizationServise {
     }
   }
 
- 
+
 
   async updateOrg(organizationVersionId: string) {
     const methodName = this.updateOrg.name;
@@ -1014,7 +1014,7 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-          console.log('update last',findPhonesOrganizationVersion[i].id );
+          console.log('update last', findPhonesOrganizationVersion[i].id);
           if (!updatePhoneVersionResult.affected) {
             this.logger.debug(
               `Method: ${methodName} - Phone Version Update In Org Version To Org Error:`,
@@ -1115,9 +1115,9 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-            console.log(deletePhoneResult);
-            console.log(findPhonesOrganizationVersion[i]?.id, PhoneResult?.id , 'Find Version');
-            
+          console.log(deletePhoneResult);
+          console.log(findPhonesOrganizationVersion[i]?.id, PhoneResult?.id, 'Find Version');
+
           if (!deletePhoneResult.affected) {
             this.logger.debug(
               `Method: ${methodName} - Phone  Delete Error:`,
