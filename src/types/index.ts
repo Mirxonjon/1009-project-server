@@ -66,3 +66,8 @@ export enum CheckOrganizationStatus {
 export type checkOrganizationType =
   | CheckOrganizationStatus.Accept
   | CheckOrganizationStatus.Reject;
+
+export enum GetTopTenOrganizatrionStatus {
+  True = '1',
+  False = '0'
+}

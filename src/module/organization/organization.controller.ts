@@ -49,6 +49,7 @@ export class OrganizationController {
   @ApiNotFoundResponse()
   @ApiOkResponse()
   async findall(@Query() query: GetAllOrganizationsDto) {
+    console.log(query, 'QUEWRy')
     return await this.#_service.findAll(query);
   }
 
@@ -374,9 +375,8 @@ export class OrganizationController {
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN)
-  @Patch('/organization/check')
+  @Patch('/organization/check/:id')
   @HttpCode(HttpStatus.OK)
-  @ApiBody({})
   @ApiOperation({ summary: 'Check Organizations by moderator' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

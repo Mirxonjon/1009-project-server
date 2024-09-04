@@ -20,6 +20,7 @@ import {
   CheckOrganizationStatus,
   OrganizationStatusType,
   OrganizationVersionActionsEnum,
+  GetTopTenOrganizatrionStatus,
 } from 'src/types';
 import {
   DeleteResult,
@@ -48,7 +49,7 @@ export class OrganizationServise {
   ) { }
 
   async findAll(query: GetAllOrganizationsDto) {
-    const { page, pageSize, search, name, category, subCategory, section, mainOrganization, segment } =
+    const { page, pageSize, search, name, category, subCategory, section, mainOrganization, segment, isTopTenList } =
       query;
 
     const queryBuilder = this.organizationRepository
@@ -64,10 +65,37 @@ export class OrganizationServise {
       .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
       .leftJoinAndSelect('subCategory.category_org', 'category');
 
+    let topTenList;
+
     if (search) {
       queryBuilder.andWhere('organization.organization_name LIKE :search', {
         search: `%${search}%`,
       });
+
+
+      if (isTopTenList == GetTopTenOrganizatrionStatus.True) {
+        const queryBuilder = this.organizationRepository
+          .createQueryBuilder('organization')
+
+        queryBuilder.andWhere(
+          `
+            organization.organization_name LIKE :search
+            AND status = :status
+            ORDER BY created_at DESC LIMIT :limit
+          `,
+          {
+            search: `%${search}%`,
+            limit: 10,
+            status: OrganizationStatus.Accepted
+          }
+        );
+
+        const topTenOrganizations = await queryBuilder.getMany()
+
+        topTenList = topTenOrganizations.map(({ id, organization_name, address }) => ({ id, organization_name, address }));
+      }
+
+
     }
 
     if (name) {
@@ -192,7 +220,8 @@ export class OrganizationServise {
     return {
       result: {
         organizations: result,
-        categories: formattedData
+        categories: formattedData,
+        top_tent_list: topTenList
       },
       pagination: {
         currentPage: page,
@@ -519,9 +548,7 @@ export class OrganizationServise {
     body: CreateOrganizationDto,
     pictures: Array<Express.Multer.File>
   ) {
-    console.log(body, 'BODY');
     this.logger.debug(body, 'BODY');
-    console.log(pictures, 'picture');
     // let findCategory = null
 
     // if(body.category_id != 'null') {
