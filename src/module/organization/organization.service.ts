@@ -99,7 +99,7 @@ export class OrganizationServise {
     }
 
     if (name) {
-      queryBuilder.andWhere('organization.organization_name LIKE :name', { name });
+      queryBuilder.andWhere('organization.organization_name LIKE :name', { name: `%${name}%` });
     }
 
     if (category) {
