@@ -20,6 +20,7 @@ import { SavedOrganizationModule } from './module/saved_org/savedorganization.mo
 import { RolesGuard } from './module/auth/guards/roles.guard';
 import { CommentAndRateModule } from './module/comment_and_rate/subcategoryorganization.module';
 import { UsersModule } from './module/users/users.module';
+import { SegmentModule } from './module/segment/organization_categories.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UsersModule } from './module/users/users.module';
     OrganizationModule,
     SavedOrganizationModule,
     CommentAndRateModule,
+    SegmentModule,
     EntertainmentCategoriesModule,
     EntertainmentsModule,
     CommunalModule,

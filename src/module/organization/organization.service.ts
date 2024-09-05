@@ -283,6 +283,7 @@ export class OrganizationServise {
           userId: {
             id: user.userId,
           },
+          status: OrganizationStatus.Accepted ,
         },
         relations: {
           phones: true,
@@ -388,6 +389,8 @@ export class OrganizationServise {
     page: string,
     pageSize: string
   ) {
+    console.log(page,pageSize);
+    
     if (pageSize == 'all') {
       const [result, total] = await OrganizationVersionsEntity.findAndCount({
         where: {
@@ -426,7 +429,7 @@ export class OrganizationServise {
         pagination: {
           currentPage: page,
           totalPages: 1,
-          pageSize,
+          pageSize: total,
           totalItems: total,
         },
       };

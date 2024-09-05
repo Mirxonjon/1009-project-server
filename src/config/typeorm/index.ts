@@ -19,6 +19,7 @@ import { PictureOrganizationVersionsEntity } from 'src/entities/picture_organiza
 import { Phone_Organization_Versions_Entity } from 'src/entities/phone_organizations_versions.entity';
 import { SectionEntity } from 'src/entities/section.entity';
 import { SavedOrganizationEntity } from 'src/entities/saved_org.entity';
+import { SegmentEntity } from 'src/entities/segment.entity';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ export const connectDb: TypeOrmModuleOptions = {
     PhoneOrganizationEntity,
     CommentAndRateEntity,
     PictureOrganizationEntity,
+    SegmentEntity,
     ImportedFilesTitleEntity,
     OrganizationVersionsEntity,
     PictureOrganizationVersionsEntity,
