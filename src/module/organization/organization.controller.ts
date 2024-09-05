@@ -383,7 +383,7 @@ export class OrganizationController {
     @Param('id') id: string,
     @Body() checkOrganizationDto: CheckOrganizationDto
   ): Promise<void> {
-    await this.#_service.check(id, checkOrganizationDto.status);
+    await this.#_service.check(id, checkOrganizationDto);
   }
 
   // @UseGuards(jwtGuard)
