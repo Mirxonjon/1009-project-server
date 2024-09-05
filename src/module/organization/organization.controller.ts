@@ -215,7 +215,7 @@ export class OrganizationController {
     @Body() createOrganizationDto: CreateOrganizationDto,
     @UploadedFiles() files: Array<Express.Multer.File>
   ): Promise<void> {
-    console.log('sssss',req, 'REQ');
+    console.log('sssss', req, 'REQ');
 
     console.log(files, 'oookkk');
 
@@ -374,9 +374,8 @@ export class OrganizationController {
   }
 
   @RequiredRoles(RolesEnum.SUPERADMIN)
-  @Patch('/organization/check')
+  @Patch('/organization/check/:id')
   @HttpCode(HttpStatus.OK)
-  @ApiBody({})
   @ApiOperation({ summary: 'Check Organizations by moderator' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

@@ -20,6 +20,7 @@ import {
   CheckOrganizationStatus,
   OrganizationStatusType,
   OrganizationVersionActionsEnum,
+  GetTopTenOrganizatrionStatus,
 } from 'src/types';
 import {
   DeleteResult,
@@ -48,7 +49,7 @@ export class OrganizationServise {
   ) { }
 
   async findAll(query: GetAllOrganizationsDto) {
-    const { page, pageSize, search, name, category, subCategory, section, mainOrganization, segment } =
+    const { page, pageSize, search, name, category, subCategory, section, mainOrganization, segment, isTopTenList } =
       query;
 
     const queryBuilder = this.organizationRepository
@@ -64,14 +65,41 @@ export class OrganizationServise {
       .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
       .leftJoinAndSelect('subCategory.category_org', 'category');
 
+    let topTenList;
+
     if (search) {
       queryBuilder.andWhere('organization.organization_name LIKE :search', {
         search: `%${search}%`,
       });
+
+
+      if (isTopTenList == GetTopTenOrganizatrionStatus.True) {
+        const queryBuilder = this.organizationRepository
+          .createQueryBuilder('organization')
+
+        queryBuilder.andWhere(
+          `
+            organization.organization_name LIKE :search
+            AND status = :status
+            ORDER BY created_at DESC LIMIT :limit
+          `,
+          {
+            search: `%${search}%`,
+            limit: 10,
+            status: OrganizationStatus.Accepted
+          }
+        );
+
+        const topTenOrganizations = await queryBuilder.getMany()
+
+        topTenList = topTenOrganizations.map(({ id, organization_name, address }) => ({ id, organization_name, address }));
+      }
+
+
     }
 
     if (name) {
-      queryBuilder.andWhere('organization.organization_name = :name', { name });
+      queryBuilder.andWhere('organization.organization_name LIKE :name', { name });
     }
 
     if (category) {
@@ -192,7 +220,8 @@ export class OrganizationServise {
     return {
       result: {
         organizations: result,
-        categories: formattedData
+        categories: formattedData,
+        top_tent_list: topTenList
       },
       pagination: {
         currentPage: page,
@@ -203,7 +232,7 @@ export class OrganizationServise {
     };
   }
 
-  
+
 
   async findOne(id: string) {
     const findOne = await OrganizationEntity.find({
@@ -459,9 +488,7 @@ export class OrganizationServise {
     body: CreateOrganizationDto,
     pictures: Array<Express.Multer.File>
   ) {
-    console.log(body, 'BODY');
     this.logger.debug(body, 'BODY');
-    console.log(pictures, 'picture');
     // let findCategory = null
 
     // if(body.category_id != 'null') {
@@ -850,7 +877,7 @@ export class OrganizationServise {
     }
   }
 
- 
+
 
   async updateOrg(organizationVersionId: string) {
     const methodName = this.updateOrg.name;
@@ -988,7 +1015,7 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-          console.log('update last',findPhonesOrganizationVersion[i].id );
+          console.log('update last', findPhonesOrganizationVersion[i].id);
           if (!updatePhoneVersionResult.affected) {
             this.logger.debug(
               `Method: ${methodName} - Phone Version Update In Org Version To Org Error:`,
@@ -1089,9 +1116,9 @@ export class OrganizationServise {
               console.log(e);
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
-            console.log(deletePhoneResult);
-            console.log(findPhonesOrganizationVersion[i]?.id, PhoneResult?.id , 'Find Version');
-            
+          console.log(deletePhoneResult);
+          console.log(findPhonesOrganizationVersion[i]?.id, PhoneResult?.id, 'Find Version');
+
           if (!deletePhoneResult.affected) {
             this.logger.debug(
               `Method: ${methodName} - Phone  Delete Error:`,

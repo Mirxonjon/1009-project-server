@@ -8,7 +8,10 @@ import {
   IsIn,
   IsOptional,
   IsNumber,
+  IsBoolean,
+  IsEnum,
 } from 'class-validator';
+import { GetTopTenOrganizatrionStatus } from 'src/types';
 
 export class GetAllOrganizationsDto {
   @ApiProperty({ required: false, example: 1, })
@@ -58,6 +61,12 @@ export class GetAllOrganizationsDto {
   @IsOptional()
   @IsString()
   segment?: string;
+
+  @ApiProperty({ required: false, default: GetTopTenOrganizatrionStatus.False, description: 'Enum: [1, 0]', })
+  @IsOptional()
+  @IsString()
+  @IsEnum(GetTopTenOrganizatrionStatus, { each: true })
+  isTopTenList?: GetTopTenOrganizatrionStatus;
 
   /*
 
