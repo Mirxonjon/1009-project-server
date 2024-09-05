@@ -666,7 +666,7 @@ export class OrganizationServise {
             .insert()
             .into(PictureOrganizationEntity)
             .values({
-              image_link: linkImage,
+              image_link:`${process.env.FILE_LINK}${linkImage}` ,
               // action: ActionEnum.create,
               organization_id: {
                 id: createdOrg.raw[0].id,
@@ -1609,7 +1609,7 @@ export class OrganizationServise {
             .insert()
             .into(PictureOrganizationVersionsEntity)
             .values({
-              image_link: linkImage,
+            image_link :  `${process.env.FILE_LINK}${linkImage}` ,
               action: ActionEnum.create,
               organization_id: {
                 id: findOrganizationVersionResult.id,
