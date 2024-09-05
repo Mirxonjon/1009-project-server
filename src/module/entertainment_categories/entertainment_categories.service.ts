@@ -28,7 +28,8 @@ export class EntertainmentCategoriesService {
       });
 
     if (!findCategory) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      
+      return []
     }
     return findCategory;
   }

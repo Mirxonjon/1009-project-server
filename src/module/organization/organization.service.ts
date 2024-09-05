@@ -254,6 +254,7 @@ export class OrganizationServise {
           userId: {
             id: user.userId,
           },
+          status: OrganizationStatus.Accepted ,
         },
         relations: {
           phones: true,
