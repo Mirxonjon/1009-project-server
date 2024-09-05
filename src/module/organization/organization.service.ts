@@ -283,7 +283,7 @@ export class OrganizationServise {
           userId: {
             id: user.userId,
           },
-          status: OrganizationStatus.Accepted ,
+          status: OrganizationStatus.Accepted,
         },
         relations: {
           phones: true,
@@ -389,8 +389,8 @@ export class OrganizationServise {
     page: string,
     pageSize: string
   ) {
-    console.log(page,pageSize);
-    
+    console.log(page, pageSize);
+
     if (pageSize == 'all') {
       const [result, total] = await OrganizationVersionsEntity.findAndCount({
         where: {
@@ -1671,7 +1671,7 @@ export class OrganizationServise {
     }
   }
 
-  async check(organizationId: string, status: checkOrganizationType) {
+  async check(organizationId: string, params: { status: checkOrganizationType, reason?: string }) {
     const methodName = this.check.name;
     const date = new Date();
     const formattedDate = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
@@ -1719,7 +1719,7 @@ export class OrganizationServise {
         where: [{ id: organizationVersion.userId }],
       });
 
-      if (CheckOrganizationStatus.Accept) {
+      if (params.status == CheckOrganizationStatus.Accept) {
         organization.status = OrganizationStatus.Accepted;
         organizationVersion.status = OrganizationStatus.Accepted;
 
@@ -1756,8 +1756,9 @@ export class OrganizationServise {
         PictureOrganizationEntity.save(pictures);
       }
 
-      if (CheckOrganizationStatus.Reject) {
+      if (params.status == CheckOrganizationStatus.Reject) {
         organizationVersion.status = OrganizationStatus.Rejected;
+        organizationVersion.reason = params?.reason
 
         if (organization.status == OrganizationStatus.Check) {
           organization.status = OrganizationStatus.Rejected;

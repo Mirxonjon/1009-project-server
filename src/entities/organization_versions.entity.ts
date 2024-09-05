@@ -166,6 +166,12 @@ export class OrganizationVersionsEntity extends BaseEntity {
   })
   method: string;
 
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  reason: string;
+
   @OneToMany(
     () => Phone_Organization_Versions_Entity,
     (phone) => phone.organization,
