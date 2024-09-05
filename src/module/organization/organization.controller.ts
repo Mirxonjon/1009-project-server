@@ -85,7 +85,7 @@ export class OrganizationController {
   async findMyOrganizationUpdateOrDelete(
     @Req() req: CustomRequest,
     @Query('page') page: string = '1',
-    @Query('pageSize') pageSize: string = '10'
+    @Query('pageSize') pageSize: string = 'all'
   ) {
     return await this.#_service.findMyOrganizationUpdateOrDelete(
       req.user,
