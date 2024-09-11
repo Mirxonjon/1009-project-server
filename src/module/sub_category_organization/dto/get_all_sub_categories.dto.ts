@@ -2,15 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsString,
-  IsNotEmpty,
-  MaxLength,
-  IsObject,
-  IsIn,
   IsOptional,
   IsNumber,
 } from 'class-validator';
 
-export class GetAllSegmentDto {
+export class GetAllSubCategoriesDto {
   @ApiProperty({ required: false, example: 1, })
   @IsOptional()
   @Type(() => Number)
@@ -32,10 +28,5 @@ export class GetAllSegmentDto {
   @ApiProperty({ required: false, default: false })
   @IsOptional()
   @IsString()
-  all?: string = 'false';;
-
-  /*
-
-    Address
-  */
+  all?: string = 'false';
 }

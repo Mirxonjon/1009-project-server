@@ -22,9 +22,9 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { SegmentService } from './organization_categories.service';
-import { CreateSegmentDto } from './dto/create_organization_categories.dto';
-import { UpdateSegmentDto } from './dto/update_organization_categories.dto';
+import { SegmentService } from './segment.service';
+import { CreateSegmentDto } from './dto/create_segment.dto';
+import { UpdateSegmentDto } from './dto/update_segment.dto';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
 import { RolesEnum } from 'src/types';
 import { GetAllSegmentDto } from './dto/get_all_segment.dto';

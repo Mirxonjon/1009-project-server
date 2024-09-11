@@ -1,17 +1,79 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateOrganizationCategoryDto } from './dto/create_organization_categories.dto';
 import { UpdateOrganizationCategoryDto } from './dto/update_organization_categories.dto';
-import { Like } from 'typeorm';
+import { ILike, Like } from 'typeorm';
 import { EntertainmentCategoriesEntity } from 'src/entities/entertainment_Categories.entity';
 import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
+import { GetAllCategoriesDto } from './dto/get_all_categories.dto';
+import { SegmentService } from '../segment/segment.service';
 @Injectable()
 export class OrganizationCategoriesService {
-  async findAll() {
-    const allOrganizationCategory =
-      await CategoryOrganizationEntity.find().catch((e) => {
-        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-      });
-    return allOrganizationCategory;
+  private logger = new Logger(OrganizationCategoriesService.name);
+
+  async findAll(params: GetAllCategoriesDto) {
+    const methodName = this.findAll.name;
+    const { page, pageSize, all, search, } = params;
+
+    if (all == 'true') {
+      const [result, total] =
+        await CategoryOrganizationEntity.findAndCount(
+          {
+            where: {
+              title: search == 'null' ? null : ILike(`%${search}%`)
+            }
+          }
+        ).catch((e) => {
+          console.log(e.message, 'ookkk');
+
+          throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+        });
+
+      if (!result) {
+        this.logger.debug(
+          `Method: ${methodName} - Categories Not Found: `,
+          result
+        );
+        throw new HttpException('Categories Not Found', HttpStatus.NOT_FOUND);
+      }
+      // return findAllSegment;
+      return {
+        result,
+        pagination: {
+          currentPage: 1,
+          totalPages: 1,
+          pageSize: 'all',
+          totalItems: total,
+        },
+      };
+    } else {
+      const offset = (+page - 1) * +pageSize;
+      const [result, total] = await CategoryOrganizationEntity.findAndCount({
+        where: {
+          title: search == 'null' ? null : ILike(`%${search}%`)
+        },
+        skip: offset,
+        take: pageSize
+      })
+
+      if (!result) {
+        this.logger.debug(
+          `Method: ${methodName} - Segment Not Found: `,
+          result
+        );
+        throw new HttpException('Not found Segment', HttpStatus.NOT_FOUND);
+      }
+      const totalPages = Math.ceil(total / +pageSize);
+
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
+    }
   }
 
   async findOne(id: string) {

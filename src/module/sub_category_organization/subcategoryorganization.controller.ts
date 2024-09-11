@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,6 +24,7 @@ import {
 import { SubCategoryOrganizationServise } from './subcategoryorganization.service';
 import { CreateSubCategoryOrganizationDto } from './dto/create_subcategoryorganization.dto';
 import { UpdateSubCategoryOrganizationDto } from './dto/update_subcategoryorganization.dto';
+import { GetAllSubCategoriesDto } from './dto/get_all_sub_categories.dto';
 
 @Controller('SubCategoryOrganization')
 @ApiTags('Sub Category Organization')
@@ -37,8 +39,8 @@ export class SubCategoryOrganizationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall() {
-    return await this.#_service.findAll();
+  async findall(@Query() query: GetAllSubCategoriesDto) {
+    return await this.#_service.findAll(query);
   }
 
   @Get('/one/:id')

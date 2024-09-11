@@ -1,17 +1,77 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateSectionDto } from './dto/create_section.dto';
 import { UpdateSectionDto } from './dto/update_section.dto';
-import { Like } from 'typeorm';
+import { ILike, Like } from 'typeorm';
 import { EntertainmentCategoriesEntity } from 'src/entities/entertainment_Categories.entity';
 import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
 import { SectionEntity } from 'src/entities/section.entity';
+import { GetAllSectionsDto } from './dto/get_all_sections.dto';
 @Injectable()
 export class SectionService {
-  async findAll() {
-    const allSection = await SectionEntity.find().catch((e) => {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
-    return allSection;
+  private logger = new Logger(SectionService.name);
+
+  async findAll(params: GetAllSectionsDto) {
+    const methodName = this.findAll.name;
+    const { page, pageSize, all, search, } = params;
+
+    if (all == 'true') {
+      const [result, total] =
+        await SectionEntity.findAndCount(
+          {
+            where: {
+              title: search == 'null' ? null : ILike(`%${search}%`)
+            }
+          }
+        ).catch((e) => {
+          throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+        });
+
+      if (!result) {
+        this.logger.debug(
+          `Method: ${methodName} - Categories Not Found: `,
+          result
+        );
+        throw new HttpException('Categories Not Found', HttpStatus.NOT_FOUND);
+      }
+      // return findAllSegment;
+      return {
+        result,
+        pagination: {
+          currentPage: 1,
+          totalPages: 1,
+          pageSize: 'all',
+          totalItems: total,
+        },
+      };
+    } else {
+      const offset = (+page - 1) * +pageSize;
+      const [result, total] = await SectionEntity.findAndCount({
+        where: {
+          title: search == 'null' ? null : ILike(`%${search}%`)
+        },
+        skip: offset,
+        take: pageSize
+      })
+
+      if (!result) {
+        this.logger.debug(
+          `Method: ${methodName} - Segment Not Found: `,
+          result
+        );
+        throw new HttpException('Not found Segment', HttpStatus.NOT_FOUND);
+      }
+      const totalPages = Math.ceil(total / +pageSize);
+
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
+    }
   }
 
   async findOne(id: string) {

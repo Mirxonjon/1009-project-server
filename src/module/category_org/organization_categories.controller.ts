@@ -27,6 +27,7 @@ import { CreateOrganizationCategoryDto } from './dto/create_organization_categor
 import { UpdateOrganizationCategoryDto } from './dto/update_organization_categories.dto';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
 import { RolesEnum } from 'src/types';
+import { GetAllCategoriesDto } from './dto/get_all_categories.dto';
 
 // @ApiTags('role')
 // @ApiBearerAuth('JWT-auth')
@@ -45,8 +46,8 @@ export class OrganizationCategoriesController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall() {
-    return await this.#_service.findAll();
+  async findall(@Query() query: GetAllCategoriesDto) {
+    return await this.#_service.findAll(query);
   }
 
   @Get('/one/:id')

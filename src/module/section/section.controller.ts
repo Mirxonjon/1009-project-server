@@ -25,6 +25,7 @@ import {
 import { SectionService } from './section.service';
 import { CreateSectionDto } from './dto/create_section.dto';
 import { UpdateSectionDto } from './dto/update_section.dto';
+import { GetAllSectionsDto } from './dto/get_all_sections.dto';
 
 @Controller('Section')
 @ApiTags('Section types')
@@ -39,8 +40,8 @@ export class SectionController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall() {
-    return await this.#_service.findAll();
+  async findall(@Query() query: GetAllSectionsDto) {
+    return await this.#_service.findAll(query);
   }
 
   @Get('/one/:id')

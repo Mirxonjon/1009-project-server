@@ -1,23 +1,79 @@
-import { HttpException, HttpStatus, Injectable, Body } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Body, Logger } from '@nestjs/common';
 import { CreateSubCategoryOrganizationDto } from './dto/create_subcategoryorganization.dto';
 
 import { UpdateSubCategoryOrganizationDto } from './dto/update_subcategoryorganization.dto';
 
 import { SubCategoryOrgEntity } from 'src/entities/sub_category_org.entity';
 import { CategoryOrganizationEntity } from 'src/entities/category_org.entity';
+import { GetAllSubCategoriesDto } from './dto/get_all_sub_categories.dto';
+import { ILike } from 'typeorm';
 
 @Injectable()
 export class SubCategoryOrganizationServise {
-  async findAll() {
-    const findAllSubCategories = await SubCategoryOrgEntity.find({
-      order: {
-        create_data: 'asc',
-      },
-    }).catch((e) => {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
+  private logger = new Logger(SubCategoryOrganizationServise.name);
 
-    return findAllSubCategories;
+  async findAll(params: GetAllSubCategoriesDto) {
+    const methodName = this.findAll.name;
+    const { page, pageSize, all, search, } = params;
+
+    if (all == 'true') {
+      const [result, total] =
+        await SubCategoryOrgEntity.findAndCount(
+          {
+            where: {
+              title: search == 'null' ? null : ILike(`%${search}%`)
+            }
+          }
+        ).catch((e) => {
+          throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+        });
+
+      if (!result) {
+        this.logger.debug(
+          `Method: ${methodName} - Categories Not Found: `,
+          result
+        );
+        throw new HttpException('Categories Not Found', HttpStatus.NOT_FOUND);
+      }
+      // return findAllSegment;
+      return {
+        result,
+        pagination: {
+          currentPage: 1,
+          totalPages: 1,
+          pageSize: 'all',
+          totalItems: total,
+        },
+      };
+    } else {
+      const offset = (+page - 1) * +pageSize;
+      const [result, total] = await SubCategoryOrgEntity.findAndCount({
+        where: {
+          title: search == 'null' ? null : ILike(`%${search}%`)
+        },
+        skip: offset,
+        take: pageSize
+      })
+
+      if (!result) {
+        this.logger.debug(
+          `Method: ${methodName} - Segment Not Found: `,
+          result
+        );
+        throw new HttpException('Not found Segment', HttpStatus.NOT_FOUND);
+      }
+      const totalPages = Math.ceil(total / +pageSize);
+
+      return {
+        result,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
+    }
   }
 
   async findOne(id: string) {
