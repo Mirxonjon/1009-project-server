@@ -18,6 +18,7 @@ import { SavedOrganizationEntity } from './saved_org.entity';
 import { UsersEntity } from './users.entity';
 import { SectionEntity } from './section.entity';
 import { OrganizationVersionsEntity } from './organization_versions.entity';
+import { SegmentEntity } from './segment.entity';
 
 @Entity()
 export class OrganizationEntity extends BaseEntity {
@@ -90,11 +91,10 @@ export class OrganizationEntity extends BaseEntity {
   })
   location: JSON;
 
-  @Column({
-    type: 'character varying',
+  @ManyToOne(() => SegmentEntity, (segment) => segment.organizations, {
     nullable: true,
   })
-  segment: string;
+  segment: SegmentEntity;
 
   @Column({
     type: 'character varying',

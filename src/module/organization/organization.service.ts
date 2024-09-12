@@ -38,6 +38,7 @@ import { UsersEntity } from 'src/entities/users.entity';
 import { SectionEntity } from 'src/entities/section.entity';
 import { Not } from 'typeorm';
 import { GetAllOrganizationsDto } from './dto/get_all_organization.dto';
+import { SegmentEntity } from 'src/entities/segment.entity';
 
 @Injectable()
 export class OrganizationServise {
@@ -46,11 +47,21 @@ export class OrganizationServise {
   constructor(
     @InjectRepository(OrganizationEntity)
     private readonly organizationRepository: Repository<OrganizationEntity>
-  ) { }
+  ) {}
 
   async findAll(query: GetAllOrganizationsDto) {
-    const { page, pageSize, search, name, category, subCategory, section, mainOrganization, segment, isTopTenList } =
-      query;
+    const {
+      page,
+      pageSize,
+      search,
+      name,
+      category,
+      subCategory,
+      section,
+      mainOrganization,
+      segment,
+      isTopTenList,
+    } = query;
 
     const queryBuilder = this.organizationRepository
       .createQueryBuilder('organization')
@@ -63,7 +74,8 @@ export class OrganizationServise {
       )
       .leftJoinAndSelect('organization.comments', 'comments')
       .leftJoinAndSelect('organization.sub_category_org', 'subCategory')
-      .leftJoinAndSelect('subCategory.category_org', 'category');
+      .leftJoinAndSelect('subCategory.category_org', 'category')
+      .leftJoinAndSelect('organization.segment', 'segment');
 
     let topTenList;
 
@@ -72,10 +84,9 @@ export class OrganizationServise {
         search: `%${search}%`,
       });
 
-
       if (isTopTenList == GetTopTenOrganizatrionStatus.True) {
-        const queryBuilder = this.organizationRepository
-          .createQueryBuilder('organization')
+        const queryBuilder =
+          this.organizationRepository.createQueryBuilder('organization');
 
         queryBuilder.andWhere(
           `
@@ -86,20 +97,26 @@ export class OrganizationServise {
           {
             search: `%${search}%`,
             limit: 10,
-            status: OrganizationStatus.Accepted
+            status: OrganizationStatus.Accepted,
           }
         );
 
-        const topTenOrganizations = await queryBuilder.getMany()
+        const topTenOrganizations = await queryBuilder.getMany();
 
-        topTenList = topTenOrganizations.map(({ id, organization_name, address }) => ({ id, organization_name, address }));
+        topTenList = topTenOrganizations.map(
+          ({ id, organization_name, address }) => ({
+            id,
+            organization_name,
+            address,
+          })
+        );
       }
-
-
     }
 
     if (name) {
-      queryBuilder.andWhere('organization.organization_name LIKE :name', { name: `%${name}%` });
+      queryBuilder.andWhere('organization.organization_name LIKE :name', {
+        name: `%${name}%`,
+      });
     }
 
     if (category) {
@@ -117,10 +134,15 @@ export class OrganizationServise {
     }
 
     if (mainOrganization) {
-      queryBuilder.andWhere('organization.main_organization = :mainOrganization', { mainOrganization });
+      queryBuilder.andWhere(
+        'organization.main_organization = :mainOrganization',
+        { mainOrganization }
+      );
     }
 
-    queryBuilder.andWhere('status = :status', { status: OrganizationStatus.Accepted })
+    queryBuilder.andWhere('status = :status', {
+      status: OrganizationStatus.Accepted,
+    });
     queryBuilder.orderBy('organization.create_data', 'DESC');
 
     const offset = (page - 1) * pageSize;
@@ -144,12 +166,14 @@ export class OrganizationServise {
         continue;
       }
 
-      let categoryObj = formattedData.find(item => item.category === categoryName);
+      let categoryObj = formattedData.find(
+        (item) => item.category === categoryName
+      );
       if (!categoryObj) {
         categoryObj = {
           category: categoryName,
           category_id: categoryId,
-          sub_categories: []
+          sub_categories: [],
         };
         formattedData.push(categoryObj);
       }
@@ -157,12 +181,12 @@ export class OrganizationServise {
       const organizationsGetCountValues = {
         subCatId: subCategoryId,
         categoryId: categoryId,
-        status: OrganizationStatus.Accepted
-      }
+        status: OrganizationStatus.Accepted,
+      };
 
       // Fetch the organization count from the database
       const organizationsCount = await this.organizationRepository
-        .createQueryBuilder("organization")
+        .createQueryBuilder('organization')
         .leftJoinAndSelect('organization.phones', 'phones')
         .leftJoinAndSelect('organization.pictures', 'pictures')
         .leftJoinAndSelect('organization.sectionId', 'section')
@@ -183,7 +207,9 @@ export class OrganizationServise {
         );
 
       if (name) {
-        organizationsCount.andWhere('organization.organization_name = :name', { name });
+        organizationsCount.andWhere('organization.organization_name = :name', {
+          name,
+        });
       }
 
       if (category) {
@@ -201,17 +227,22 @@ export class OrganizationServise {
       }
 
       if (mainOrganization) {
-        organizationsCount.andWhere('organization.main_organization = :mainOrganization', { mainOrganization });
+        organizationsCount.andWhere(
+          'organization.main_organization = :mainOrganization',
+          { mainOrganization }
+        );
       }
 
       const getOrgCount = await organizationsCount.getCount();
 
-      let subCategoryObj = categoryObj.sub_categories.find(sub => sub.name === subCategoryName);
+      let subCategoryObj = categoryObj.sub_categories.find(
+        (sub) => sub.name === subCategoryName
+      );
       if (!subCategoryObj) {
         subCategoryObj = {
           name: subCategoryName,
           id: subCategoryId,
-          count: getOrgCount
+          count: getOrgCount,
         };
         categoryObj.sub_categories.push(subCategoryObj);
       }
@@ -221,7 +252,7 @@ export class OrganizationServise {
       result: {
         organizations: result,
         categories: formattedData,
-        top_tent_list: topTenList
+        top_tent_list: topTenList,
       },
       pagination: {
         currentPage: page,
@@ -231,8 +262,6 @@ export class OrganizationServise {
       },
     };
   }
-
-
 
   async findOne(id: string) {
     const findOne = await OrganizationEntity.find({
@@ -260,6 +289,7 @@ export class OrganizationServise {
         sub_category_org: {
           category_org: true,
         },
+        segment: true,
         saved_organization: true,
       },
       order: {
@@ -539,6 +569,16 @@ export class OrganizationServise {
       });
     }
 
+    let findSegment = await SegmentEntity.findOne({
+      where: {
+        id: body.segment,
+      },
+    }).catch((e) => {
+      console.log(e, ': SUB SEGMENT');
+
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    });
+
     console.log(findSection, 'FIND BY CATEGORY');
     console.log(user, 'Role');
 
@@ -558,7 +598,7 @@ export class OrganizationServise {
         transport: JSON.parse(body.transport as any),
         comment: body.comment,
         location: JSON.parse(body.location as any),
-        segment: body.segment,
+        segment: { id: findSegment.id },
         account: body.account,
         added_by: body.added_by,
         inn: body.inn,
@@ -666,7 +706,7 @@ export class OrganizationServise {
             .insert()
             .into(PictureOrganizationEntity)
             .values({
-              image_link:`${process.env.FILE_LINK}${linkImage}` ,
+              image_link: `${process.env.FILE_LINK}${linkImage}`,
               // action: ActionEnum.create,
               organization_id: {
                 id: createdOrg.raw[0].id,
@@ -733,7 +773,7 @@ export class OrganizationServise {
             transport: findOrganizationResult.transport,
             comment: findOrganizationResult.comment,
             location: findOrganizationResult.location,
-            segment: findOrganizationResult.segment,
+            segment: findOrganizationResult.segment?.toString(),
             account: findOrganizationResult.account,
             added_by: findOrganizationResult.added_by,
             inn: findOrganizationResult.inn,
@@ -879,8 +919,6 @@ export class OrganizationServise {
     }
   }
 
-
-
   async updateOrg(organizationVersionId: string) {
     const methodName = this.updateOrg.name;
 
@@ -888,15 +926,15 @@ export class OrganizationServise {
       const findOrganizationVersionResult:
         | OrganizationVersionsEntity
         | undefined = await OrganizationVersionsEntity.findOne({
-          where: [
-            {
-              id: organizationVersionId,
-            },
-          ],
-          relations: {
-            organization_id: true,
+        where: [
+          {
+            id: organizationVersionId,
           },
-        });
+        ],
+        relations: {
+          organization_id: true,
+        },
+      });
 
       const updateOrganizationEntityResult: UpdateResult =
         await OrganizationEntity.createQueryBuilder()
@@ -912,7 +950,7 @@ export class OrganizationServise {
             transport: findOrganizationVersionResult.transport,
             comment: findOrganizationVersionResult.comment,
             location: findOrganizationVersionResult.location,
-            segment: findOrganizationVersionResult.segment,
+            segment: { id: findOrganizationVersionResult.segment },
             account: findOrganizationVersionResult.account,
             added_by: findOrganizationVersionResult.added_by,
             inn: findOrganizationVersionResult.inn,
@@ -1046,13 +1084,10 @@ export class OrganizationServise {
           }
 
           const updatePhoneResult: UpdateResult =
-            await PhoneOrganizationEntity.update(
-              PhoneResult.id,
-              {
-                number: findPhonesOrganizationVersion[i].number,
-                type_number: findPhonesOrganizationVersion[i].type_number,
-              }
-            );
+            await PhoneOrganizationEntity.update(PhoneResult.id, {
+              number: findPhonesOrganizationVersion[i].number,
+              type_number: findPhonesOrganizationVersion[i].type_number,
+            });
 
           if (!updatePhoneResult.affected) {
             this.logger.debug(
@@ -1119,7 +1154,11 @@ export class OrganizationServise {
               throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
             });
           console.log(deletePhoneResult);
-          console.log(findPhonesOrganizationVersion[i]?.id, PhoneResult?.id, 'Find Version');
+          console.log(
+            findPhonesOrganizationVersion[i]?.id,
+            PhoneResult?.id,
+            'Find Version'
+          );
 
           if (!deletePhoneResult.affected) {
             this.logger.debug(
@@ -1348,19 +1387,19 @@ export class OrganizationServise {
       const findOrganizationVersionResult:
         | OrganizationVersionsEntity
         | undefined = await OrganizationVersionsEntity.findOne({
-          where: {
-            organization_id: {
-              id: findOrganizationResult.id,
-            },
+        where: {
+          organization_id: {
+            id: findOrganizationResult.id,
           },
+        },
 
-          relations: {
-            organization_id: true,
-          },
-        }).catch((e) => {
-          console.log(e);
-          throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-        });
+        relations: {
+          organization_id: true,
+        },
+      }).catch((e) => {
+        console.log(e);
+        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+      });
       // console.log(findOrganizationVersionResult ,'find OrganizationVersion Result');
 
       if (!findOrganizationVersionResult) {
@@ -1412,6 +1451,22 @@ export class OrganizationServise {
         }
       }
 
+      let findSegment = findOrganizationResult?.segment;
+      if (body.segment != 'null') {
+        findSegment = await SegmentEntity.findOne({
+          where: {
+            id: body.segment,
+          },
+        });
+        if (!findSegment) {
+          this.logger.debug(
+            `Method: ${methodName} - Segment Not Found: `,
+            findSegment
+          );
+          throw new HttpException('Segment Not Found', HttpStatus.NOT_FOUND);
+        }
+      }
+
       // update organization version
 
       const updateOrganizationVersionResult: UpdateResult =
@@ -1440,7 +1495,7 @@ export class OrganizationServise {
             location:
               JSON.parse(body.location as any) ||
               findOrganizationResult.location,
-            segment: body.segment || findOrganizationResult.segment,
+            segment: findSegment?.id?.toString(),
             account: body.account || findOrganizationResult.account,
             added_by: body.added_by || findOrganizationResult.added_by,
             inn: body.inn || findOrganizationResult.inn,
@@ -1609,7 +1664,7 @@ export class OrganizationServise {
             .insert()
             .into(PictureOrganizationVersionsEntity)
             .values({
-            image_link :  `${process.env.FILE_LINK}${linkImage}` ,
+              image_link: `${process.env.FILE_LINK}${linkImage}`,
               action: ActionEnum.create,
               organization_id: {
                 id: findOrganizationVersionResult.id,
@@ -1671,7 +1726,10 @@ export class OrganizationServise {
     }
   }
 
-  async check(organizationId: string, params: { status: checkOrganizationType, reason?: string }) {
+  async check(
+    organizationId: string,
+    params: { status: checkOrganizationType; reason?: string }
+  ) {
     const methodName = this.check.name;
     const date = new Date();
     const formattedDate = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
@@ -1715,6 +1773,10 @@ export class OrganizationServise {
         where: [{ id: organizationVersion.sectionId }],
       });
 
+      const segment = await SegmentEntity.findOne({
+        where: [{ id: organizationVersion.segment }],
+      });
+
       const user = await UsersEntity.findOne({
         where: [{ id: organizationVersion.userId }],
       });
@@ -1733,7 +1795,7 @@ export class OrganizationServise {
         organization.transport = organizationVersion.transport;
         organization.comment = organizationVersion.comment;
         organization.location = organizationVersion.location;
-        organization.segment = organizationVersion.segment;
+        organization.segment = segment;
         organization.account = organizationVersion.account;
         organization.added_by = organizationVersion.added_by;
         organization.inn = organizationVersion.inn;
@@ -1758,7 +1820,7 @@ export class OrganizationServise {
 
       if (params.status == CheckOrganizationStatus.Reject) {
         organizationVersion.status = OrganizationStatus.Rejected;
-        organizationVersion.reason = params?.reason
+        organizationVersion.reason = params?.reason;
 
         if (organization.status == OrganizationStatus.Check) {
           organization.status = OrganizationStatus.Rejected;

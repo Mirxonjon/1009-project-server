@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { SubCategoryOrgEntity } from './sub_category_org.entity';
+import { OrganizationEntity } from './organization.entity';
 
 @Entity()
 export class SegmentEntity extends BaseEntity {
@@ -17,9 +18,12 @@ export class SegmentEntity extends BaseEntity {
   @Column({
     type: 'character varying',
     nullable: true,
-    unique: true
+    unique: true,
   })
   title: string;
+
+  @OneToMany(() => OrganizationEntity, (org) => org.sub_category_org)
+  organizations: OrganizationEntity[];
 
   // @Column({
   //   type: 'character varying',
